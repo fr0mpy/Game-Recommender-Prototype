@@ -18,16 +18,18 @@ const HOLIDAYS = {
   'new-years-eve': { start: '12-30', end: '01-02', themes: ['Celebration', 'Party', 'Champagne'] }
 };
 
-// Sports seasons that might influence cross-sell (EU focused)
+// Sports seasons that might influence cross-sell (Global focused)
 const SPORTS_SEASONS = {
-  'premier-league': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4] },
-  'champions-league': { months: [9, 10, 11, 12, 2, 3, 4, 5], peak: [2, 3, 4, 5] },
-  'euros': { months: [6, 7], peak: [6, 7] }, // Every 4 years
-  'world-cup': { months: [11, 12], peak: [11, 12] }, // Every 4 years (Qatar timing)
-  'formula-1': { months: [3, 4, 5, 6, 7, 8, 9, 10, 11], peak: [6, 7, 8, 9] },
-  'rugby-six-nations': { months: [2, 3], peak: [2, 3] },
-  'wimbledon': { months: [7], peak: [7] },
-  'tour-de-france': { months: [7], peak: [7] }
+  'premier-league': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Football', 'British', 'Competition'] },
+  'champions-league': { months: [9, 10, 11, 12, 2, 3, 4, 5], peak: [2, 3, 4, 5], themes: ['European', 'Elite', 'Champions'] },
+  'nfl': { months: [9, 10, 11, 12, 1], peak: [1, 2], themes: ['American Football', 'Super Bowl', 'Competition'] },
+  'nba': { months: [10, 11, 12, 1, 2, 3, 4, 6], peak: [4, 5, 6], themes: ['Basketball', 'Playoffs', 'Stars'] },
+  'world-cup': { months: [11, 12], peak: [11, 12], themes: ['Global', 'National Pride', 'Football'] }, // Every 4 years
+  'olympics': { months: [7, 8], peak: [7, 8], themes: ['Global', 'Competition', 'Achievement'] }, // Every 4 years
+  'formula-1': { months: [3, 4, 5, 6, 7, 8, 9, 10, 11], peak: [6, 7, 8, 9], themes: ['Racing', 'Speed', 'Luxury'] },
+  'march-madness': { months: [3], peak: [3], themes: ['College Basketball', 'Brackets', 'Upset'] },
+  'wimbledon': { months: [7], peak: [7], themes: ['Tennis', 'Tradition', 'British'] },
+  'tour-de-france': { months: [7], peak: [7], themes: ['Cycling', 'Endurance', 'French'] }
 };
 
 class ContextTracker {
@@ -76,7 +78,9 @@ class ContextTracker {
       },
       activeHolidays: this.getActiveHolidays(monthDay),
       sportsSeason: this.getActiveSportsSeason(month),
-      playTimeContext: this.getPlayTimeContext(hour, dayOfWeek)
+      playTimeContext: this.getPlayTimeContext(hour, dayOfWeek),
+      season: this.getCurrentSeason(month),
+      weather: this.getWeatherContext(month, day)
     };
   }
 
@@ -136,11 +140,36 @@ class ContextTracker {
       if (season.months.includes(month)) {
         active.push({
           sport,
-          intensity: season.peak.includes(month) ? 'peak' : 'regular'
+          intensity: season.peak.includes(month) ? 'peak' : 'regular',
+          themes: season.themes || []
         });
       }
     }
     return active;
+  }
+
+  // Get current season
+  getCurrentSeason(month) {
+    // Northern Hemisphere seasons
+    if (month >= 3 && month <= 5) return { name: 'spring', themes: ['Renewal', 'Growth', 'Fresh Start'] };
+    if (month >= 6 && month <= 8) return { name: 'summer', themes: ['Vacation', 'Energy', 'Adventure'] };
+    if (month >= 9 && month <= 11) return { name: 'autumn', themes: ['Harvest', 'Change', 'Cozy'] };
+    return { name: 'winter', themes: ['Celebration', 'Reflection', 'Warmth'] };
+  }
+
+  // Get weather-influenced context
+  getWeatherContext(month, day) {
+    const season = this.getCurrentSeason(month);
+    
+    // Simulate weather patterns for context
+    const weatherPatterns = {
+      spring: { mood: 'optimistic', themes: ['Nature', 'Lucky', 'Fresh'] },
+      summer: { mood: 'energetic', themes: ['Beach', 'Travel', 'Adventure'] },
+      autumn: { mood: 'contemplative', themes: ['Harvest', 'Mystery', 'Traditional'] },
+      winter: { mood: 'cozy', themes: ['Celebration', 'Magic', 'Warmth'] }
+    };
+    
+    return weatherPatterns[season.name] || { mood: 'neutral', themes: [] };
   }
 
   // Determine play time context
@@ -196,7 +225,7 @@ class ContextTracker {
         attentionSpan: 'medium',
         preferredPace: 'slow',
         preferredVolatility: 'low-medium', // Less stimulation when tired
-        reasoning: 'Reduced cognitive capacity - prefers relaxing, less demanding gameplay'
+        reasoning: 'Reduced cognitive capacity at late hours - prefers relaxing, meditative gameplay with calming themes'
       };
     } else if (isWeekend && hour >= 10 && hour <= 16) {
       context = {
@@ -493,31 +522,130 @@ Provide a 1-2 sentence summary of what this context means for game recommendatio
   }
 
   generateBasicContextSummary(playerContext) {
-    const factors = [];
+    const temporal = playerContext.temporal;
+    const confidence = playerContext.confidence;
     
-    if (playerContext.temporal?.currentTime?.isWeekend) {
-      factors.push('weekend leisure time');
-    } else if (playerContext.temporal?.currentTime?.isEvening) {
-      factors.push('evening gaming session');
+    // Generate dynamic, varied responses based on multiple context factors
+    const contextFactors = this.analyzeContextFactors(playerContext);
+    
+    // Select response template based on primary context
+    const responses = this.getContextResponseTemplates();
+    const primaryContext = contextFactors.primary;
+    const availableResponses = responses[primaryContext] || responses.default;
+    
+    // Pick random response template to avoid repetition
+    const randomIndex = Math.floor(Math.random() * availableResponses.length);
+    const template = availableResponses[randomIndex];
+    
+    // Replace placeholders with actual context data
+    return this.interpolateContextTemplate(template, contextFactors);
+  }
+
+  // Analyze context to determine primary factors and themes
+  analyzeContextFactors(playerContext) {
+    const factors = {
+      primary: 'standard',
+      timeContext: null,
+      seasonalContext: null,
+      eventContext: null,
+      sportContext: null,
+      moodContext: null,
+      themes: []
+    };
+    
+    const temporal = playerContext.temporal;
+    const playTime = temporal?.playTimeContext;
+    
+    // Determine primary context
+    if (playTime?.type === 'work-hours') {
+      factors.primary = 'work';
+      factors.timeContext = 'stealth gaming session';
+    } else if (temporal?.currentTime?.isWeekend) {
+      factors.primary = 'weekend';
+      factors.timeContext = 'weekend leisure time';
+    } else if (temporal?.currentTime?.isEvening) {
+      factors.primary = 'evening';
+      factors.timeContext = 'prime gaming hours';
+    } else if (temporal?.currentTime?.isLateNight) {
+      factors.primary = 'latenight';
+      factors.timeContext = 'late night session';
     }
     
-    if (playerContext.temporal?.activeHolidays?.length > 0) {
-      factors.push(`${playerContext.temporal.activeHolidays[0].name.replace('-', ' ')} season`);
+    // Add seasonal context
+    if (temporal?.season) {
+      factors.seasonalContext = temporal.season.name;
+      factors.themes.push(...temporal.season.themes);
     }
     
-    if (playerContext.temporal?.sportsSeason?.length > 0) {
-      factors.push(`${playerContext.temporal.sportsSeason[0].sport} season`);
+    // Add holiday context
+    if (temporal?.activeHolidays?.length > 0) {
+      const holiday = temporal.activeHolidays[0];
+      factors.eventContext = holiday.name.replace('-', ' ');
+      factors.themes.push(...holiday.themes);
     }
     
-    if (playerContext.referrer?.includes('ballysports')) {
-      factors.push('sports betting crossover opportunity');
+    // Add sports context
+    if (temporal?.sportsSeason?.length > 0) {
+      const sport = temporal.sportsSeason[0];
+      factors.sportContext = sport.sport;
+      factors.themes.push(...(sport.themes || []));
     }
     
-    if (factors.length === 0) {
-      return 'Standard gaming session with basic personalization available based on device and timing preferences.';
+    // Add weather/mood context
+    if (temporal?.weather) {
+      factors.moodContext = temporal.weather.mood;
+      factors.themes.push(...temporal.weather.themes);
     }
     
-    return `Optimal timing for recommendations emphasizing ${factors.slice(0, 2).join(' and ')} themes and mechanics.`;
+    return factors;
+  }
+
+  // Get varied response templates for different contexts
+  getContextResponseTemplates() {
+    return {
+      work: [
+        "Perfect for quick {timeContext} - suggesting fast-paced, low-risk games that won't draw attention.",
+        "Work break detected! Recommending instant-gratification slots with easy pause/resume features.",
+        "Stealth mode gaming time - focusing on {moodContext} themes with minimal visual complexity.",
+        "Quick session opportunity - suggesting games optimized for micro-breaks and split attention."
+      ],
+      weekend: [
+        "{timeContext} calls for high-engagement experiences with {themes} themes to match your relaxed mood.",
+        "Weekend vibes detected! Perfect timing for exploring higher volatility games and {seasonalContext} themes.",
+        "Leisure time optimization - recommending immersive experiences with {eventContext} seasonal flair.",
+        "Weekend gaming at its finest - suggesting premium experiences with {sportContext} excitement."
+      ],
+      evening: [
+        "{timeContext} - ideal for deeper gaming experiences with {themes} themes and engaging mechanics.",
+        "Prime gaming window open! Focusing on {moodContext} experiences with seasonal {seasonalContext} appeal.",
+        "Evening session detected - recommending games that match the {eventContext} atmosphere.",
+        "Perfect timing for immersive gameplay with {sportContext} energy and {themes} themes."
+      ],
+      latenight: [
+        "{timeContext} suggests relaxing, low-stimulation games with {themes} themes for unwinding.",
+        "Night owl gaming - focusing on atmospheric {seasonalContext} experiences with gentle pacing.",
+        "Late night ambiance calls for {moodContext} games with soothing {themes} themes.",
+        "Midnight gaming session - suggesting contemplative experiences with {eventContext} charm."
+      ],
+      default: [
+        "Current {seasonalContext} season suggests games with {themes} themes and {moodContext} gameplay.",
+        "Perfect timing for {eventContext}-inspired experiences with engaging {themes} mechanics.",
+        "Gaming session optimized for {moodContext} mood with seasonal {themes} themes.",
+        "{sportContext} season energy calls for high-engagement games with {themes} excitement.",
+        "Contextual gaming experience featuring {themes} themes tailored to current {seasonalContext} vibes."
+      ]
+    };
+  }
+
+  // Replace template placeholders with actual context data
+  interpolateContextTemplate(template, factors) {
+    return template
+      .replace('{timeContext}', factors.timeContext || 'gaming session')
+      .replace('{seasonalContext}', factors.seasonalContext || 'current')
+      .replace('{eventContext}', factors.eventContext || 'seasonal')
+      .replace('{sportContext}', factors.sportContext || 'current season')
+      .replace('{moodContext}', factors.moodContext || 'engaging')
+      .replace('{themes}', factors.themes.slice(0, 2).join(' and ') || 'varied');
   }
 
   // Clean up old contexts (keep last 30 days)
