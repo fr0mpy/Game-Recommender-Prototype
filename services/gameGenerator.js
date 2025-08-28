@@ -225,8 +225,15 @@ OUTPUT ONLY THE JSON ARRAY - NO OTHER TEXT:`;
           throw new Error(`Chunk ${chunkIndex + 1} response is not an array`);
         }
 
-        console.log(`✅ Chunk ${chunkIndex + 1} completed: ${chunkGames.length} games`);
-        return { chunkIndex, games: chunkGames, gamesInThisChunk };
+        // Assign IDs to successfully generated games
+        const startingId = (chunkIndex * chunkSize) + 1;
+        const gamesWithIds = chunkGames.map((game, index) => ({
+          ...game,
+          id: `game-${(startingId + index).toString().padStart(3, '0')}`
+        }));
+
+        console.log(`✅ Chunk ${chunkIndex + 1} completed: ${gamesWithIds.length} games with IDs assigned`);
+        return { chunkIndex, games: gamesWithIds, gamesInThisChunk };
         
       } catch (error) {
         console.error(`❌ Error in chunk ${chunkIndex + 1}:`, error.message);
