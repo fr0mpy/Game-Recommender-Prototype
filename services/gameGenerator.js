@@ -105,9 +105,9 @@ Each game object MUST have ALL these fields with proper values:
 \`\`\`json
 {
   "id": "DO NOT INCLUDE - will be auto-assigned",
-  "title": "Unique game title (creative, themed)",
-  "studio": "Studio name (e.g., 'Mythic Gaming', 'Wild Studios', 'Ocean Deep Games')",
-  "theme": ["1-3 theme strings from the theme list below"],
+  "title": "Unique game title (creative, match the theme)",
+  "studio": "Studio name (creative fictional studio)",
+  "theme": ["1-3 theme strings (ANY themes based on user request)"],
   "volatility": "one of: low, medium, high, ultra",
   "rtp": 94.0 to 97.5 (number with 2 decimals),
   "maxWin": 1000 to 10000 (integer),
@@ -118,8 +118,8 @@ Each game object MUST have ALL these fields with proper values:
   "pace": "one of: slow, medium, fast",
   "hitFrequency": 15.0 to 35.0 (number with 1-2 decimals),
   "bonusFrequency": 0.5 to 2.5 (number with 1-2 decimals),
-  "artStyle": "one of: Detailed 3D, Cartoon, 2D Illustrated, Photorealistic, Stylized",
-  "audioVibe": "one of: Epic Fantasy, Country Western, Ambient Electronic, Orchestral, Rock, Jazz",
+  "artStyle": "art style string (e.g., Detailed 3D, Cartoon, Anime, Retro, etc.)",
+  "audioVibe": "audio style string (match the theme - be creative)",
   "visualDensity": "one of: clean, standard, busy",
   "mobileOptimized": true or false (boolean),
   "releaseYear": 2023 or 2024 (integer),
@@ -128,11 +128,19 @@ Each game object MUST have ALL these fields with proper values:
 \`\`\`
 
 **CRITICAL FOR SIMILARITY ENGINE:**
-- \`theme\`: MUST be array of 1-3 theme strings from: ["Fantasy", "Dragons", "Western", "Gold Mining", "Ancient", "Egypt", "Pirates", "Treasure", "Space", "Aliens", "Underwater", "Ocean", "Jungle", "Adventure", "Norse", "Vikings", "Magic", "Wizards", "Gems", "Jewels", "Fruits", "Classic", "Animals", "Safari", "Mystery", "Detective", "Horror", "Gothic", "Romance", "Love", "Music", "Rock", "Food", "Cooking", "Travel", "Exploration", "Medieval", "Knights", "Futuristic", "Cyberpunk"]
-- \`volatility\`: MUST be one of: "low", "medium", "high", "ultra" (randomized distribution: 25% low, 40% medium, 25% high, 10% ultra)
-- \`studio\`: MUST be a studio name string (studios can make multiple games, use realistic fictional studio names like "Mythic Gaming", "Dark Moon Games", "Adventure Studios", etc.)
-- \`mechanics\`: MUST be array of 2-4 mechanic strings from: ["Wild", "Scatter", "Free Spins", "Multiplier", "Expanding Reels", "Cascade", "Pick Bonus", "Respins", "Stacked Wilds", "Mystery Symbol", "Megaways", "Hold & Win"]
-- \`features\`: MUST be array of 1-3 feature strings from: ["Bonus Round", "Progressive", "Free Spins", "Wild Multiplier", "Pick Feature", "Gamble", "Bonus Wheel", "Cash Collect", "Super Stacks", "Expanding Symbols", "Buy Feature", "Ante Bet"]
+
+CREATIVE FIELDS (user themes welcome):
+- \`theme\`: MUST be array of 1-3 theme strings (e.g., ["Zombies", "Apocalypse"], ["Donald Trump", "Politics"], ["Fantasy", "Dragons"] - ANY themes are allowed based on user prompt)
+- \`studio\`: MUST be a studio name string (creative fictional names encouraged)
+- \`title\`: MUST be unique and creative based on theme
+
+INDUSTRY STANDARD FIELDS (strict requirements):
+- \`volatility\`: MUST be exactly one of: "low", "medium", "high", "ultra" (randomized distribution: 25% low, 40% medium, 25% high, 10% ultra)
+- \`mechanics\`: MUST be array of 2-4 mechanic strings from standard slot mechanics: ["Wild", "Scatter", "Free Spins", "Multiplier", "Expanding Reels", "Cascade", "Pick Bonus", "Respins", "Stacked Wilds", "Mystery Symbol", "Megaways", "Hold & Win"]
+- \`features\`: MUST be array of 1-3 feature strings from standard slot features: ["Bonus Round", "Progressive", "Free Spins", "Wild Multiplier", "Pick Feature", "Gamble", "Bonus Wheel", "Cash Collect", "Super Stacks", "Expanding Symbols", "Buy Feature", "Ante Bet"]
+- \`pace\`: MUST be exactly one of: "slow", "medium", "fast"
+- \`visualDensity\`: MUST be exactly one of: "clean", "standard", "busy"
+- \`reelLayout\`: MUST be exactly one of: "5x3", "5x4", "6x4", "3x3"
 
 ### JSON Syntax Rules
 - **DO NOT INCLUDE "id" FIELD** - IDs are auto-assigned by the system
