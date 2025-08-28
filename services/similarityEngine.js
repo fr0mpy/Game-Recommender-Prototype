@@ -23,13 +23,18 @@ function volatilityLevel(game) {
 
 function calculateSimilarity(game1, game2, weights = DEFAULT_WEIGHTS) {
   let score = 0;
+  let debugInfo = [];
   
   // Theme matching (40% default weight)
   if (game1.theme && game2.theme && Array.isArray(game1.theme) && Array.isArray(game2.theme)) {
     const themeOverlap = game1.theme.filter(t => game2.theme.includes(t)).length;
     if (game1.theme.length > 0) {
-      score += (themeOverlap / game1.theme.length) * weights.theme;
+      const themeScore = (themeOverlap / game1.theme.length) * weights.theme;
+      score += themeScore;
+      debugInfo.push(`theme: ${themeScore.toFixed(3)} (${themeOverlap}/${game1.theme.length} overlap)`);
     }
+  } else {
+    debugInfo.push(`theme: 0 (missing data - g1:${!!game1.theme}, g2:${!!game2.theme})`);
   }
   
   // Volatility matching (30% default weight)
@@ -37,24 +42,45 @@ function calculateSimilarity(game1, game2, weights = DEFAULT_WEIGHTS) {
   const vol2 = volatilityLevel(game2);
   if (vol1 === vol2) {
     score += weights.volatility;
+    debugInfo.push(`volatility: ${weights.volatility.toFixed(3)} (exact match ${game1.volatility})`);
   } else if (Math.abs(vol1 - vol2) === 1) {
-    score += weights.volatility * 0.5;
+    const volScore = weights.volatility * 0.5;
+    score += volScore;
+    debugInfo.push(`volatility: ${volScore.toFixed(3)} (close match ${game1.volatility}/${game2.volatility})`);
+  } else {
+    debugInfo.push(`volatility: 0 (no match ${game1.volatility}/${game2.volatility})`);
   }
   
   // Studio matching (20% default weight)
   if (game1.studio && game2.studio && game1.studio === game2.studio) {
     score += weights.studio;
+    debugInfo.push(`studio: ${weights.studio.toFixed(3)} (match: ${game1.studio})`);
+  } else {
+    debugInfo.push(`studio: 0 (${game1.studio || 'null'} vs ${game2.studio || 'null'})`);
   }
   
   // Mechanics matching (10% default weight)
   if (game1.mechanics && game2.mechanics && Array.isArray(game1.mechanics) && Array.isArray(game2.mechanics)) {
     const mechanicsOverlap = game1.mechanics.filter(m => game2.mechanics.includes(m)).length;
     if (game1.mechanics.length > 0) {
-      score += (mechanicsOverlap / game1.mechanics.length) * weights.mechanics;
+      const mechScore = (mechanicsOverlap / game1.mechanics.length) * weights.mechanics;
+      score += mechScore;
+      debugInfo.push(`mechanics: ${mechScore.toFixed(3)} (${mechanicsOverlap}/${game1.mechanics.length} overlap)`);
     }
+  } else {
+    debugInfo.push(`mechanics: 0 (missing data - g1:${!!game1.mechanics}, g2:${!!game2.mechanics})`);
   }
   
-  return Math.min(score, 1.0);
+  const finalScore = Math.min(score, 1.0);
+  
+  // Log debug info for first few calculations
+  if (Math.random() < 0.1) { // 10% chance to log
+    console.log(`🔍 Similarity Debug: ${game1.title} vs ${game2.title}`);
+    console.log(`🔍 ${debugInfo.join(', ')}`);
+    console.log(`🔍 Final score: ${finalScore.toFixed(3)} (${Math.round(finalScore * 100)}%)`);
+  }
+  
+  return finalScore;
 }
 
 function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesArray = null) {

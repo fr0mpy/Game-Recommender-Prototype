@@ -76,6 +76,8 @@ async function loadGames(sessionId = null) {
             // Also cache in memory for faster subsequent access
             sessionGames.set(sessionId, kvGames);
             console.log(`✅ Loaded ${kvGames.length} games from KV storage for session: ${sessionId}`);
+            console.log(`🔍 KV loaded - first game ID: ${kvGames[0]?.id}, has ID: ${!!kvGames[0]?.id}`);
+            console.log(`🔍 KV loaded - first game title: ${kvGames[0]?.title}`);
             return kvGames;
           }
         } catch (kvError) {
@@ -201,6 +203,10 @@ function loadSettings() {
 
 // Session-based game storage functions (KV + memory hybrid)
 async function saveSessionGames(sessionId, games) {
+  // Debug: Check if games have IDs before saving
+  console.log(`🔍 Saving games - first game ID: ${games[0]?.id}, has ID: ${!!games[0]?.id}`);
+  console.log(`🔍 All games have IDs: ${games.every(g => !!g.id)}`);
+  
   // 1. Store in KV storage with TTL (serverless persistence)
   if (kv) {
     try {
@@ -212,6 +218,7 @@ async function saveSessionGames(sessionId, games) {
       const verifyGames = await kv.get(`session:${sessionId}`);
       if (verifyGames && Array.isArray(verifyGames)) {
         console.log(`✅ KV save verification successful: ${verifyGames.length} games retrieved`);
+        console.log(`🔍 KV retrieved - first game ID: ${verifyGames[0]?.id}, has ID: ${!!verifyGames[0]?.id}`);
       } else {
         console.log(`⚠️ KV save verification failed: ${verifyGames ? typeof verifyGames : 'null'}`);
       }
