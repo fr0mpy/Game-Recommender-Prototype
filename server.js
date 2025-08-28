@@ -577,6 +577,19 @@ app.get("/api/token-usage", (req, res) => {
   res.json(tokenUsage);
 });
 
+// API endpoint to get database status
+app.get("/api/database-status", (req, res) => {
+  const { getDatabaseStats } = require('./services/database');
+  const stats = getDatabaseStats();
+  res.json({
+    database: stats,
+    session: {
+      id: req.sessionId,
+      hasGames: require('./utils/storage').hasSessionGames(req.sessionId)
+    }
+  });
+});
+
 // Server-Sent Events endpoint for generation progress
 app.get("/api/generation-progress/:sessionId", (req, res) => {
   const sessionId = req.params.sessionId;

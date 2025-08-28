@@ -3,6 +3,7 @@ node_modules/
 data/player-context.json
 data/user-settings.json
 data/temp-sessions/
+data/sessions.db
 package-lock.json
 *.log
 .DS_Store
