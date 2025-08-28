@@ -18,18 +18,20 @@ const HOLIDAYS = {
   'new-years-eve': { start: '12-30', end: '01-02', themes: ['Celebration', 'Party', 'Champagne'] }
 };
 
-// Sports seasons that might influence cross-sell (Global focused)
+// Sports seasons that might influence cross-sell (EU focused)
 const SPORTS_SEASONS = {
   'premier-league': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Football', 'British', 'Competition'] },
   'champions-league': { months: [9, 10, 11, 12, 2, 3, 4, 5], peak: [2, 3, 4, 5], themes: ['European', 'Elite', 'Champions'] },
-  'nfl': { months: [9, 10, 11, 12, 1], peak: [1, 2], themes: ['American Football', 'Super Bowl', 'Competition'] },
-  'nba': { months: [10, 11, 12, 1, 2, 3, 4, 6], peak: [4, 5, 6], themes: ['Basketball', 'Playoffs', 'Stars'] },
+  'europa-league': { months: [9, 10, 11, 12, 2, 3, 4, 5], peak: [2, 3, 4, 5], themes: ['European', 'Competition', 'Rising Stars'] },
+  'euros': { months: [6, 7], peak: [6, 7], themes: ['European', 'National Pride', 'Unity'] }, // Every 4 years
   'world-cup': { months: [11, 12], peak: [11, 12], themes: ['Global', 'National Pride', 'Football'] }, // Every 4 years
-  'olympics': { months: [7, 8], peak: [7, 8], themes: ['Global', 'Competition', 'Achievement'] }, // Every 4 years
   'formula-1': { months: [3, 4, 5, 6, 7, 8, 9, 10, 11], peak: [6, 7, 8, 9], themes: ['Racing', 'Speed', 'Luxury'] },
-  'march-madness': { months: [3], peak: [3], themes: ['College Basketball', 'Brackets', 'Upset'] },
+  'rugby-six-nations': { months: [2, 3], peak: [2, 3], themes: ['Rugby', 'European', 'Tradition'] },
   'wimbledon': { months: [7], peak: [7], themes: ['Tennis', 'Tradition', 'British'] },
-  'tour-de-france': { months: [7], peak: [7], themes: ['Cycling', 'Endurance', 'French'] }
+  'tour-de-france': { months: [7], peak: [7], themes: ['Cycling', 'Endurance', 'French'] },
+  'bundesliga': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['German Football', 'Precision', 'Efficiency'] },
+  'la-liga': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Spanish Football', 'Passion', 'Technical'] },
+  'serie-a': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Italian Football', 'Tactical', 'Style'] }
 };
 
 class ContextTracker {
