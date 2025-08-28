@@ -2,15 +2,15 @@
 
 > **Bally's R&D**: AI-Powered Slot Game Recommendation Engine
 
-Intelligent slot game recommendations using deep contextual AI analysis. Generate custom games (1-100) and get personalized suggestions based on your current focus level, attention span, work patterns, and financial cycle timing.
+Intelligent slot game recommendations using deep contextual AI analysis. Generate custom games and get personalized suggestions based on your current focus level, attention span, work patterns, and financial cycle timing.
 
 ## ✨ Key Features
 
-### 🎮 Smart Game Generation (1-100 games)
-- **AI-Powered**: Creates realistic slots using Anthropic Claude Sonnet 4
-- **Custom Prompts**: Specify themes, volatility, studio preferences  
-- **Validation**: Enforced 1-100 game limits with clear errors
-- **Session Persistence**: Generated games saved throughout session
+### 🎮 AI Game Generation
+- **LLM-Powered**: Creates realistic slots using Anthropic Claude Sonnet 4
+- **Custom Prompts**: Specify themes, volatility, studio preferences or creative overrides
+- **Redis Storage**: Persistent custom games across serverless deployments
+- **Complete Schema**: Generated games include all fields for accurate similarity scoring
 
 ### 🧠 Deep Contextual Intelligence
 - **Work Pattern Analysis**: Detects stealth gaming vs. dedicated leisure time
@@ -19,22 +19,24 @@ Intelligent slot game recommendations using deep contextual AI analysis. Generat
 - **Focus Level Detection**: Split-attention, drowsy, relaxed-engaged, etc.
 - **AI Explanations**: Personalized reasoning for each recommendation
 
-### ⚖️ Proportional Weight Sliders (Always 100%)
+### ⚖️ Dynamic Similarity Scoring
 - **Theme** (40%): Similar theme importance
 - **Volatility** (30%): Risk/reward pattern matching  
 - **Studio** (20%): Developer preference
 - **Mechanics** (10%): Bonus feature similarity
-- **Auto-Balance**: Moving one adjusts others proportionally
+- **Weighted Algorithm**: Produces unique match percentages based on user priorities
 
 ## 🚀 Quick Start
 
 ```bash
-# Clone and setup (2 minutes)
+# Clone and setup
 git clone <repo-url> && cd "Game Recommender Prototype"
 npm install
 
-# Add API key  
+# Environment setup
 echo "ANTHROPIC_API_KEY=your_key_here" > .env
+echo "KV_REST_API_URL=your_upstash_redis_url" >> .env  
+echo "KV_REST_API_TOKEN=your_upstash_token" >> .env
 
 # Start server
 npm start
@@ -42,12 +44,12 @@ npm start
 
 **Open**: `http://localhost:3001`
 
-### Basic Usage
-1. **Generate**: "Generate 50 fantasy slots" → Click Generate
-2. **Select**: Choose from dropdown (custom games replace defaults)  
-3. **Adjust**: Move sliders (auto-balance to 100%)
-4. **Recommend**: Click "Find Similar Games"
-5. **Context**: View AI analysis of your current state
+### Usage Flow
+1. **Generate**: "Generate 5 horror games" → Click Generate
+2. **Select**: Choose from dropdown (custom games stored in Redis)  
+3. **Adjust**: Move weight sliders to prioritize similarity factors
+4. **Recommend**: Click "Find Similar Games" 
+5. **Analyze**: View personalized AI explanations for each match
 
 ## 🧠 Deep Context Analysis
 
@@ -104,37 +106,40 @@ The AI analyzes your current situation and adapts recommendations:
 ## 💡 Example Prompts
 
 ```
-Generate 25 fantasy dragon slots
-Create 10 high-volatility games for experienced players
-Generate 50 sports slots for football season  
-Create 5 relaxing low-volatility fruit games
-Generate 100 diverse slots with various themes
+Generate 5 horror games with zombies, vampires, and witches
+Create 10 high-volatility games for experienced players  
+Generate 25 sports slots for football season
+Create fantasy dragon slots with magical themes
+Generate diverse slots with creative custom themes
 ```
 
-## 🔧 Technical Details
+## 🔧 Technical Architecture
 
-**Stack**: Node.js + Express + EJS + Tailwind CSS + Anthropic Claude API
+**Stack**: Node.js + Express + EJS + Tailwind CSS + Anthropic Claude API + Upstash Redis
 
-**Limits**:
-- Games: 1-100 per request (validated client & server)
-- Recommendations: 5 similar games  
-- Sliders: 1% precision, always total 100%
+**Storage**: 
+- Redis (Upstash) for persistent custom games in serverless environments
+- Session-based context tracking for recommendations
 
-**Context Factors**:
-- Time patterns (work vs. leisure detection)
-- Attention span analysis (very-short to very-long)
-- Financial cycle timing (payday awareness)
-- Focus level detection (split-attention to relaxed-engaged)
-- Interruption risk assessment (high at work to minimal late night)
+**Similarity Algorithm**:
+- Weighted scoring: Theme (40%) + Volatility (30%) + Studio (20%) + Mechanics (10%)
+- Produces unique match percentages (e.g., 48%, 36%, 33%, 31%)
+- Dynamic weight adjustment affects ranking order
+
+**Context Analysis**:
+- Real-time temporal pattern detection (work vs. leisure)
+- Financial cycle awareness (payday vs. end-of-month)
+- Attention span and focus level assessment
+- Device and usage pattern recognition
 
 ## 🚀 Deployment
 
-**Serverless Ready**: Vercel, Netlify, traditional hosting
+**Production**: Vercel with Upstash Redis
 
 **Requirements**:
 - Node.js 18+
 - `ANTHROPIC_API_KEY` environment variable
-- ~50MB memory + generated game storage
+- `KV_REST_API_URL` and `KV_REST_API_TOKEN` for Redis storage
 
 ## 📚 Developer Resources
 
@@ -157,12 +162,12 @@ Generate 100 diverse slots with various themes
 
 ## 🔍 Troubleshooting
 
-**Generation Issues**: Check API key and credits
-**Recommendation Errors**: Generate games first, refresh if needed  
-**Slider Problems**: Clear localStorage, refresh page
-**Context Issues**: Check browser console for analysis logs
-**Session Issues**: See [Developer Guide](docs/DEVELOPER_GUIDE.md#technical-debt-and-known-constraints) for session management details
+**Generation Issues**: Check ANTHROPIC_API_KEY and credits  
+**Redis Errors**: Verify KV_REST_API_URL and KV_REST_API_TOKEN are set
+**Recommendation Errors**: Generate custom games first, check Redis connection at `/api/debug-redis`  
+**Context Issues**: Check browser console for temporal analysis logs
+**Similarity Scoring**: Weight sliders affect ranking - adjust to see different results
 
 ---
 
-**Ultra-lightweight POC** • **Deep contextual intelligence** • **Built for Bally's R&D**
+**AI-Powered Slot Recommendations** • **Redis Serverless Storage** • **Built for Bally's R&D**

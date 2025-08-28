@@ -211,6 +211,7 @@ app.get("/", async (req, res) => {
   try {
     const games = await loadGames(); // Load custom games from Redis or defaults
     const settings = loadSettings();
+    const customGamesExist = await hasCustomGames(); // Check if custom games exist in Redis
 
     let message = null;
     if (req.query.success) {
@@ -236,7 +237,8 @@ app.get("/", async (req, res) => {
       crossSell,
       sessionId: req.sessionId,
       tokenUsage,
-      customPrompt
+      customPrompt,
+      customGamesExist
     });
   } catch (error) {
     renderError(res, error);
@@ -658,6 +660,21 @@ app.post("/api/enhance-explanations", async (req, res) => {
   } catch (error) {
     console.error('Error generating explanations:', error);
     res.json({ success: false, error: 'Server error' });
+  }
+});
+
+// Reset games API endpoint
+app.post("/api/reset-games", async (req, res) => {
+  try {
+    // Clear custom games from Redis
+    const { clearCustomGames } = require("./utils/storage");
+    await clearCustomGames();
+    
+    console.log('✅ Custom games cleared, reset to defaults');
+    res.json({ success: true, message: 'Games reset to defaults' });
+  } catch (error) {
+    console.error('❌ Failed to reset games:', error);
+    res.status(500).json({ success: false, error: 'Failed to reset games' });
   }
 });
 

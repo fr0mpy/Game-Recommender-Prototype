@@ -181,9 +181,21 @@
   <% if (games.length > 0) { %>
   <!-- Game Selection & Recommendation Section -->
   <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-xl font-semibold text-casino-dark mb-4">
-      🎯 Get Game Recommendations
-    </h2>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-casino-dark">
+        🎯 Get Game Recommendations
+      </h2>
+      <% if (customGamesExist) { %>
+      <button 
+        type="button"
+        onclick="resetToDefaults()"
+        class="text-gray-500 hover:text-gray-700 text-xs underline"
+        title="Clear custom games and reset to defaults"
+      >
+        Reset to Defaults
+      </button>
+      <% } %>
+    </div>
     <form method="POST" action="/recommend" class="space-y-6" onsubmit="return handleRecommendSubmit(event)">
       <!-- Game Selection -->
       <div>
@@ -1242,6 +1254,31 @@
       customPrompt: !!document.getElementById('customPrompt')
     });
   });
+
+  // Reset to default games function
+  async function resetToDefaults() {
+    if (!confirm('This will clear all custom games and reset to default games. Continue?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/reset-games', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert('Failed to reset games. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error resetting games:', error);
+      alert('Failed to reset games. Please try again.');
+    }
+  }
 </script>
 
 <%- include('partials/footer') %>
