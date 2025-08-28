@@ -1,4 +1,6 @@
 // Dynamic in-memory context tracking - no static files needed
+const fs = require('fs');
+const path = require('path');
 
 // Holiday and special event definitions for EU
 const HOLIDAYS = {
@@ -33,6 +35,25 @@ const SPORTS_SEASONS = {
   'la-liga': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Spanish Football', 'Passion', 'Technical'] },
   'serie-a': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Italian Football', 'Tactical', 'Style'] }
 };
+
+// Load prompt from file
+function loadPrompt(filename) {
+  try {
+    const promptPath = path.join(__dirname, '..', 'prompts', filename);
+    const content = fs.readFileSync(promptPath, 'utf8');
+    
+    // Extract the context tracker implementation template section
+    const templateStart = content.indexOf('# Context Tracker Implementation Template');
+    if (templateStart !== -1) {
+      return content.substring(templateStart).replace('# Context Tracker Implementation Template\n\n', '');
+    }
+    
+    return content;
+  } catch (error) {
+    console.error(`Failed to load prompt from ${filename}:`, error.message);
+    return null;
+  }
+}
 
 class ContextTracker {
   constructor() {
@@ -486,24 +507,40 @@ class ContextTracker {
         timezone: playerContext.timezone
       };
 
-      const prompt = `Analyze this player context and provide a brief recommendation insight:
-
+      // Load prompt template from file
+      let promptTemplate = loadPrompt('player-context-analysis-prompt.md');
+      
+      if (!promptTemplate) {
+        // Fallback to embedded prompt if file loading fails
+        promptTemplate = `Analyze this player context and provide a brief recommendation insight:
 PLAYER CONTEXT:
-- Confidence Level: ${contextData.confidence?.level || 'unknown'} (${Math.round((contextData.confidence?.score || 0) * 100)}%)
-- Time: ${contextData.temporal?.currentTime?.localeInfo?.fullDateTime || 'Unknown time'}
-- Device: ${contextData.device || 'Unknown'}
-- Referrer: ${contextData.referrer || 'Direct visit'}
-- Timezone: ${contextData.timezone || 'Unknown'}
-
+- Confidence Level: {{confidenceLevel}} ({{confidenceScore}}%)
+- Time: {{currentTime}}
+- Device: {{device}}
+- Referrer: {{referrer}}
+- Timezone: {{timezone}}
 TEMPORAL FACTORS:
-- ${contextData.temporal?.currentTime?.isWeekend ? 'Weekend' : 'Weekday'} ${contextData.temporal?.playTimeContext?.description || ''}
-- Active Holidays: ${contextData.temporal?.activeHolidays?.map(h => h.name).join(', ') || 'None'}
-- Sports Seasons: ${contextData.temporal?.sportsSeason?.map(s => s.sport.toUpperCase()).join(', ') || 'None active'}
-
+- {{weekendStatus}} {{playTimeDescription}}
+- Active Holidays: {{activeHolidays}}
+- Sports Seasons: {{sportsSeason}}
 CONFIDENCE FACTORS:
-${contextData.confidence?.factors?.map(f => `- ${f}`).join('\n') || '- Basic session data only'}
-
+{{confidenceFactors}}
 Provide a 1-2 sentence summary of what this context means for game recommendations, focusing on the most relevant factors for personalizing slot game suggestions.`;
+      }
+
+      // Replace template variables with actual values
+      const prompt = promptTemplate
+        .replace('{{confidenceLevel}}', contextData.confidence?.level || 'unknown')
+        .replace('{{confidenceScore}}', Math.round((contextData.confidence?.score || 0) * 100))
+        .replace('{{currentTime}}', contextData.temporal?.currentTime?.localeInfo?.fullDateTime || 'Unknown time')
+        .replace('{{device}}', contextData.device || 'Unknown')
+        .replace('{{referrer}}', contextData.referrer || 'Direct visit')
+        .replace('{{timezone}}', contextData.timezone || 'Unknown')
+        .replace('{{weekendStatus}}', contextData.temporal?.currentTime?.isWeekend ? 'Weekend' : 'Weekday')
+        .replace('{{playTimeDescription}}', contextData.temporal?.playTimeContext?.description || '')
+        .replace('{{activeHolidays}}', contextData.temporal?.activeHolidays?.map(h => h.name).join(', ') || 'None')
+        .replace('{{sportsSeason}}', contextData.temporal?.sportsSeason?.map(s => s.sport.toUpperCase()).join(', ') || 'None active')
+        .replace('{{confidenceFactors}}', contextData.confidence?.factors?.map(f => `- ${f}`).join('\n') || '- Basic session data only');
 
       const response = await anthropic.messages.create({
         model: 'claude-3-haiku-20240307',

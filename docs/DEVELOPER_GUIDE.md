@@ -12,6 +12,7 @@ This document serves as the definitive reference for developers working on the S
 ### Change Log
 | Date   | Version | Description                   | Author    |
 | ------ | ------- | ----------------------------- | --------- |
+| Aug 2025 | 2.0   | Updated for Redis & Vercel deployment | Winston   |
 | Jan 2025 | 1.0   | Initial developer guide       | Winston   |
 
 ---
@@ -23,17 +24,17 @@ This document serves as the definitive reference for developers working on the S
 | **Category** | **File** | **Purpose** | **Criticality** |
 |-------------|----------|-------------|-----------------|
 | **Main Entry** | `server.js` | Express app with all routes and middleware | 🔴 Critical |
-| **Core Storage** | `utils/storage.js` | All file I/O operations and session management | 🔴 Critical |
+| **Core Storage** | `utils/storage.js` | Redis storage + file I/O with serverless compatibility | 🔴 Critical |
 | **Game Generation** | `services/gameGenerator.js` | LLM integration for creating games | 🔴 Critical |
 | **Similarity Engine** | `services/similarityEngine.js` | Recommendation algorithm core | 🔴 Critical |
 | **Context Intelligence** | `services/contextTracker.js` | Advanced player behavior analysis | 🟡 Important |
 | **Main UI** | `views/index.ejs` | Primary user interface with generation/recommendation | 🔴 Critical |
-| **Configuration** | `package.json`, `vercel.json`, `.env.example` | Deployment and environment setup | 🟡 Important |
+| **Configuration** | `package.json`, `vercel.json`, `.env.example` | Vercel deployment and Redis configuration | 🔴 Critical |
 
 ### Key Configuration Files
-- **Dependencies**: `package.json` - 6 main dependencies (Express, EJS, Anthropic SDK, etc.)
-- **Serverless Config**: `vercel.json` - Production deployment configuration
-- **Environment Template**: `.env.example` - Required environment variables
+- **Dependencies**: `package.json` - 9 main dependencies (Express, EJS, Anthropic SDK, Redis, Vercel)
+- **Serverless Config**: `vercel.json` - Production Vercel deployment configuration
+- **Environment Template**: `.env.example` - API keys and Redis connection variables
 
 ---
 
@@ -48,6 +49,8 @@ This document serves as the definitive reference for developers working on the S
 | **Template Engine** | EJS | ^3.1.10 | Server-side rendering only |
 | **LLM Integration** | Anthropic SDK | ^0.60.0 | Claude Sonnet 4 for generation |
 | **Alternative LLM** | OpenAI SDK | ^5.16.0 | Legacy/fallback support |
+| **Redis Storage** | @upstash/redis | ^1.28.4 | Serverless-compatible Redis client |
+| **Deployment** | Vercel CLI | ^46.0.5 | Serverless deployment platform |
 | **Styling** | Tailwind CSS | CDN | No build process required |
 | **Environment** | dotenv | ^17.2.1 | Configuration management |
 | **Development** | nodemon | ^3.1.10 | Hot reload for development |
@@ -57,8 +60,8 @@ This document serves as the definitive reference for developers working on the S
 - **Type**: Server-first monolithic web application
 - **Rendering**: 100% server-side rendered (EJS templates)
 - **Client JS**: Minimal - only for form enhancements and AJAX
-- **Data Storage**: File-based JSON + in-memory session storage
-- **Deployment**: Serverless-ready with read-only filesystem handling
+- **Data Storage**: Redis (Upstash) for persistent custom games + local JSON fallbacks
+- **Deployment**: Production on Vercel serverless with Redis database
 
 ---
 
@@ -68,19 +71,20 @@ This document serves as the definitive reference for developers working on the S
 
 ```text
 slot-forge/
-├── server.js                          # 🔴 Main Express application (652 lines)
+├── server.js                          # 🔴 Main Express application (700+ lines)
 ├── package.json                       # Dependencies and scripts
 ├── vercel.json                        # Serverless deployment config
-├── .env.example                       # Environment template
+├── .env.example                       # Environment template (API keys)
+├── vercel.json                        # 🔴 Vercel deployment configuration
 ├── README.md                          # User-facing documentation
 ├── ASSESSMENT_COMPARISON.md           # Project analysis vs original brief
 │
-├── data/                              # 📁 File-based storage (gitignored in production)
-│   ├── games.json                     # Generated game dataset (100 games)
-│   └── user-settings.json             # User preference weights
+├── data/                              # 📁 Local fallback storage (default games)
+│   ├── games.json                     # Default game dataset for fallback
+│   └── user-settings.json             # Local user preference weights
 │
 ├── utils/                             # 📁 Core utilities
-│   └── storage.js                     # 🔴 File I/O + session management (183 lines)
+│   └── storage.js                     # 🔴 Redis storage + file I/O (270+ lines)
 │
 ├── services/                          # 📁 Business logic services
 │   ├── gameGenerator.js               # 🔴 LLM game generation (200+ lines)
@@ -128,7 +132,7 @@ slot-forge/
 
 #### 🔴 Critical Modules
 
-**`server.js`** (652 lines)
+**`server.js`** (700+ lines)
 - Express application setup and middleware
 - All HTTP routes: `/`, `/generate`, `/recommend`, `/export/*`, `/api/*`
 - Advanced context tracking middleware
@@ -136,12 +140,12 @@ slot-forge/
 - Token usage tracking and rate limiting
 - Production error handling with user-friendly messages
 
-**`utils/storage.js`** (183 lines)
-- File I/O operations: `saveGames()`, `loadGames()`, `saveSettings()`, `loadSettings()`
-- Session management: `saveSessionGames()`, `hasSessionGames()`, `clearSessionGames()`
-- Serverless compatibility with read-only filesystem detection
-- In-memory Map for session storage: `const sessionGames = new Map()`
-- Default weight configuration and error handling
+**`utils/storage.js`** (270+ lines)
+- Redis integration with Upstash client: `saveCustomGames()`, `clearCustomGames()`, `hasCustomGames()`
+- File I/O fallbacks: `saveGames()`, `loadGames()`, `saveSettings()`, `loadSettings()`
+- Serverless compatibility with Redis-first architecture
+- Graceful degradation when Redis unavailable
+- Default weight configuration and comprehensive error handling
 
 **`services/gameGenerator.js`** (200+ lines)
 - Anthropic Claude Sonnet 4 integration
@@ -226,36 +230,56 @@ interface UserSettings {
 
 ### Storage Patterns
 
-#### File-Based Storage (Production)
-- **Games**: `data/games.json` - Default 100-game dataset
+#### Redis Storage (Primary - Production)
+- **Custom Games**: Stored in Upstash Redis with key `custom:games`
+- **Persistence**: Permanent storage across serverless cold starts
+- **Connection**: `@upstash/redis` client with REST API
+- **Fallback**: Local JSON files when Redis unavailable
+
+#### File-Based Storage (Fallback)
+- **Default Games**: `data/games.json` - Default game dataset for fallbacks
 - **Settings**: `data/user-settings.json` - User preference weights
 - **Format**: Pretty-printed JSON with 2-space indentation
-- **Serverless Handling**: Graceful degradation when filesystem is read-only
+- **Serverless Handling**: Read-only compatibility, graceful degradation
 
-#### Session-Based Storage (Runtime)
+#### Redis Storage Implementation
 ```javascript
-// In-memory session storage for custom games
-const sessionGames = new Map(); // Maps sessionId -> Game[]
+// Upstash Redis client setup
+let redis = null;
+try {
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    const { Redis } = require('@upstash/redis');
+    redis = new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
+    });
+  }
+} catch (error) {
+  console.log('⚠️ Redis not available:', error.message);
+}
 
 // Usage patterns:
-saveSessionGames(sessionId, games);    // Store custom games per session
-loadGames(sessionId);                  // Load session-specific games or fallback
-hasSessionGames(sessionId);            // Check session game availability
-clearSessionGames(sessionId);          // Cleanup session data
+await saveCustomGames(games);          // Store custom games globally in Redis
+await loadGames();                     // Load from Redis or fallback to local
+await hasCustomGames();                // Check Redis for custom games
+await clearCustomGames();              // Clear Redis custom games (reset feature)
 ```
 
 #### Storage Functions (utils/storage.js)
 ```javascript
-// File operations (handles serverless compatibility)
-saveGames(games)           // Save to data/games.json
-loadGames(sessionId?)      // Load games (session-specific or default)
-saveSettings(settings)     // Save user preferences
-loadSettings()             // Load user preferences with defaults
+// Redis operations (primary storage)
+static saveCustomGames(games)          // Store custom games in Redis
+static loadGames()                     // Load from Redis or fallback to local JSON
+static hasCustomGames()                // Check Redis for custom games existence
+static clearCustomGames()              // Clear custom games from Redis
 
-// Session operations (in-memory)
-saveSessionGames(sessionId, games)     // Store session games
-hasSessionGames(sessionId)             // Check session existence
-clearSessionGames(sessionId)           // Cleanup session
+// File operations (fallback and local preferences)
+saveGames(games)                       // Save to local data/games.json
+saveSettings(settings)                 // Save user preferences locally
+loadSettings()                         // Load user preferences with defaults
+
+// Environment detection
+const isServerless = process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME;
 ```
 
 ---
@@ -338,11 +362,13 @@ npm install
 
 # 3. Configure environment
 cp .env.example .env
-# Edit .env with your API key:
+# Edit .env with your credentials:
 # ANTHROPIC_API_KEY=your_anthropic_key_here
+# KV_REST_API_URL=your_upstash_redis_url
+# KV_REST_API_TOKEN=your_upstash_token
 # PORT=3001
 
-# 4. Generate initial dataset (optional)
+# 4. Generate initial dataset (optional - for local fallback)
 node scripts/generateDefaultGames.js
 
 # 5. Start development server
@@ -375,6 +401,8 @@ node scripts/generateDefaultGames.js  # Create 100-game dataset
 ```bash
 # Required
 ANTHROPIC_API_KEY=sk-ant-...           # Primary LLM provider
+KV_REST_API_URL=https://...            # Upstash Redis REST API URL
+KV_REST_API_TOKEN=...                  # Upstash Redis authentication token
 PORT=3001                             # Server port (default: 3000)
 
 # Optional

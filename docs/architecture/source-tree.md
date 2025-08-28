@@ -4,48 +4,63 @@
 
 ```
 slot-forge/
-├── server.js                          # Main Express application entry point
-├── package.json                       # Dependencies: express, ejs, dotenv, openai
+├── server.js                          # Main Express application entry point (700+ lines)
+├── package.json                       # Dependencies: @anthropic-ai/sdk, @upstash/redis, vercel, etc.
 ├── package-lock.json                  # Dependency lock file
+├── vercel.json                        # Vercel serverless deployment configuration
 ├── .env                               # Environment variables (not in git)
-├── .env.example                       # Environment template
+├── .env.example                       # Environment template (API keys, Redis)
 ├── .gitignore                         # Git ignore file
+├── server.log                         # Server runtime logs (development)
 │
-├── data/                              # File-based storage (gitignored)
-│   ├── games.json                     # Generated slot games dataset
-│   └── user-settings.json             # User weight preferences
+├── data/                              # Local fallback storage
+│   ├── games.json                     # Default games dataset for fallback
+│   └── user-settings.json             # Local user weight preferences
 │
-├── utils/                             # Utility functions
-│   └── storage.js                     # File I/O operations (saveGames, loadGames, etc.)
+├── utils/                             # Core utilities
+│   └── storage.js                     # Redis storage + file I/O operations (270+ lines)
 │
-├── services/                          # Business logic
-│   ├── gameGenerator.js               # LLM integration for game generation
-│   ├── similarityEngine.js            # Recommendation calculation logic
+├── services/                          # Business logic services
+│   ├── gameGenerator.js               # LLM integration with Anthropic Claude
+│   ├── similarityEngine.js            # Weighted recommendation algorithm
+│   ├── contextTracker.js              # Advanced player behavior analysis (500+ lines)
 │   └── csvConverter.js                # CSV export functionality
 │
 ├── views/                             # EJS templates
-│   ├── index.ejs                      # Home page with game selection
-│   ├── recommendations.ejs            # Recommendation results page
-│   ├── error.ejs                      # Error page template
-│   └── partials/                      # Reusable template components
-│       ├── header.ejs                 # Common header
+│   ├── index.ejs                      # Main UI with generation/recommendation (1200+ lines)
+│   ├── recommendations.ejs            # Recommendation results display
+│   ├── error.ejs                      # Error page with troubleshooting
+│   └── partials/                      # Template components
+│       ├── header.ejs                 # Common header with Tailwind
 │       └── footer.ejs                 # Common footer
 │
 ├── public/                            # Static assets
-│   ├── style.css                      # Custom CSS (if needed beyond Tailwind CDN)
-│   └── favicon.ico                    # Site icon
+│   ├── favicon.ico                    # Site icon
+│   └── test.html                      # Development testing page
 │
-├── docs/                              # Documentation
-│   ├── requirements.md                # PRD requirements
-│   ├── technical-specifications.md    # Implementation details
-│   ├── user-flows.md                  # User interaction flows
-│   ├── llm-flows.md                   # LLM processing flows
-│   └── architecture/                  # Architecture documentation
-│       ├── tech-stack.md              # Technology choices
-│       ├── coding-standards.md        # Development rules
-│       └── source-tree.md             # This file
+├── scripts/                           # Data generation utilities
+│   ├── generateDefaultGames.js        # Create default game dataset
+│   ├── create-default-games.js        # Alternative generation script
+│   ├── create-premium-games.js        # Premium game variants
+│   └── createDiverseGames.js          # Diverse dataset creation
 │
-└── slot-game-generator-system-prompt.md  # LLM generation prompt
+├── prompts/                           # LLM prompt engineering
+│   ├── slot-forge-system-prompt.md   # Main generation prompt (800+ lines)
+│   ├── slot-forge-generation-instructions.md # Generation rules
+│   ├── match-explanation-prompt.md    # Recommendation explanations
+│   └── json-output-format.md          # Output formatting guide
+│
+└── docs/                              # Technical documentation
+    ├── DEVELOPER_GUIDE.md             # Complete developer reference
+    ├── architecture/                  # Architecture specifications
+    │   ├── tech-stack.md              # Technology decisions
+    │   ├── coding-standards.md        # Development patterns
+    │   └── source-tree.md             # This file
+    ├── flows/                         # Process documentation
+    │   ├── user-flows.md              # User interaction flows
+    │   └── llm-flows.md               # AI processing flows
+    └── stories/                       # Requirements and stories
+        └── 1.1.game-recommender-poc.md # Main implementation story
 ```
 
 ## File Responsibilities
@@ -62,18 +77,24 @@ slot-forge/
 **`package.json`**
 
 - Project metadata and scripts
-- Minimal dependencies: express, ejs, dotenv, openai
+- Dependencies: @anthropic-ai/sdk, @upstash/redis, express, ejs, vercel
 - Start script: `node server.js`
-- Dev script: `nodemon server.js`
+- Dev script: `nodemon server.js --ext js,ejs`
+
+**`vercel.json`**
+
+- Vercel serverless deployment configuration
+- Routes all requests to server.js
+- Uses @vercel/node build process
 
 ### Data Layer
 
 **`data/games.json`**
 
-- Generated dataset of 100 fictional slot games
-- Schema matches interface from requirements.md
-- Created by LLM, consumed by similarity engine
-- Gitignored - regenerated as needed
+- Default fallback dataset of slot games
+- Used when Redis unavailable or for initial load
+- Schema matches Game interface specification
+- Persistent file for serverless compatibility
 
 **`data/user-settings.json`**
 
@@ -85,19 +106,32 @@ slot-forge/
 
 **`utils/storage.js`**
 
-- `saveGames(games)` - Write games to JSON file
-- `loadGames()` - Read games from JSON file
-- `saveSettings(settings)` - Write user preferences
+- `saveCustomGames(games)` - Store custom games in Redis
+- `loadGames()` - Load from Redis or fallback to local JSON
+- `hasCustomGames()` - Check Redis for custom games
+- `clearCustomGames()` - Clear Redis custom games (reset feature)
+- `saveSettings(settings)` - Write local user preferences
 - `loadSettings()` - Read user preferences with defaults
-- All file I/O goes through these functions
+- Upstash Redis client integration with graceful fallback
 
 ### Services Layer
 
 **`services/gameGenerator.js`**
 
-- `generateGames()` - Call OpenAI API with SlotForge prompt
-- JSON parsing with error handling
-- Integration with storage utilities
+- `generateGames()` - Call Anthropic Claude API with SlotForge prompt
+- Advanced prompt engineering with structured JSON output
+- Real-time progress tracking via Server-Sent Events
+- Custom prompt handling (1-100 games with validation)
+- Integration with Redis storage utilities
+
+**`services/contextTracker.js`**
+
+- Advanced player behavior analysis (500+ lines)
+- Work pattern detection (stealth gaming vs. leisure)
+- Financial cycle awareness (payday timing, budget pressure)
+- Attention span analysis and focus level detection
+- Time-based context (work hours, evening, late night)
+- Device and system theme detection with confidence scoring
 
 **`services/similarityEngine.js`**
 
@@ -155,8 +189,8 @@ slot-forge/
 
 ```bash
 npm install          # Install dependencies
-cp .env.example .env # Configure environment
-npm run dev          # Start with nodemon
+cp .env.example .env # Configure environment (API keys + Redis)
+npm run dev          # Start with nodemon (hot reload)
 ```
 
 ### File Creation Order
@@ -180,20 +214,42 @@ npm run dev          # Start with nodemon
 
 ### Environment Files
 
-- `.env.example` - Template for required environment variables
+- `.env.example` - Template for API keys and Redis connection
 - `.env` - Local development configuration (gitignored)
-- Production uses platform environment variables
+- Production uses Vercel environment variables for Redis and API keys
 
-### Build Process
+### Deployment Process
 
-- **No build required** - Direct file execution
-- Static assets served directly from `/public`
+**Vercel Serverless**:
+- **No build required** - Direct Node.js execution
+- Automatic deployment on git push
+- Environment variables set in Vercel dashboard
+- Redis connection via Upstash integration
+
+**Local Development**:
+- Static assets served from `/public`
 - Templates rendered server-side at request time
+- Hot reload with nodemon
 
-### Dependencies
+### Current Dependencies
 
-- **Production**: express, ejs, dotenv, openai
-- **Development**: nodemon (optional)
-- **No frontend build tools** - CDN-based styling
+**Production**:
+- `@anthropic-ai/sdk` - Primary LLM integration
+- `@upstash/redis` - Serverless Redis client
+- `express` - Web framework
+- `ejs` - Template engine
+- `dotenv` - Environment configuration
+- `vercel` - Deployment CLI
+- `openai` - Legacy LLM support
 
-This structure supports rapid development, easy deployment, and clear separation of concerns while maintaining the ultra-lightweight architecture.
+**Development**:
+- `nodemon` - Hot reload development server
+
+**Architecture Benefits**:
+- **Serverless Ready**: Zero-config Vercel deployment
+- **Redis Persistence**: Custom games survive cold starts
+- **Graceful Degradation**: Falls back to local storage when Redis unavailable
+- **No Build Process**: Direct file execution with CDN-based styling
+- **Ultra-Lightweight**: Minimal dependencies, maximum performance
+
+This structure supports rapid development, serverless deployment, and persistent data storage while maintaining architectural simplicity.

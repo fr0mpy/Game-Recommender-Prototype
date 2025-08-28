@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 
 // Import services
 const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCustomGames, redis } = require("./utils/storage");
@@ -9,6 +10,25 @@ const {
   generateMockGames,
 } = require("./services/gameGenerator");
 const { getRecommendations, generateMatchExplanation } = require("./services/similarityEngine");
+
+// Load prompt from file
+function loadPrompt(filename) {
+  try {
+    const promptPath = path.join(__dirname, 'prompts', filename);
+    const content = fs.readFileSync(promptPath, 'utf8');
+    
+    // Extract the server implementation template section
+    const templateStart = content.indexOf('# Server Implementation Template');
+    if (templateStart !== -1) {
+      return content.substring(templateStart).replace('# Server Implementation Template\n\n', '');
+    }
+    
+    return content;
+  } catch (error) {
+    console.error(`Failed to load prompt from ${filename}:`, error.message);
+    return null;
+  }
+}
 
 // Unified function to generate all recommendation explanations in a single LLM call
 async function generateAllRecommendationExplanations(selectedGame, recommendations, weights, playerContext, allGames) {
@@ -55,29 +75,34 @@ async function generateAllRecommendationExplanations(selectedGame, recommendatio
     const playTimeContext = playerContext?.temporal?.playTimeContext || {};
     const financialContext = playTimeContext.financialCycle || {};
     
-    const prompt = `Generate concise recommendation explanations for slot games. Return ONLY a JSON array of explanations.
+    // Load prompt template from file
+    let promptTemplate = loadPrompt('recommendation-explanation-prompt.md');
+    
+    if (!promptTemplate) {
+      // Fallback to embedded prompt if file loading fails
+      promptTemplate = `Generate concise recommendation explanations for slot games. Return ONLY a JSON array of explanations.
 
 PLAYER CONTEXT:
-- Selected game: "${selectedGame.title}" (${selectedGame.theme.join('/')}, ${selectedGame.volatility} volatility)
-- Current time: ${timeContext}
-- Player weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%
-- Device: ${playerContext?.deviceType || 'unknown'}
-${playerContext?.temporal?.sportsSeason?.length ? `- Sports active: ${playerContext.temporal.sportsSeason.map(s => s.sport).join(', ')}` : ''}
+- Selected game: "{{selectedGameTitle}}" ({{selectedGameThemes}}, {{selectedGameVolatility}} volatility)
+- Current time: {{timeContext}}
+- Player weights: Theme {{themeWeight}}%, Volatility {{volatilityWeight}}%, Studio {{studioWeight}}%, Mechanics {{mechanicsWeight}}%
+- Device: {{deviceType}}
+{{sportsActive}}
 
 PLAYER FOCUS & ATTENTION CONTEXT:
-- Focus level: ${playTimeContext.focusLevel || 'unknown'} (${playTimeContext.reasoning || 'standard session'})
-- Attention span: ${playTimeContext.attentionSpan || 'medium'}
-- Preferred pace: ${playTimeContext.preferredPace || 'medium'} games
-- Preferred volatility: ${playTimeContext.preferredVolatility || 'any'}
-- Session type: ${playTimeContext.description || 'gaming session'}
+- Focus level: {{focusLevel}} ({{focusReasoning}})
+- Attention span: {{attentionSpan}}
+- Preferred pace: {{preferredPace}} games
+- Preferred volatility: {{preferredVolatility}}
+- Session type: {{sessionDescription}}
 
 FINANCIAL CYCLE CONTEXT:
-- Budget phase: ${financialContext.description || 'standard period'}
-- Budget pressure: ${financialContext.budgetPressure || 'low'}
-- Day ${financialContext.dayOfMonth || '?'} of ${financialContext.totalDaysInMonth || '?'} in month
+- Budget phase: {{budgetDescription}}
+- Budget pressure: {{budgetPressure}}
+- Day {{dayOfMonth}} of {{totalDaysInMonth}} in month
 
 RECOMMENDED GAMES:
-${gamesList}
+{{gamesList}}
 
 Return JSON array with explanations (1-2 sentences each, natural language, no percentages):
 ["explanation for game 1", "explanation for game 2", ...]
@@ -91,6 +116,31 @@ IMPORTANT: Tailor recommendations to the player's current focus level, attention
 - Lunch break: Emphasize quick, immediately gratifying features
 
 Focus on: contextually appropriate gameplay style, matching attention/focus needs, financial sensitivity, shared themes, volatility alignment.`;
+    }
+
+    // Replace template variables with actual values
+    const prompt = promptTemplate
+      .replace('{{selectedGameTitle}}', selectedGame.title)
+      .replace('{{selectedGameThemes}}', selectedGame.theme.join('/'))
+      .replace('{{selectedGameVolatility}}', selectedGame.volatility)
+      .replace('{{timeContext}}', timeContext)
+      .replace('{{themeWeight}}', Math.round(weights.theme * 100))
+      .replace('{{volatilityWeight}}', Math.round(weights.volatility * 100))
+      .replace('{{studioWeight}}', Math.round(weights.studio * 100))
+      .replace('{{mechanicsWeight}}', Math.round(weights.mechanics * 100))
+      .replace('{{deviceType}}', playerContext?.deviceType || 'unknown')
+      .replace('{{sportsActive}}', playerContext?.temporal?.sportsSeason?.length ? `- Sports active: ${playerContext.temporal.sportsSeason.map(s => s.sport).join(', ')}` : '')
+      .replace('{{focusLevel}}', playTimeContext.focusLevel || 'unknown')
+      .replace('{{focusReasoning}}', playTimeContext.reasoning || 'standard session')
+      .replace('{{attentionSpan}}', playTimeContext.attentionSpan || 'medium')
+      .replace('{{preferredPace}}', playTimeContext.preferredPace || 'medium')
+      .replace('{{preferredVolatility}}', playTimeContext.preferredVolatility || 'any')
+      .replace('{{sessionDescription}}', playTimeContext.description || 'gaming session')
+      .replace('{{budgetDescription}}', financialContext.description || 'standard period')
+      .replace('{{budgetPressure}}', financialContext.budgetPressure || 'low')
+      .replace('{{dayOfMonth}}', financialContext.dayOfMonth || '?')
+      .replace('{{totalDaysInMonth}}', financialContext.totalDaysInMonth || '?')
+      .replace('{{gamesList}}', gamesList);
 
     const response = await anthropic.messages.create({
       model: 'claude-3-haiku-20240307',
