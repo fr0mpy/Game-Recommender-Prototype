@@ -100,30 +100,30 @@ const JSON_FORMAT_RULES = `# JSON Output Format Requirements
 - Array must contain the exact number of objects requested
 
 ### EXACT REQUIRED FIELD STRUCTURE
-Each game object must have these fields in this structure:
+Each game object MUST have ALL these fields with proper values:
 
 \`\`\`json
 {
-  "id": "game-001",
-  "title": "Game Title",
-  "studio": "Studio Name", 
-  "theme": ["Theme1", "Theme2"],
-  "volatility": "low",
-  "rtp": 96.32,
-  "maxWin": 2200,
-  "reelLayout": "5x4", 
-  "paylines": 20,
-  "mechanics": ["Wild", "Scatter"],
-  "features": ["Bonus Round", "Progressive"],
-  "pace": "slow",
-  "hitFrequency": 31.55,
-  "bonusFrequency": 0.81,
-  "artStyle": "Detailed 3D",
-  "audioVibe": "Epic Fantasy", 
-  "visualDensity": "clean",
-  "mobileOptimized": true,
-  "releaseYear": 2023,
-  "description": "Game description."
+  "id": "DO NOT INCLUDE - will be auto-assigned",
+  "title": "Unique game title (creative, themed)",
+  "studio": "Studio name (e.g., 'Mythic Gaming', 'Wild Studios', 'Ocean Deep Games')",
+  "theme": ["1-3 theme strings from the theme list below"],
+  "volatility": "one of: low, medium, high, ultra",
+  "rtp": 94.0 to 97.5 (number with 2 decimals),
+  "maxWin": 1000 to 10000 (integer),
+  "reelLayout": "one of: 5x3, 5x4, 6x4, 3x3",
+  "paylines": 10 to 50 (integer),
+  "mechanics": ["2-4 mechanics from the mechanics list below"],
+  "features": ["1-3 features from the features list below"],
+  "pace": "one of: slow, medium, fast",
+  "hitFrequency": 15.0 to 35.0 (number with 1-2 decimals),
+  "bonusFrequency": 0.5 to 2.5 (number with 1-2 decimals),
+  "artStyle": "one of: Detailed 3D, Cartoon, 2D Illustrated, Photorealistic, Stylized",
+  "audioVibe": "one of: Epic Fantasy, Country Western, Ambient Electronic, Orchestral, Rock, Jazz",
+  "visualDensity": "one of: clean, standard, busy",
+  "mobileOptimized": true or false (boolean),
+  "releaseYear": 2023 or 2024 (integer),
+  "description": "1-2 sentence engaging game description"
 }
 \`\`\`
 
@@ -131,9 +131,11 @@ Each game object must have these fields in this structure:
 - \`theme\`: MUST be array of 1-3 theme strings from: ["Fantasy", "Dragons", "Western", "Gold Mining", "Ancient", "Egypt", "Pirates", "Treasure", "Space", "Aliens", "Underwater", "Ocean", "Jungle", "Adventure", "Norse", "Vikings", "Magic", "Wizards", "Gems", "Jewels", "Fruits", "Classic", "Animals", "Safari", "Mystery", "Detective", "Horror", "Gothic", "Romance", "Love", "Music", "Rock", "Food", "Cooking", "Travel", "Exploration", "Medieval", "Knights", "Futuristic", "Cyberpunk"]
 - \`volatility\`: MUST be one of: "low", "medium", "high", "ultra" (randomized distribution: 25% low, 40% medium, 25% high, 10% ultra)
 - \`studio\`: MUST be a studio name string (studios can make multiple games, use realistic fictional studio names like "Mythic Gaming", "Dark Moon Games", "Adventure Studios", etc.)
-- \`mechanics\`: MUST be array of 2-6 mechanic strings from: ["Wild", "Scatter", "Free Spins", "Multiplier", "Expanding Reels", "Cascade", "Pick Bonus", "Respins", "Stacked Wilds", "Mystery Symbol", "Megaways", "Hold & Win"]
+- \`mechanics\`: MUST be array of 2-4 mechanic strings from: ["Wild", "Scatter", "Free Spins", "Multiplier", "Expanding Reels", "Cascade", "Pick Bonus", "Respins", "Stacked Wilds", "Mystery Symbol", "Megaways", "Hold & Win"]
+- \`features\`: MUST be array of 1-3 feature strings from: ["Bonus Round", "Progressive", "Free Spins", "Wild Multiplier", "Pick Feature", "Gamble", "Bonus Wheel", "Cash Collect", "Super Stacks", "Expanding Symbols", "Buy Feature", "Ante Bet"]
 
 ### JSON Syntax Rules
+- **DO NOT INCLUDE "id" FIELD** - IDs are auto-assigned by the system
 - Use double quotes \`"\` for all strings (never single quotes \`'\`)
 - No trailing commas anywhere: \`{"key": "value",}\` ❌ 
 - Proper comma separation between array elements
