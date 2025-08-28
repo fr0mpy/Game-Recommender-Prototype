@@ -146,18 +146,148 @@ class ContextTracker {
   // Determine play time context
   getPlayTimeContext(hour, dayOfWeek) {
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const now = new Date();
+    const financialCycle = this.getFinancialCycleContext(now);
     
+    let context = {};
+    
+    // Base time context with focus/attention factors
     if (hour >= 9 && hour <= 17 && !isWeekend) {
-      return { type: 'work-hours', intensity: 'low', description: 'Workday casual play' };
+      context = {
+        type: 'work-hours',
+        intensity: 'low',
+        description: 'Workday stealth gaming',
+        focusLevel: 'split-attention', // Watching for supervisor
+        attentionSpan: 'very-short', // Must alt-tab quickly
+        preferredPace: 'fast', // Quick dopamine hits
+        preferredVolatility: 'low-medium', // Can't afford emotional investment
+        sessionStyle: 'micro-sessions', // 1-3 minutes max
+        interruptionRisk: 'high',
+        reasoning: 'During work: needs instant gratification, easy pause/resume, low cognitive load, muted audio, simple mechanics'
+      };
+    } else if (hour >= 12 && hour <= 14 && !isWeekend) {
+      context = {
+        type: 'lunch-break',
+        intensity: 'medium',
+        description: 'Quick lunch session',
+        focusLevel: 'moderate',
+        attentionSpan: 'very-short',
+        preferredPace: 'fast',
+        preferredVolatility: 'medium-high', // Time-limited, want excitement
+        reasoning: 'Short time window - needs immediate gratification and excitement'
+      };
     } else if (hour >= 17 && hour <= 23) {
-      return { type: 'evening', intensity: 'high', description: 'Prime gaming time' };
+      context = {
+        type: 'evening',
+        intensity: 'high',
+        description: 'Prime gaming time',
+        focusLevel: 'high',
+        attentionSpan: 'long',
+        preferredPace: 'medium',
+        preferredVolatility: 'any', // Open to exploration
+        reasoning: 'Peak attention and leisure time - ideal for immersive gaming experiences'
+      };
     } else if (hour >= 0 && hour <= 4) {
-      return { type: 'late-night', intensity: 'medium', description: 'Late night session' };
+      context = {
+        type: 'late-night',
+        intensity: 'medium',
+        description: 'Late night session',
+        focusLevel: 'tired',
+        attentionSpan: 'medium',
+        preferredPace: 'slow',
+        preferredVolatility: 'low-medium', // Less stimulation when tired
+        reasoning: 'Reduced cognitive capacity - prefers relaxing, less demanding gameplay'
+      };
     } else if (isWeekend && hour >= 10 && hour <= 16) {
-      return { type: 'weekend-day', intensity: 'high', description: 'Weekend leisure time' };
+      context = {
+        type: 'weekend-day',
+        intensity: 'high',
+        description: 'Weekend leisure time',
+        focusLevel: 'relaxed',
+        attentionSpan: 'long',
+        preferredPace: 'medium',
+        preferredVolatility: 'high', // Weekend indulgence
+        reasoning: 'Relaxed weekend mindset - ready for entertaining and potentially rewarding games'
+      };
     } else {
-      return { type: 'off-peak', intensity: 'medium', description: 'Off-peak play' };
+      context = {
+        type: 'off-peak',
+        intensity: 'medium',
+        description: 'Off-peak play',
+        focusLevel: 'moderate',
+        attentionSpan: 'medium',
+        preferredPace: 'medium',
+        preferredVolatility: 'medium',
+        reasoning: 'Standard gaming session - balanced preferences'
+      };
     }
+    
+    // Layer in financial cycle context
+    context.financialCycle = financialCycle;
+    
+    // Adjust recommendations based on financial cycle
+    if (financialCycle.phase === 'pre-payday' || financialCycle.phase === 'end-of-month-tight') {
+      context.preferredVolatility = 'low'; // Conservative when money is tight
+      context.description += ' (conservative period)';
+      context.reasoning += '. Financial constraints suggest lower-risk gaming preferences.';
+    } else if (financialCycle.phase === 'post-payday' || financialCycle.phase === 'mid-month-comfortable') {
+      // Keep original volatility preference or increase it
+      if (context.preferredVolatility === 'low') context.preferredVolatility = 'medium';
+      else if (context.preferredVolatility === 'medium') context.preferredVolatility = 'medium-high';
+      context.description += ' (comfortable period)';
+      context.reasoning += '. Financial comfort allows for more adventurous gaming choices.';
+    }
+    
+    return context;
+  }
+  
+  // Get financial cycle context (payday patterns, end of month)
+  getFinancialCycleContext(now) {
+    const day = now.getDate();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+    const dayOfWeek = now.getDay();
+    
+    let phase, intensity, description;
+    
+    // End of month (last 5 days)
+    if (day > lastDayOfMonth - 5) {
+      phase = 'end-of-month-tight';
+      intensity = 'high';
+      description = 'End of month - typically tighter budget';
+    }
+    // Beginning of month (first 5 days) - often payday
+    else if (day <= 5) {
+      phase = 'post-payday';
+      intensity = 'high';
+      description = 'Early month - typically post-payday comfort';
+    }
+    // Mid-month comfort zone
+    else if (day >= 10 && day <= 20) {
+      phase = 'mid-month-comfortable';
+      intensity = 'medium';
+      description = 'Mid-month - generally comfortable spending period';
+    }
+    // Pre-payday period
+    else {
+      phase = 'pre-payday';
+      intensity = 'medium';
+      description = 'Pre-payday period - moderate budget consciousness';
+    }
+    
+    // Friday is common payday
+    const isLikelyPayday = dayOfWeek === 5 && (day >= 1 && day <= 7 || day >= 15 && day <= 21);
+    
+    return {
+      phase,
+      intensity,
+      description,
+      dayOfMonth: day,
+      totalDaysInMonth: lastDayOfMonth,
+      isLikelyPayday,
+      budgetPressure: phase === 'end-of-month-tight' ? 'high' : phase === 'pre-payday' ? 'medium' : 'low'
+    };
   }
 
   // Calculate context confidence based on available data

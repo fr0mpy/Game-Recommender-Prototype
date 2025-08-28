@@ -52,6 +52,9 @@ async function generateAllRecommendationExplanations(selectedGame, recommendatio
       `${i + 1}. "${rec.game.title}" - ${rec.game.theme.join('/')} themes, ${rec.game.volatility} volatility, ${rec.game.pace} pace, RTP ${rec.game.rtp}%, max win ${rec.game.maxWin}x`
     ).join('\n');
 
+    const playTimeContext = playerContext?.temporal?.playTimeContext || {};
+    const financialContext = playTimeContext.financialCycle || {};
+    
     const prompt = `Generate concise recommendation explanations for slot games. Return ONLY a JSON array of explanations.
 
 PLAYER CONTEXT:
@@ -61,17 +64,37 @@ PLAYER CONTEXT:
 - Device: ${playerContext?.deviceType || 'unknown'}
 ${playerContext?.temporal?.sportsSeason?.length ? `- Sports active: ${playerContext.temporal.sportsSeason.map(s => s.sport).join(', ')}` : ''}
 
+PLAYER FOCUS & ATTENTION CONTEXT:
+- Focus level: ${playTimeContext.focusLevel || 'unknown'} (${playTimeContext.reasoning || 'standard session'})
+- Attention span: ${playTimeContext.attentionSpan || 'medium'}
+- Preferred pace: ${playTimeContext.preferredPace || 'medium'} games
+- Preferred volatility: ${playTimeContext.preferredVolatility || 'any'}
+- Session type: ${playTimeContext.description || 'gaming session'}
+
+FINANCIAL CYCLE CONTEXT:
+- Budget phase: ${financialContext.description || 'standard period'}
+- Budget pressure: ${financialContext.budgetPressure || 'low'}
+- Day ${financialContext.dayOfMonth || '?'} of ${financialContext.totalDaysInMonth || '?'} in month
+
 RECOMMENDED GAMES:
 ${gamesList}
 
 Return JSON array with explanations (1-2 sentences each, natural language, no percentages):
 ["explanation for game 1", "explanation for game 2", ...]
 
-Focus on: time-appropriate gameplay, shared themes, volatility matching, bonus features, visual appeal.`;
+IMPORTANT: Tailor recommendations to the player's current focus level, attention span, preferred pace/volatility, and financial cycle. For example:
+- Low focus/distracted: Recommend engaging, easy-to-follow games
+- Short attention span: Emphasize quick bonus features and fast-paced action
+- Tired/late night: Suggest relaxing, low-stress games
+- High budget pressure: Focus on entertainment value and lower volatility
+- Post-payday comfort: Can suggest higher volatility exciting games
+- Lunch break: Emphasize quick, immediately gratifying features
+
+Focus on: contextually appropriate gameplay style, matching attention/focus needs, financial sensitivity, shared themes, volatility alignment.`;
 
     const response = await anthropic.messages.create({
       model: 'claude-3-haiku-20240307',
-      max_tokens: 400,
+      max_tokens: 500, // Increased for richer contextual explanations
       temperature: 0.3,
       messages: [{
         role: 'user',

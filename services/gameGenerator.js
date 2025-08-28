@@ -265,6 +265,16 @@ async function generateGames(customPrompt = null, sessionId = null) {
       requestedCount = numberMatch ? parseInt(numberMatch[0]) : 100;
       console.log(`Custom prompt requesting ${requestedCount} games as specified`);
     }
+    
+    // Validate game count limits (1-100)
+    if (requestedCount < 1) {
+      throw new Error('Must generate at least 1 game');
+    }
+    if (requestedCount > 100) {
+      throw new Error('Cannot generate more than 100 games. Please reduce your request.');
+    }
+    
+    console.log(`✅ Validated game count: ${requestedCount} (within 1-100 limit)`);
 
     // Use Anthropic Claude Haiku
     if (!anthropic || !process.env.ANTHROPIC_API_KEY) {

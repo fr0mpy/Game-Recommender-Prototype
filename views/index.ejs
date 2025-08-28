@@ -325,9 +325,15 @@
 
       <!-- Weight Configuration -->
       <div>
-        <h3 class="text-md font-medium text-casino-dark text-opacity-80 mb-4">
-          🎚️ Recommendation Weights
-        </h3>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-md font-medium text-casino-dark text-opacity-80">
+            🎚️ Recommendation Weights
+          </h3>
+          <div class="bg-green-100 border border-green-300 rounded-lg px-3 py-1">
+            <span class="text-sm font-semibold text-green-800">Total: </span>
+            <span id="total-percentage" class="text-sm font-bold text-green-800">100%</span>
+          </div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <label
@@ -342,7 +348,7 @@
               name="theme"
               min="0"
               max="1"
-              step="0.05"
+              step="0.01"
               value="<%= settings.theme %>"
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('theme', this.value)"
@@ -369,7 +375,7 @@
               name="volatility"
               min="0"
               max="1"
-              step="0.05"
+              step="0.01"
               value="<%= settings.volatility %>"
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('volatility', this.value)"
@@ -396,7 +402,7 @@
               name="studio"
               min="0"
               max="1"
-              step="0.05"
+              step="0.01"
               value="<%= settings.studio %>"
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('studio', this.value)"
@@ -423,7 +429,7 @@
               name="mechanics"
               min="0"
               max="1"
-              step="0.05"
+              step="0.01"
               value="<%= settings.mechanics %>"
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('mechanics', this.value)"
@@ -606,18 +612,145 @@
     };
   }
 
-  function updateSliderValue(sliderId, value) {
-    const percentage = Math.round(value * 100);
+  function updateSliderValue(sliderId, newValue, skipRebalance = false) {
+    const newValueFloat = parseFloat(newValue);
+    const percentage = Math.round(newValueFloat * 100);
     document.getElementById(sliderId + "-value").textContent = percentage + "%";
-
-    // Store preference
-    const prefs = JSON.parse(
-      localStorage.getItem("slotForge_weightPrefs") || "{}"
-    );
-    prefs[sliderId] = value;
-    localStorage.setItem("slotForge_weightPrefs", JSON.stringify(prefs));
+    
+    if (!skipRebalance) {
+      // Rebalance other sliders to maintain 100% total
+      rebalanceSliders(sliderId, newValueFloat);
+    } else {
+      // Still update display and save if this is just a display update
+      updateTotalDisplay();
+      saveAllWeights();
+    }
+  }
+  
+  function rebalanceSliders(changedSliderId, newValue) {
+    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
+    const otherSliders = sliderIds.filter(id => id !== changedSliderId);
+    
+    // Calculate remaining weight to distribute
+    const remainingWeight = 1.0 - newValue;
+    
+    // Get current values of other sliders
+    const currentValues = {};
+    let currentTotal = 0;
+    
+    otherSliders.forEach(id => {
+      const slider = document.getElementById(id);
+      if (slider) {
+        currentValues[id] = parseFloat(slider.value) || 0;
+        currentTotal += currentValues[id];
+      }
+    });
+    
+    // Calculate new values for other sliders
+    const newValues = {};
+    otherSliders.forEach(id => {
+      if (currentTotal > 0) {
+        // Proportional adjustment
+        newValues[id] = (currentValues[id] / currentTotal) * remainingWeight;
+      } else {
+        // Equal distribution if all others were zero
+        newValues[id] = remainingWeight / otherSliders.length;
+      }
+    });
+    
+    // Normalize to ensure exact 100% total (fix rounding errors)
+    const calculatedTotal = newValue + Object.values(newValues).reduce((sum, val) => sum + val, 0);
+    const normalizationFactor = 1.0 / calculatedTotal;
+    
+    // Apply normalization to the changed slider too
+    const normalizedNewValue = newValue * normalizationFactor;
+    document.getElementById(changedSliderId).value = normalizedNewValue;
+    
+    // Apply normalized values to other sliders
+    otherSliders.forEach(id => {
+      const slider = document.getElementById(id);
+      if (slider) {
+        const normalizedValue = newValues[id] * normalizationFactor;
+        // Clamp to valid range
+        const clampedValue = Math.max(0, Math.min(1, normalizedValue));
+        
+        // Update slider and display
+        slider.value = clampedValue;
+        updateSliderValue(id, clampedValue, true); // Skip rebalance to avoid recursion
+      }
+    });
+    
+    // Update the changed slider's display too (since we normalized it)
+    updateSliderValue(changedSliderId, normalizedNewValue, true);
+    
+    // Update total percentage display and save all weights
+    updateTotalDisplay();
+    saveAllWeights();
+  }
+  
+  function updateTotalDisplay() {
+    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
+    const total = sliderIds.reduce((sum, id) => {
+      const slider = document.getElementById(id);
+      return sum + (slider ? parseFloat(slider.value) : 0);
+    }, 0);
+    
+    const totalElement = document.getElementById('total-percentage');
+    if (totalElement) {
+      totalElement.textContent = Math.round(total * 100) + '%';
+      
+      // Visual feedback - green if exactly 100%, yellow if close, red if far off
+      const percentage = Math.round(total * 100);
+      const exactTotal = Math.abs(total - 1.0) < 0.001; // Within 0.1%
+      
+      totalElement.parentElement.className = 
+        exactTotal ? 'bg-green-100 border border-green-300 rounded-lg px-3 py-1' :
+        Math.abs(percentage - 100) <= 2 ? 'bg-yellow-100 border border-yellow-300 rounded-lg px-3 py-1' :
+        'bg-red-100 border border-red-300 rounded-lg px-3 py-1';
+        
+      // Force display to show 100% if very close
+      totalElement.textContent = exactTotal ? '100%' : percentage + '%';
+    }
+    
+    console.log(`⚖️ Slider total: ${Math.round(total * 100)}%`);
+  }
+  
+  function saveAllWeights() {
+    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
+    const weights = {};
+    
+    sliderIds.forEach(id => {
+      const slider = document.getElementById(id);
+      if (slider) {
+        weights[id] = parseFloat(slider.value);
+      }
+    });
+    
+    localStorage.setItem("slotForge_weightPrefs", JSON.stringify(weights));
+    console.log('💾 Saved weights:', weights);
   }
 
+  function validateGameCount(prompt) {
+    if (!prompt) return { valid: true, count: 100 }; // Default to 100
+    
+    // Extract number from prompt
+    const numbers = prompt.match(/\b(\d+)\b/g);
+    if (!numbers) return { valid: true, count: 100 }; // Default if no number found
+    
+    // Get the largest number (assuming it's the game count)
+    const gameCount = Math.max(...numbers.map(n => parseInt(n)));
+    
+    if (gameCount < 1) {
+      return { valid: false, error: 'Must generate at least 1 game', count: gameCount };
+    }
+    
+    if (gameCount > 100) {
+      return { valid: false, error: 'Cannot generate more than 100 games', count: gameCount };
+    }
+    
+    return { valid: true, count: gameCount };
+  }
+  
   function isGameGenerationPrompt(prompt) {
     if (!prompt) return true; // Empty prompt is fine
     
@@ -700,10 +833,25 @@
     const progressMessage = document.getElementById("progressMessage");  
     const progressBar = document.getElementById("progressBar");
     const button = document.getElementById("generateButton");
+    const customPromptField = document.getElementById('customPrompt');
     
     try {
       event.preventDefault();
       console.log('✅ preventDefault called');
+      
+      // Validate game count first
+      const prompt = customPromptField ? customPromptField.value : '';
+      const countValidation = validateGameCount(prompt);
+      
+      if (!countValidation.valid) {
+        showPromptError(countValidation.error);
+        return;
+      }
+      
+      console.log(`🎯 Validated game count: ${countValidation.count}`);
+      
+      // Clear any existing errors
+      clearPromptError();
       
       // Show progress immediately
       console.log('🔧 Looking for progress elements...');
@@ -722,7 +870,7 @@
       }
       
       if (progressMessage) {
-        progressMessage.textContent = "Starting generation...";
+        progressMessage.textContent = `Generating ${countValidation.count} games...`;
         console.log('✅ Progress message updated');
       }
       
@@ -1025,16 +1173,40 @@
       console.log('Available buttons:', document.querySelectorAll('button'));
     }
     
-    // Load saved slider preferences
+    // Load saved slider preferences and ensure they add up to 100%
     const savedPrefs = JSON.parse(
       localStorage.getItem("slotForge_weightPrefs") || "{}"
     );
-
-    Object.keys(savedPrefs).forEach((sliderId) => {
+    
+    // Default values that sum to 100%
+    const defaultWeights = {
+      theme: 0.4,
+      volatility: 0.3, 
+      studio: 0.2,
+      mechanics: 0.1
+    };
+    
+    // Use saved preferences or defaults
+    const weights = Object.keys(defaultWeights).reduce((acc, key) => {
+      acc[key] = savedPrefs[key] !== undefined ? savedPrefs[key] : defaultWeights[key];
+      return acc;
+    }, {});
+    
+    // Normalize to ensure 100% total
+    const currentTotal = Object.values(weights).reduce((sum, val) => sum + val, 0);
+    if (currentTotal !== 1.0) {
+      console.log(`⚠️ Normalizing weights from ${Math.round(currentTotal * 100)}% to 100%`);
+      Object.keys(weights).forEach(key => {
+        weights[key] = weights[key] / currentTotal;
+      });
+    }
+    
+    // Apply normalized weights to sliders
+    Object.keys(weights).forEach((sliderId) => {
       const slider = document.getElementById(sliderId);
       if (slider) {
-        slider.value = savedPrefs[sliderId];
-        updateSliderValue(sliderId, savedPrefs[sliderId]);
+        slider.value = weights[sliderId];
+        updateSliderValue(sliderId, weights[sliderId], true); // Skip rebalance during initialization
       }
     });
 
