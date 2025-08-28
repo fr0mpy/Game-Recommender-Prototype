@@ -596,11 +596,18 @@ async function generateGames(customPrompt = null, sessionId = null) {
       throw new Error('LLM returned empty games array');
     }
 
+    // Assign IDs to successfully generated games  
+    const gamesWithIds = games.map((game, index) => ({
+      ...game,
+      id: `game-${(index + 1).toString().padStart(3, '0')}`
+    }));
+    
     // DO NOT SAVE - Games will be saved to session storage only by server.js
     
-    console.log(`✅ GENERATE: Successfully generated ${games.length} games`);
-    console.log('🔍 GENERATE: Final games sample:', games[0] ? Object.keys(games[0]) : 'no games');
-    return games;
+    console.log(`✅ GENERATE: Successfully generated ${gamesWithIds.length} games`);
+    console.log('🔍 GENERATE: Final games sample:', gamesWithIds[0] ? Object.keys(gamesWithIds[0]) : 'no games');
+    console.log('🔍 GENERATE: First game ID assigned:', gamesWithIds[0]?.id);
+    return gamesWithIds;
     
   } catch (error) {
     console.error('❌ GENERATE: Game generation failed:', error);
