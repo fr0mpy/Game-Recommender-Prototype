@@ -46,6 +46,19 @@ When a casino player finishes playing a slot game, the system suggests:
 
 ## ✨ Latest Improvements (August 2025)
 
+### **Enhanced AI Security & Reliability**
+- **Prompt Injection Protection**: Sanitizes user inputs to prevent malicious prompt manipulation
+- **Enhanced JSON Parsing**: Improved error recovery with robust cleanup for malformed AI responses
+- **Modular Prompt Architecture**: Separated system prompts, generation instructions, and JSON formatting rules
+- **Extended Timeout Handling**: Increased chunked generation timeout from 30s to 60s for better reliability
+- **Smart Content Filtering**: Custom prompts are validated and cleaned while preserving legitimate requests
+
+### **Custom Generation Features**
+- **Sports-Focused Generation**: Specialized handling for sports-themed game requests (e.g., "Generate 100 sports games")
+- **Custom Prompt Support**: Users can specify themes, counts, and requirements via natural language
+- **Input Validation**: Prevents injection attacks while allowing creative game generation requests
+- **Fallback Generation**: If AI generation fails, system falls back to high-quality pre-generated games
+
 ### **Enhanced Player Context Analysis**
 - **Real-time System Detection**: Automatically detects user's system theme (dark/light mode) and timezone
 - **European Market Focus**: Updated holidays and sports seasons for EU audience (Premier League, Champions League, Euros, Oktoberfest, etc.)
@@ -54,15 +67,17 @@ When a casino player finishes playing a slot game, the system suggests:
 
 ### **Performance & Reliability**
 - **Instant Page Loads**: No LLM calls on home page - uses static 100-game dataset
-- **Smart Timeout Handling**: 2-3 second timeouts on AI calls with graceful fallbacks
+- **Smart Timeout Handling**: 60-second timeouts on chunked generation with graceful fallbacks
 - **Robust Error Recovery**: All LLM failures fall back to rule-based alternatives
 - **Static Game Dataset**: 100 high-quality pre-generated games available immediately
+- **Enhanced JSON Cleanup**: Advanced parsing with support for common formatting issues
 
 ### **Enhanced User Experience**
 - **Improved Visual Design**: Professional styling with opacity variations for depth
 - **Better Context Display**: Three-column layout showing Device & System, Traffic Source, and Time & Location
 - **Bally Sports Integration**: Prominent detection and highlighting of Bally Sports referrers
 - **Responsive Mobile Support**: Works seamlessly on all device types
+- **Clickable Header**: Slot Forge header now links to home page for better navigation
 
 ---
 
@@ -82,15 +97,17 @@ When a casino player finishes playing a slot game, the system suggests:
 
 #### **1. AI Game Generation** (`services/gameGenerator.js`)
 
-- Generates 100+ fictional slot games using **Claude 3 Haiku**
+- Generates 100+ fictional slot games using **Claude 3.5 Sonnet**
 - Rich game metadata: themes, volatility, RTP, mechanics, features
 - Ensures mathematical consistency and market distribution
+- **Model Choice**: Sonnet for complex JSON generation (8192 token limit)
 
 #### **2. Similarity Engine** (`services/similarityEngine.js`)
 
 - **Content-based filtering** with configurable weights
-- **AI-generated explanations** for each recommendation
+- **AI-generated explanations** using **Claude 3 Haiku** (fast, cost-effective)
 - Smart caching for performance optimization
+- **Model Choice**: Haiku for quick explanation generation (low latency)
 
 #### **3. Context Tracker** (`services/contextTracker.js`)
 
@@ -109,12 +126,22 @@ When a casino player finishes playing a slot game, the system suggests:
 
 ## 🧠 How the AI Components Work
 
+### **Dual-Model Architecture**
+
+**🎯 Optimized Model Selection:**
+- **Claude 3.5 Sonnet**: Game generation (complex JSON, 8192 token limit, high reliability)
+- **Claude 3 Haiku**: Recommendations explanations (fast, cost-effective, 4096 token limit)
+
+This hybrid approach balances **quality** (Sonnet for complex tasks) with **speed/cost** (Haiku for simple tasks).
+
 ### **Game Generation Process**
 
 1. **System Prompt**: Comprehensive SlotForge persona with mathematical requirements
-2. **User Prompt**: Custom generation instructions (default: 100 diverse games)
-3. **JSON Validation**: Smart parsing with error recovery
-4. **Schema Compliance**: Ensures all games match required structure
+2. **User Prompt**: Custom generation instructions (default: 100 diverse games)  
+3. **Model**: Claude 3.5 Sonnet for reliable JSON generation
+4. **Chunking**: 20 games per chunk to stay within optimal token usage
+5. **JSON Validation**: Smart parsing with error recovery
+6. **Schema Compliance**: Ensures all games match required structure
 
 ```javascript
 // Example generated game
@@ -241,7 +268,7 @@ and free spin bonuses for balanced excitement."
 ### **Prerequisites**
 
 - Node.js 16+
-- Anthropic API Key (Claude 3 Haiku)
+- Anthropic API Key (supports both Claude 3.5 Sonnet and Claude 3 Haiku)
 
 ### **Environment Setup**
 
@@ -290,8 +317,9 @@ Slot Forge/
 │   ├── user-settings.json      # Player preferences
 │   └── player-context.json     # Session tracking data
 ├── prompts/
-│   ├── slot-forge-system-prompt.md      # AI game generation
-│   ├── slot-forge-generator-prompt.md   # Detailed generation rules
+│   ├── slot-forge-system-prompt.md      # Core AI personality and constraints
+│   ├── slot-forge-generation-instructions.md # Specific generation tasks
+│   ├── json-output-format.md            # JSON formatting requirements
 │   └── match-explanation-prompt.md      # Recommendation explanations
 └── server.js                    # Express application entry point
 ```
@@ -311,12 +339,18 @@ Adjust the recommendation algorithm via UI sliders:
 
 ### **AI Game Generation**
 
-Customize the generation prompt via the web interface:
+Customize the generation prompt via the web interface with built-in security:
 
 ```
 Default: "Generate 100 fictional slot games using AI"
 Custom: "Create 50 sports-themed games for football season"
+Sports Example: "Generate 100 fictional slot games - MUST BE SPORTS FOCUSSED"
 ```
+
+**Security Features:**
+- Prompt injection protection sanitizes malicious inputs
+- Content filtering preserves legitimate requests while blocking harmful patterns
+- Input validation prevents role manipulation and system override attempts
 
 ### **Context Tracking**
 
@@ -383,7 +417,8 @@ The system automatically tracks:
 
 ### **Current Implementation**
 
-- **Claude 3 Haiku**: Fast, cost-effective for game generation and explanations
+- **Claude 3.5 Sonnet**: Complex JSON game generation (high reliability, 8192 tokens)
+- **Claude 3 Haiku**: Fast explanation generation (low latency, cost-effective)
 - **Rule-based Algorithm**: Transparent, configurable similarity scoring
 - **Context Awareness**: Temporal and behavioral pattern recognition
 

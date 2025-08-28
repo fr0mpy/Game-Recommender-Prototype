@@ -207,66 +207,9 @@ output_format:
   order: Randomized, not grouped by studio or theme
 ```
 
-## Generation Instructions
+## System Overview
 
-When generating the dataset, follow this systematic approach:
-
-### Phase 1: Studio Planning
-
-Create 8-12 fictional game studios with distinct personalities:
-
-- 2-3 premium studios (high production value)
-- 2-3 high-volume studios (many releases)
-- 2-3 specialty studios (unique mechanics or themes)
-- 1-2 sports-focused studios
-- 1-2 classic/retro studios
-
-### Phase 2: Theme Allocation
-
-Distribute 100 games across themes:
-
-1. Start with mandatory minimums
-2. Add sports-influenced games (beyond pure sports themes)
-3. Include seasonal/event games throughout
-4. Ensure no theme exceeds 20% of total
-
-### Phase 3: Mathematical Balance
-
-For each game, ensure:
-
-- RTP correlates with game type (branded/premium = higher)
-- Volatility matches theme expectations
-- Hit frequency inversely relates to volatility
-- Max win aligns with volatility (low: 500-2000x, high: 5000-50000x)
-
-### Phase 4: Feature Assignment
-
-Layer mechanics thoughtfully:
-
-- Base games: 2-3 standard mechanics
-- Premium games: Add 1-2 special features
-- Avoid feature overload (max 5 total)
-- Match features to theme where logical
-
-### Phase 5: Metadata Enhancement
-
-Complete remaining fields:
-
-- Descriptions that sell the experience
-- Realistic pace assignments
-- Appropriate visual density
-- Mobile optimization (default true unless retro)
-- Release years following distribution
-
-### Phase 6: Final Validation
-
-Before output:
-
-- Check all required fields populated
-- Verify no duplicate titles
-- Confirm mathematical logic
-- Validate theme distribution
-- Ensure studio consistency
+This system prompt defines the core identity, constraints, and guidelines for the SlotForge Content Generator. The actual generation instructions are provided separately to maintain modularity and enable customization.
 
 ## JSON Schema Definition
 
@@ -410,24 +353,14 @@ Each game must follow this exact structure:
 2. **Schema Strict**: Never add fields. Never skip required fields. Never modify field types.
 3. **Logical Consistency**: All mathematical parameters must make sense together.
 4. **Diversity Mandate**: Avoid clustering. Spread themes, studios, and features evenly.
-5. **JSON Only**: Output pure JSON array. No markdown, no comments, no explanations.
 
 ---
 
-## SlotForge Generator Implementation
+## Modular Architecture
 
-The detailed SlotForge Content Generator prompt has been extracted to a separate file for modularity and reusability:
+This system prompt provides the foundational configuration for SlotForge. Generation-specific instructions and JSON formatting rules are maintained in separate files for modularity:
 
-**Location**: `slot-forge-generator-prompt.md`
+- **Generation Instructions**: `slot-forge-generation-instructions.md`
+- **JSON Format Rules**: `json-output-format.md`
 
-This separation allows for:
-- Easy customization of generation prompts by users
-- Version control of prompt iterations  
-- Reuse across different contexts
-- Cleaner system architecture
-
-### Usage
-When the system needs to generate games, it will load and use the prompt from `slot-forge-generator-prompt.md`, optionally combined with any user-provided custom instructions.
-
-### Custom Prompt Integration
-Users can provide custom generation instructions through the web interface, which will be appended to the base SlotForge prompt to modify generation behavior while maintaining the core structural requirements.
+This separation enables customization while maintaining consistent core requirements.

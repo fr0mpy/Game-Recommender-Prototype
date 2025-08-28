@@ -13,11 +13,12 @@ if (process.env.ANTHROPIC_API_KEY) {
 }
 
 const SYSTEM_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'slot-forge-system-prompt.md');
-const GENERATOR_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'slot-forge-generator-prompt.md');
+const GENERATION_INSTRUCTIONS_FILE = path.join(__dirname, '..', 'prompts', 'slot-forge-generation-instructions.md');
+const JSON_FORMAT_FILE = path.join(__dirname, '..', 'prompts', 'json-output-format.md');
 
 // Chunked generation for large game requests
-async function generateGamesInChunks(systemPrompt, generatorPrompt, customPrompt, totalCount) {
-  const chunkSize = 20; // Generate 20 games per chunk to stay within token limits
+async function generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, customPrompt, totalCount) {
+  const chunkSize = 20; // Back to 20 games per chunk - Sonnet can handle this easily
   const chunks = Math.ceil(totalCount / chunkSize);
   const allGames = [];
   let gameIdCounter = 1;
@@ -30,40 +31,109 @@ async function generateGamesInChunks(systemPrompt, generatorPrompt, customPrompt
     
     console.log(`Generating chunk ${i + 1}/${chunks}: ${gamesInThisChunk} games (starting from game-${gameIdCounter.toString().padStart(3, '0')})`);
     
-    const chunkPrompt = `${generatorPrompt}\n\nCHUNK GENERATION INSTRUCTIONS:
-- Generate exactly ${gamesInThisChunk} games for chunk ${i + 1} of ${chunks}
+    const chunkPrompt = `CRITICAL: You must output ONLY a valid JSON array. No explanations, no markdown, no text before or after.
+
+Generate exactly ${gamesInThisChunk} games for chunk ${i + 1} of ${chunks}:
 - Start game IDs from "game-${gameIdCounter.toString().padStart(3, '0')}"
 - Ensure variety in themes, volatility, and studios
 - ${customPrompt || 'Create diverse fictional slot games'}
 
-IMPORTANT: Output only valid JSON array with exactly ${gamesInThisChunk} game objects. No explanatory text before or after the JSON array.`;
+${jsonFormatRules}
+
+OUTPUT ONLY THE JSON ARRAY - NO OTHER TEXT:`;
 
     try {
-      const response = await anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 4096,
-        temperature: 0.7 + (i * 0.05), // Slightly vary temperature for diversity
-        system: systemPrompt,
-        messages: [{
-          role: 'user',
-          content: chunkPrompt
-        }]
-      });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Chunk ${i + 1} timed out after 60 seconds`)), 60000)
+      );
+
+      const response = await Promise.race([
+        anthropic.messages.create({
+          model: 'claude-3-5-sonnet-20241022', // Latest Sonnet for reliable JSON generation
+          max_tokens: 8192, // Sonnet can handle much larger outputs
+          temperature: 0.7 + (i * 0.05), // Slightly vary temperature for diversity
+          system: systemPrompt,
+          messages: [{
+            role: 'user',
+            content: chunkPrompt
+          }]
+        }),
+        timeoutPromise
+      ]);
 
       const content = response.content[0]?.text;
       if (!content) {
         throw new Error(`No response content for chunk ${i + 1}`);
       }
 
-      // Parse the chunk
+      // Extract JSON more aggressively
       let jsonContent = content;
-      if (content.includes('[') && content.includes(']')) {
-        const startIndex = content.indexOf('[');
-        const endIndex = content.lastIndexOf(']') + 1;
-        jsonContent = content.substring(startIndex, endIndex);
+      
+      // Find first [ and last ] for better extraction
+      const startIndex = content.indexOf('[');
+      const endIndex = content.lastIndexOf(']');
+      
+      if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+        jsonContent = content.substring(startIndex, endIndex + 1);
+      } else {
+        // If no brackets found, try to find JSON object pattern
+        const objectMatch = content.match(/\{[\s\S]*\}/);
+        if (objectMatch) {
+          jsonContent = '[' + objectMatch[0] + ']'; // Wrap single object in array
+        }
       }
 
-      const chunkGames = JSON.parse(jsonContent.trim());
+      // Enhanced JSON cleanup
+      jsonContent = jsonContent.trim()
+        .replace(/,\s*}/g, '}')  // Remove trailing commas before }
+        .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
+        .replace(/\n/g, ' ')     // Remove newlines
+        .replace(/\r/g, '')      // Remove carriage returns
+        .replace(/\t/g, ' ')     // Replace tabs with spaces
+        .replace(/\s+/g, ' ')    // Normalize multiple spaces
+        .replace(/"\s*:\s*"/g, '":"')  // Clean up spacing around colons
+        .replace(/,\s*,/g, ',')  // Remove duplicate commas
+        .replace(/}\s*{/g, '},{') // Fix missing commas between objects
+
+      let chunkGames;
+      try {
+        chunkGames = JSON.parse(jsonContent);
+      } catch (parseError) {
+        console.error(`JSON Parse Error for chunk ${i + 1}:`, parseError.message);
+        console.error('Raw content length:', content.length);
+        console.error('JSON content preview:', jsonContent.substring(0, 500) + '...');
+        
+        // Aggressive JSON repair attempts
+        let fixedJson = jsonContent
+          .replace(/([^"\\])'([^']*?)'/g, '$1"$2"')  // Fix single quotes
+          .replace(/([{,]\s*)(\w+):/g, '$1"$2":')    // Quote unquoted keys
+          .replace(/:\s*([^",\]\}]+)([,\]\}])/g, ': "$1"$2') // Quote unquoted values
+          .replace(/,(\s*[\]}])/g, '$1')  // Remove trailing commas
+          .replace(/\}(\s*)\{/g, '},$1{')  // Add missing commas between objects
+          .replace(/\](\s*)\[/g, '],$1['); // Add missing commas between arrays
+        
+        // If still truncated, try to close the JSON properly
+        const openBraces = (fixedJson.match(/\{/g) || []).length;
+        const closeBraces = (fixedJson.match(/\}/g) || []).length;
+        const openBrackets = (fixedJson.match(/\[/g) || []).length;
+        const closeBrackets = (fixedJson.match(/\]/g) || []).length;
+        
+        // Close unclosed braces
+        for (let i = 0; i < openBraces - closeBraces; i++) {
+          fixedJson += '}';
+        }
+        // Close unclosed brackets
+        for (let i = 0; i < openBrackets - closeBrackets; i++) {
+          fixedJson += ']';
+        }
+        
+        try {
+          chunkGames = JSON.parse(fixedJson);
+          console.log(`✓ Fixed JSON parsing for chunk ${i + 1}`);
+        } catch (secondError) {
+          throw new Error(`Failed to parse JSON for chunk ${i + 1}: ${parseError.message}`);
+        }
+      }
       
       if (!Array.isArray(chunkGames)) {
         throw new Error(`Chunk ${i + 1} response is not an array`);
@@ -121,17 +191,42 @@ IMPORTANT: Output only valid JSON array with exactly ${gamesInThisChunk} game ob
   return allGames;
 }
 
+// Sanitize custom prompt to prevent injection attacks
+function sanitizeCustomPrompt(prompt) {
+  if (!prompt || typeof prompt !== 'string') return null;
+  
+  // Remove potential injection patterns
+  const cleaned = prompt
+    .replace(/(?:ignore|disregard|forget)\s+(?:previous|above|system)/gi, '') // Remove ignore instructions
+    .replace(/(?:you\s+are\s+now|act\s+as|pretend\s+to\s+be)/gi, '') // Remove role changes
+    .replace(/(?:system|assistant|user):\s*/gi, '') // Remove role prefixes
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/<[^>]*>/g, '') // Remove HTML/XML tags
+    .trim();
+  
+  // Only allow game generation focused content
+  if (cleaned.length > 500) {
+    return cleaned.substring(0, 500) + '...'; // Limit length
+  }
+  
+  return cleaned;
+}
+
 async function generateGames(customPrompt = null) {
   try {
-    // Load system and generator prompts
+    // Load system, generation instructions, and JSON format prompts
     const systemPrompt = fs.readFileSync(SYSTEM_PROMPT_FILE, 'utf8');
-    const generatorPrompt = fs.readFileSync(GENERATOR_PROMPT_FILE, 'utf8');
+    const generationInstructions = fs.readFileSync(GENERATION_INSTRUCTIONS_FILE, 'utf8');
+    const jsonFormatRules = fs.readFileSync(JSON_FORMAT_FILE, 'utf8');
+    
+    // Sanitize custom prompt to prevent injection
+    const sanitizedPrompt = sanitizeCustomPrompt(customPrompt);
     
     let requestedCount = 100; // Default from generator prompt
-    if (customPrompt && customPrompt.trim()) {
+    if (sanitizedPrompt && sanitizedPrompt.trim()) {
       console.log('Using custom user prompt for generation...');
       // Extract number from custom prompt - should be 100 for default UI prompt
-      const numberMatch = customPrompt.match(/\d+/);
+      const numberMatch = sanitizedPrompt.match(/\d+/);
       requestedCount = numberMatch ? parseInt(numberMatch[0]) : 100;
       console.log(`Custom prompt requesting ${requestedCount} games as specified`);
     }
@@ -141,22 +236,22 @@ async function generateGames(customPrompt = null) {
       throw new Error('Anthropic API key not configured. Please set ANTHROPIC_API_KEY environment variable.');
     }
 
-    console.log('Generating games via Anthropic Claude Haiku...');
+    console.log('Generating games via Anthropic Claude 3.5 Sonnet...');
     
     // For large generations (>25 games), use chunked approach
     if (requestedCount > 25) {
       console.log(`Large generation (${requestedCount} games) - using chunked approach`);
-      return await generateGamesInChunks(systemPrompt, generatorPrompt, customPrompt, requestedCount);
+      return await generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, sanitizedPrompt, requestedCount);
     }
     
     // Single generation for smaller requests
-    const userPrompt = customPrompt && customPrompt.trim() 
-      ? `${generatorPrompt}\n\nCUSTOM INSTRUCTIONS: ${customPrompt}\n\nIMPORTANT: Generate exactly ${requestedCount} games. Output only valid JSON array with exactly ${requestedCount} game objects. No explanatory text before or after the JSON array.`
-      : generatorPrompt;
+    const userPrompt = sanitizedPrompt && sanitizedPrompt.trim() 
+      ? `${generationInstructions}\n\nCUSTOM INSTRUCTIONS: ${sanitizedPrompt}\n\nGenerate exactly ${requestedCount} games.\n\n${jsonFormatRules}`
+      : `${generationInstructions}\n\n${jsonFormatRules}`;
 
     const response = await anthropic.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 4096,
+      model: 'claude-3-5-sonnet-20241022', // Latest Sonnet for reliable JSON generation
+      max_tokens: 8192,
       temperature: 0.7,
       system: systemPrompt,
       messages: [{
@@ -172,7 +267,7 @@ async function generateGames(customPrompt = null) {
       throw new Error('No response content from Anthropic');
     }
 
-    console.log('Successfully used Anthropic Claude Haiku');
+    console.log('Successfully used Anthropic Claude 3.5 Sonnet');
 
     if (!content) {
       throw new Error('No content received from API');
