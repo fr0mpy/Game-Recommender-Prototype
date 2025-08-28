@@ -371,17 +371,54 @@ app.post("/api/sync-custom-games", (req, res) => {
     const { games } = req.body;
     const sessionId = req.sessionId;
     
+    console.log(`🔄 Sync request: ${games?.length || 0} games for session ${sessionId}`);
+    
     if (!games || !Array.isArray(games)) {
+      console.log('❌ Invalid games data in sync request');
       return res.status(400).json({ error: 'Invalid games data' });
     }
     
-    // Save to session storage
+    if (games.length === 0) {
+      console.log('⚠️ Empty games array in sync request');
+      return res.json({ success: true, message: 'No games to sync' });
+    }
+    
+    // Save to session storage (memory only in serverless)
     saveSessionGames(sessionId, games);
     
+    console.log(`✅ Successfully synced ${games.length} games for session ${sessionId}`);
     res.json({ success: true, message: `Synced ${games.length} games` });
   } catch (error) {
-    console.error('Failed to sync custom games:', error);
+    console.error('❌ Failed to sync custom games:', error);
     res.status(500).json({ error: 'Failed to sync games' });
+  }
+});
+
+// Validate session games are available
+app.post("/api/validate-session-games", (req, res) => {
+  try {
+    const { gameIds } = req.body;
+    const sessionId = req.sessionId;
+    
+    const sessionGames = loadGames(sessionId);
+    const hasSession = hasSessionGames(sessionId);
+    
+    const validation = {
+      hasSessionGames: hasSession,
+      sessionGameCount: sessionGames.length,
+      missingGameIds: []
+    };
+    
+    if (gameIds && Array.isArray(gameIds)) {
+      validation.missingGameIds = gameIds.filter(id => !sessionGames.find(g => g.id === id));
+    }
+    
+    console.log(`🔍 Session validation for ${sessionId}: ${validation.sessionGameCount} games, missing: ${validation.missingGameIds.length}`);
+    
+    res.json(validation);
+  } catch (error) {
+    console.error('❌ Failed to validate session games:', error);
+    res.status(500).json({ error: 'Failed to validate session' });
   }
 });
 
@@ -424,22 +461,22 @@ app.post("/recommend", async (req, res) => {
     saveSettings(weights);
 
     // Load games using the effective session ID
-    const games = loadGames(effectiveSessionId);
+    let games = loadGames(effectiveSessionId);
     console.log(`📚 Loaded ${games.length} games for session ${effectiveSessionId}`);
     
-    if (games.length === 0) {
-      console.log('⚠️ No games found for session, falling back to default games');
-      const fallbackGames = loadGames(); // Load default games
-      const recommendations = getRecommendations(gameId, weights, 5, fallbackGames);
-      const selectedGame = fallbackGames.find((g) => g.id === gameId);
+    // CRITICAL FIX: If no session games found, check if gameId looks like a custom game
+    // Custom games typically have UUIDs or non-default patterns
+    if (games.length === 0 || !games.find(g => g.id === gameId)) {
+      const isCustomGameId = gameId && !gameId.startsWith('default-');
       
-      if (!selectedGame) {
+      if (isCustomGameId) {
+        console.log(`❌ SERVERLESS ISSUE: Custom game ${gameId} not found in session ${effectiveSessionId}`);
         return res.render("index", {
-          games: fallbackGames,
+          games: loadGames(), // Load default games for display
           settings: loadSettings(),
           message: {
             type: "error",
-            text: "Selected game not found. Please refresh and try again.",
+            text: "Custom games lost (serverless limitation). Please generate games again or refresh the page.",
           },
           playerContext: req.playerContext,
           crossSell: null,
@@ -447,25 +484,11 @@ app.post("/recommend", async (req, res) => {
           tokenUsage,
           customPrompt: 'Generate 100 slot games'
         });
+      } else {
+        // For default games, fall back to default dataset
+        console.log('⚠️ No session games found, using default dataset');
+        games = loadGames(); // Load default games
       }
-      
-      // Render recommendations using fallback games
-      const fallbackRecommendationsWithExplanations = recommendations.map((rec) => {
-        return {
-          ...rec, 
-          explanation: 'Generating personalized match analysis...',
-          loading: true
-        };
-      });
-
-      return res.render("recommendations", {
-        recommendations: fallbackRecommendationsWithExplanations,
-        selectedGame,
-        weights,
-        playerContext: req.playerContext,
-        sessionId: req.sessionId,
-        tokenUsage
-      });
     }
 
     // Get recommendations using session-specific games
