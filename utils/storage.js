@@ -3,13 +3,25 @@ const path = require('path');
 
 const GAMES_FILE = path.join(__dirname, '..', 'data', 'games.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'user-settings.json');
+const TEMP_GAMES_DIR = path.join(__dirname, '..', 'data', 'temp-sessions');
 
-// Import database service for session storage
-const db = require('../services/database');
-
-// Fallback in-memory storage if database unavailable
+// In-memory session storage for temporary games
 const sessionGames = new Map();
 
+// Temporary file storage with cleanup mechanism
+const sessionCleanupTimers = new Map();
+const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+
+// Ensure temp directory exists
+function ensureTempDir() {
+  try {
+    if (!fs.existsSync(TEMP_GAMES_DIR)) {
+      fs.mkdirSync(TEMP_GAMES_DIR, { recursive: true });
+    }
+  } catch (error) {
+    console.log('Could not create temp directory (serverless limitation):', error.message);
+  }
+}
 
 // Default weight configuration
 const DEFAULT_WEIGHTS = {
@@ -48,20 +60,26 @@ function saveGames(games) {
 
 function loadGames(sessionId = null) {
   try {
-    // If sessionId provided, try database first, then memory fallback
+    // If sessionId provided, try multiple sources in priority order
     if (sessionId) {
-      // 1. Try loading from database (persistent across cold starts)
-      const dbGames = db.loadSessionGames(sessionId);
-      if (dbGames.length > 0) {
-        // Cache in memory for faster subsequent access
-        sessionGames.set(sessionId, dbGames);
-        return dbGames;
+      // 1. Check in-memory first (fastest)
+      if (sessionGames.has(sessionId)) {
+        console.log(`✅ Loaded ${sessionGames.get(sessionId).length} games from memory for session: ${sessionId}`);
+        return sessionGames.get(sessionId);
       }
       
-      // 2. Fallback: Check in-memory (if database unavailable)
-      if (sessionGames.has(sessionId)) {
-        console.log(`✅ Loaded ${sessionGames.get(sessionId).length} games from memory fallback for session: ${sessionId}`);
-        return sessionGames.get(sessionId);
+      // 2. Try loading from temporary file (persistence across cold starts)
+      const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
+      if (fs.existsSync(tempSessionFile)) {
+        const tempData = fs.readFileSync(tempSessionFile, 'utf8');
+        const tempGames = JSON.parse(tempData);
+        
+        // Restore to memory for fast access
+        sessionGames.set(sessionId, tempGames);
+        resetSessionTimeout(sessionId); // Reset cleanup timer
+        
+        console.log(`✅ Restored ${tempGames.length} games from temp file for session: ${sessionId}`);
+        return tempGames;
       }
       
       console.log(`⚠️ No session games found for: ${sessionId}, falling back to defaults`);
@@ -174,43 +192,78 @@ function loadSettings() {
   }
 }
 
-// Session-based game storage functions with database persistence
+// Session-based game storage functions with dual persistence
 function saveSessionGames(sessionId, games) {
-  // 1. Store in database (persistent across cold starts)
-  const dbSaved = db.saveSessionGames(sessionId, games);
-  
-  // 2. Also store in memory for fast access
+  // 1. Store in memory (fast access)
   sessionGames.set(sessionId, games);
   
-  if (dbSaved) {
-    console.log(`✅ Saved ${games.length} games for session: ${sessionId} (database + memory)`);
-  } else {
-    console.log(`⚠️ Database save failed, using memory only for session: ${sessionId}`);
+  // 2. Store in temporary file (survives cold starts)
+  try {
+    ensureTempDir();
+    const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
+    fs.writeFileSync(tempSessionFile, JSON.stringify(games, null, 2));
+    
+    // Set cleanup timer (10 minutes)
+    resetSessionTimeout(sessionId);
+    
+    console.log(`✅ Saved ${games.length} games for session: ${sessionId} (memory + temp file)`);
+  } catch (error) {
+    console.log(`⚠️ Could not save temp file (serverless limitation), using memory only: ${error.message}`);
   }
 }
 
 function clearSessionGames(sessionId) {
-  // Clear from database
-  const dbCleared = db.clearSessionGames(sessionId);
-  
   // Clear from memory
   sessionGames.delete(sessionId);
   
-  if (dbCleared) {
-    console.log(`✅ Cleared session games from database and memory for: ${sessionId}`);
-  } else {
-    console.log(`⚠️ Database clear failed, cleared memory only for: ${sessionId}`);
+  // Clear temp file
+  try {
+    const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
+    if (fs.existsSync(tempSessionFile)) {
+      fs.unlinkSync(tempSessionFile);
+    }
+  } catch (error) {
+    console.log(`Could not delete temp file: ${error.message}`);
   }
+  
+  // Clear cleanup timer
+  if (sessionCleanupTimers.has(sessionId)) {
+    clearTimeout(sessionCleanupTimers.get(sessionId));
+    sessionCleanupTimers.delete(sessionId);
+  }
+  
+  console.log(`✅ Cleared session games and temp file for: ${sessionId}`);
 }
 
 function hasSessionGames(sessionId) {
-  // Check database first (most reliable)
-  if (db.hasSessionGames(sessionId)) {
+  // Check memory first
+  if (sessionGames.has(sessionId)) {
     return true;
   }
   
-  // Fallback: Check memory
-  return sessionGames.has(sessionId);
+  // Check temp file exists
+  try {
+    const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
+    return fs.existsSync(tempSessionFile);
+  } catch (error) {
+    return false;
+  }
+}
+
+// Reset session timeout (10 minutes from now)
+function resetSessionTimeout(sessionId) {
+  // Clear existing timer
+  if (sessionCleanupTimers.has(sessionId)) {
+    clearTimeout(sessionCleanupTimers.get(sessionId));
+  }
+  
+  // Set new cleanup timer
+  const timer = setTimeout(() => {
+    console.log(`🕒 Session timeout: cleaning up ${sessionId}`);
+    clearSessionGames(sessionId);
+  }, SESSION_TIMEOUT);
+  
+  sessionCleanupTimers.set(sessionId, timer);
 }
 
 module.exports = {
