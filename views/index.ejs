@@ -502,8 +502,7 @@
     localStorage.setItem('slotForge_customGames', JSON.stringify(games));
     localStorage.setItem('slotForge_hasCustomGames', 'true');
     
-    // Sync to server session immediately
-    syncCustomGamesToServer(games);
+    // Note: Redis storage handles persistence automatically
   }
   
   function loadCustomGames() {
@@ -520,41 +519,11 @@
     localStorage.removeItem('slotForge_hasCustomGames');
   }
   
-  // Sync custom games from localStorage to server session
+  // Note: Redis handles storage directly, no client sync needed
   async function syncCustomGamesToServer(games = null) {
-    if (!games) {
-      games = loadCustomGames();
-    }
-    
-    if (!games || games.length === 0) {
-      console.log('No custom games to sync');
-      return;
-    }
-    
-    console.log(`Syncing ${games.length} custom games to server...`);
-    
-    try {
-      const response = await fetch('/api/sync-custom-games', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Session-ID': sessionId
-        },
-        body: JSON.stringify({ games: games })
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to sync custom games to server:', response.statusText);
-        return false;
-      }
-      
-      const result = await response.json();
-      console.log('Sync result:', result);
-      return true;
-    } catch (error) {
-      console.error('Error syncing custom games:', error);
-      return false;
-    }
+    // No-op: Games are stored in Redis globally, no sync required
+    console.log('Sync bypassed - using Redis global storage');
+    return true;
   }
 
   // Detect and send timezone and system theme
@@ -1166,8 +1135,7 @@
     // Load custom games and update dropdown (custom games take priority)
     updateGameDropdown();
     
-    // Sync any existing custom games to server on page load
-    syncCustomGamesToServer();
+    // Note: Redis storage is globally accessible, no sync needed
     
     // Load saved custom prompt
     const customPromptField = document.getElementById('customPrompt');

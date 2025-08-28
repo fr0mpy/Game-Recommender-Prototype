@@ -365,7 +365,33 @@ app.post("/generate", async (req, res) => {
 });
 
 
-// Note: sync-custom-games endpoint removed - using Redis global storage instead
+// KV connection test endpoint
+app.get("/api/debug-kv", async (req, res) => {
+  const debug = {
+    kvExists: !!kv,
+    envVars: {
+      vercel: !!process.env.VERCEL,
+      kvRestUrl: !!process.env.KV_REST_API_URL,
+      kvRestToken: !!process.env.KV_REST_API_TOKEN
+    },
+    timestamp: new Date().toISOString()
+  };
+  
+  if (kv) {
+    try {
+      await kv.set('test:ping', 'pong');
+      const result = await kv.get('test:ping');
+      debug.kvTest = result === 'pong' ? 'SUCCESS' : `FAILED: got ${result}`;
+      await kv.del('test:ping');
+    } catch (error) {
+      debug.kvTest = `ERROR: ${error.message}`;
+    }
+  } else {
+    debug.kvTest = 'KV_CLIENT_NOT_AVAILABLE';
+  }
+  
+  res.json(debug);
+});
 
 // Validate session games are available
 app.post("/api/validate-session-games", async (req, res) => {
