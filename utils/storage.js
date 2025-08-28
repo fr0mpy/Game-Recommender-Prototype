@@ -3,24 +3,30 @@ const path = require('path');
 
 const GAMES_FILE = path.join(__dirname, '..', 'data', 'games.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'user-settings.json');
-const TEMP_GAMES_DIR = path.join(__dirname, '..', 'data', 'temp-sessions');
 
-// In-memory session storage for temporary games
+// Vercel KV for serverless-compatible session storage
+let kv = null;
+try {
+  // Only import KV in serverless environments
+  if (process.env.VERCEL || process.env.KV_REST_API_URL) {
+    kv = require('@vercel/kv').kv;
+  }
+} catch (error) {
+  console.log('⚠️ Vercel KV not available, using memory fallback');
+}
+
+// Fallback in-memory storage for local development
 const sessionGames = new Map();
 
 // Temporary file storage with cleanup mechanism
 const sessionCleanupTimers = new Map();
 const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
-// Ensure temp directory exists
-function ensureTempDir() {
-  try {
-    if (!fs.existsSync(TEMP_GAMES_DIR)) {
-      fs.mkdirSync(TEMP_GAMES_DIR, { recursive: true });
-    }
-  } catch (error) {
-    console.log('Could not create temp directory (serverless limitation):', error.message);
-  }
+// Note: Custom games directory approach removed due to Vercel "no fs" constraint
+// Keeping function for backwards compatibility but returns false
+function ensureCustomGamesDir() {
+  console.log('⚠️ Custom games directory creation disabled (Vercel no-fs constraint)');
+  return false;
 }
 
 // Default weight configuration
@@ -58,28 +64,29 @@ function saveGames(games) {
   }
 }
 
-function loadGames(sessionId = null) {
+async function loadGames(sessionId = null) {
   try {
     // If sessionId provided, try multiple sources in priority order
     if (sessionId) {
-      // 1. Check in-memory first (fastest)
+      // 1. Try KV storage first (serverless persistence)
+      if (kv) {
+        try {
+          const kvGames = await kv.get(`session:${sessionId}`);
+          if (kvGames && Array.isArray(kvGames)) {
+            // Also cache in memory for faster subsequent access
+            sessionGames.set(sessionId, kvGames);
+            console.log(`✅ Loaded ${kvGames.length} games from KV storage for session: ${sessionId}`);
+            return kvGames;
+          }
+        } catch (kvError) {
+          console.log(`⚠️ KV storage error: ${kvError.message}, trying memory fallback`);
+        }
+      }
+      
+      // 2. Check in-memory fallback (local development or KV failure)
       if (sessionGames.has(sessionId)) {
         console.log(`✅ Loaded ${sessionGames.get(sessionId).length} games from memory for session: ${sessionId}`);
         return sessionGames.get(sessionId);
-      }
-      
-      // 2. Try loading from temporary file (persistence across cold starts)
-      const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
-      if (fs.existsSync(tempSessionFile)) {
-        const tempData = fs.readFileSync(tempSessionFile, 'utf8');
-        const tempGames = JSON.parse(tempData);
-        
-        // Restore to memory for fast access
-        sessionGames.set(sessionId, tempGames);
-        resetSessionTimeout(sessionId); // Reset cleanup timer
-        
-        console.log(`✅ Restored ${tempGames.length} games from temp file for session: ${sessionId}`);
-        return tempGames;
       }
       
       console.log(`⚠️ No session games found for: ${sessionId}, falling back to defaults`);
@@ -192,62 +199,72 @@ function loadSettings() {
   }
 }
 
-// Session-based game storage functions with dual persistence
-function saveSessionGames(sessionId, games) {
-  // 1. Store in memory (fast access)
+// Session-based game storage functions (KV + memory hybrid)
+async function saveSessionGames(sessionId, games) {
+  // 1. Store in KV storage with TTL (serverless persistence)
+  if (kv) {
+    try {
+      // Set with 10 minute expiration (600 seconds)
+      await kv.setex(`session:${sessionId}`, 600, games);
+      console.log(`✅ Saved ${games.length} games to KV storage for session: ${sessionId}`);
+    } catch (kvError) {
+      console.log(`⚠️ KV storage save error: ${kvError.message}, using memory fallback`);
+    }
+  }
+  
+  // 2. Also store in memory for fast local access
   sessionGames.set(sessionId, games);
   
-  // 2. Store in temporary file (survives cold starts)
-  try {
-    ensureTempDir();
-    const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
-    fs.writeFileSync(tempSessionFile, JSON.stringify(games, null, 2));
-    
-    // Set cleanup timer (10 minutes)
-    resetSessionTimeout(sessionId);
-    
-    console.log(`✅ Saved ${games.length} games for session: ${sessionId} (memory + temp file)`);
-  } catch (error) {
-    console.log(`⚠️ Could not save temp file (serverless limitation), using memory only: ${error.message}`);
-  }
+  // 3. Set cleanup timer for memory (10 minutes)
+  resetSessionTimeout(sessionId);
+  
+  console.log(`✅ Saved ${games.length} games for session: ${sessionId} (KV + memory)`);
 }
 
-function clearSessionGames(sessionId) {
-  // Clear from memory
-  sessionGames.delete(sessionId);
-  
-  // Clear temp file
-  try {
-    const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
-    if (fs.existsSync(tempSessionFile)) {
-      fs.unlinkSync(tempSessionFile);
+async function clearSessionGames(sessionId) {
+  // 1. Clear from KV storage
+  if (kv) {
+    try {
+      await kv.del(`session:${sessionId}`);
+      console.log(`✅ Cleared KV storage for session: ${sessionId}`);
+    } catch (kvError) {
+      console.log(`⚠️ KV storage clear error: ${kvError.message}`);
     }
-  } catch (error) {
-    console.log(`Could not delete temp file: ${error.message}`);
   }
   
-  // Clear cleanup timer
+  // 2. Clear from memory
+  sessionGames.delete(sessionId);
+  
+  // 3. Clear cleanup timer
   if (sessionCleanupTimers.has(sessionId)) {
     clearTimeout(sessionCleanupTimers.get(sessionId));
     sessionCleanupTimers.delete(sessionId);
   }
   
-  console.log(`✅ Cleared session games and temp file for: ${sessionId}`);
+  console.log(`✅ Cleared session games for: ${sessionId} (KV + memory)`);
 }
 
-function hasSessionGames(sessionId) {
-  // Check memory first
+async function hasSessionGames(sessionId) {
+  // 1. Check memory first (fastest)
   if (sessionGames.has(sessionId)) {
     return true;
   }
   
-  // Check temp file exists
-  try {
-    const tempSessionFile = path.join(TEMP_GAMES_DIR, `${sessionId}.json`);
-    return fs.existsSync(tempSessionFile);
-  } catch (error) {
-    return false;
+  // 2. Check KV storage (serverless persistence)
+  if (kv) {
+    try {
+      const kvGames = await kv.get(`session:${sessionId}`);
+      if (kvGames && Array.isArray(kvGames)) {
+        // Cache in memory for future access
+        sessionGames.set(sessionId, kvGames);
+        return true;
+      }
+    } catch (kvError) {
+      console.log(`⚠️ KV storage check error: ${kvError.message}`);
+    }
   }
+  
+  return false;
 }
 
 // Reset session timeout (10 minutes from now)
@@ -258,9 +275,9 @@ function resetSessionTimeout(sessionId) {
   }
   
   // Set new cleanup timer
-  const timer = setTimeout(() => {
+  const timer = setTimeout(async () => {
     console.log(`🕒 Session timeout: cleaning up ${sessionId}`);
-    clearSessionGames(sessionId);
+    await clearSessionGames(sessionId);
   }, SESSION_TIMEOUT);
   
   sessionCleanupTimers.set(sessionId, timer);

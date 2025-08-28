@@ -207,9 +207,9 @@ function renderError(res, error) {
 // Routes
 
 // Home page (with message handling)
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   try {
-    const games = loadGames(req.sessionId); // Load session-specific games if available
+    const games = await loadGames(req.sessionId); // Load session-specific games if available
     const settings = loadSettings();
 
     let message = null;
@@ -259,7 +259,7 @@ app.post("/generate", async (req, res) => {
     // Prevent concurrent generations for the same session
     if (activeGenerations.has(req.sessionId)) {
       console.log(`🚫 SERVER: Generation already in progress for session: ${req.sessionId}`);
-      const games = loadGames(req.sessionId);
+      const games = await loadGames(req.sessionId);
       const settings = loadSettings();
       return res.render("index", {
         games,
@@ -289,7 +289,7 @@ app.post("/generate", async (req, res) => {
     console.log('🔍 SERVER: Generated games count:', games?.length);
     
     // Save generated games to SESSION ONLY - NEVER overwrite main games.json file
-    saveSessionGames(req.sessionId, games); // Keep session copy for this user
+    await saveSessionGames(req.sessionId, games); // Keep session copy for this user
     
     console.log(`✅ Generated ${games.length} fresh games for session ${req.sessionId}`);
     
@@ -342,7 +342,7 @@ app.post("/generate", async (req, res) => {
     } else {
       // Traditional error page for non-AJAX requests
       console.log('📤 SERVER: Returning error page for traditional request');
-      const games = loadGames(req.sessionId);
+      const games = await loadGames(req.sessionId);
       const settings = loadSettings();
       console.log('🔍 SERVER: Loaded games count for error page:', games?.length);
       console.log('🔍 SERVER: Loaded settings for error page:', settings);
@@ -366,7 +366,7 @@ app.post("/generate", async (req, res) => {
 
 
 // Sync custom games from client to server session
-app.post("/api/sync-custom-games", (req, res) => {
+app.post("/api/sync-custom-games", async (req, res) => {
   try {
     const { games } = req.body;
     const sessionId = req.sessionId;
@@ -383,8 +383,8 @@ app.post("/api/sync-custom-games", (req, res) => {
       return res.json({ success: true, message: 'No games to sync' });
     }
     
-    // Save to session storage (memory only in serverless)
-    saveSessionGames(sessionId, games);
+    // Save to session storage (KV + memory)
+    await saveSessionGames(sessionId, games);
     
     console.log(`✅ Successfully synced ${games.length} games for session ${sessionId}`);
     res.json({ success: true, message: `Synced ${games.length} games` });
@@ -395,13 +395,13 @@ app.post("/api/sync-custom-games", (req, res) => {
 });
 
 // Validate session games are available
-app.post("/api/validate-session-games", (req, res) => {
+app.post("/api/validate-session-games", async (req, res) => {
   try {
     const { gameIds } = req.body;
     const sessionId = req.sessionId;
     
-    const sessionGames = loadGames(sessionId);
-    const hasSession = hasSessionGames(sessionId);
+    const sessionGames = await loadGames(sessionId);
+    const hasSession = await hasSessionGames(sessionId);
     
     const validation = {
       hasSessionGames: hasSession,
@@ -538,9 +538,9 @@ app.post("/recommend", async (req, res) => {
 });
 
 // Export routes
-app.get("/export/json", (req, res) => {
+app.get("/export/json", async (req, res) => {
   try {
-    const games = loadGames(req.sessionId);
+    const games = await loadGames(req.sessionId);
 
     if (games.length === 0) {
       return res.redirect("/?error=No games available for export");
@@ -554,9 +554,9 @@ app.get("/export/json", (req, res) => {
   }
 });
 
-app.get("/export/csv", (req, res) => {
+app.get("/export/csv", async (req, res) => {
   try {
-    const games = loadGames(req.sessionId);
+    const games = await loadGames(req.sessionId);
 
     if (games.length === 0) {
       return res.redirect("/?error=No games available for export");
@@ -637,7 +637,7 @@ app.post("/api/enhance-explanations", async (req, res) => {
     const { selectedGameId, recommendations, weights, playerContext } = req.body;
     
     // Load all games for context (using session if available)
-    const allGames = loadGames(req.sessionId);
+    const allGames = await loadGames(req.sessionId);
     const selectedGame = allGames.find(g => g.id === selectedGameId);
     
     if (!selectedGame || !recommendations || !Array.isArray(recommendations)) {
