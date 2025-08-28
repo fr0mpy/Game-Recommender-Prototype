@@ -360,22 +360,62 @@ function validateGameGenerationPrompt(prompt) {
   
   const lowercased = prompt.toLowerCase();
   
-  // Check for non-game generation requests
+  // Check for non-game generation requests - comprehensive guardrails
   const nonGamePatterns = [
+    // Technical/Development requests
     /write.*(?:code|function|script|program)/,
     /create.*(?:website|app|application|database)/,
     /build.*(?:system|platform|tool)/,
-    /explain.*(?:how to|concept|algorithm)/,
-    /help.*(?:with|me)/,
-    /what.*(?:is|are|does)/,
-    /tell.*(?:me|about)/,
-    /calculate|compute|solve/,
-    /translate|convert/,
-    /summarize|analyze/,
-    /research|find.*information/,
-    /send.*email|make.*call/,
+    /install|download|update/,
     /access.*file|read.*document/,
-    /install|download|update/
+    
+    // Entertainment & Creative Content
+    /^(?:sing|song|music|poem|poetry|story|write.*story|tell.*story|novel|book)/i,
+    /^(?:joke|funny|laugh|comedy|humor|pun|riddle)/i,
+    /^(?:dance|perform|act|play.*instrument|concert|show)/i,
+    /^(?:draw|paint|sketch|art|design.*logo|create.*image)/i,
+    
+    // General Questions & Information Requests
+    /^(?:what|who|when|where|why|how|explain|define|describe)/i,
+    /^(?:tell me|help me|show me|teach me|inform me)/i,
+    /^(?:can you|could you|would you|will you|please)/i,
+    /^(?:do you|are you|have you|did you)/i,
+    
+    // Conversational & Social
+    /^(?:hello|hi|hey|good morning|good evening|greetings)/i,
+    /^(?:how are you|what's up|what do you think|how do you feel)/i,
+    /^(?:thank you|thanks|bye|goodbye|see you|farewell)/i,
+    /^(?:nice to meet|pleased to meet|good to see)/i,
+    
+    // Academic & Analysis (non-game)
+    /^(?:analyze|research|study|investigate|compare|contrast)/i,
+    /^(?:summarize|review|critique|evaluate|assess)/i,
+    /^(?:calculate|compute|solve|equation|math|formula)/i,
+    /^(?:translate|convert|transform)/i,
+    
+    // Personal & Life Advice
+    /^(?:should I|what should|advice|recommend|suggest)/i,
+    /^(?:my life|personal|relationship|career|health)/i,
+    /^(?:feel|emotion|sad|happy|angry|worried)/i,
+    
+    // Weather, News & Current Events
+    /^(?:weather|news|today|yesterday|tomorrow|current)/i,
+    /^(?:politics|election|government|president|minister)/i,
+    /^(?:stock|market|economy|finance|investment)/i,
+    
+    // Food & Lifestyle
+    /^(?:recipe|cook|food|eat|restaurant|meal)/i,
+    /^(?:travel|vacation|trip|visit|destination)/i,
+    /^(?:exercise|workout|fitness|diet|weight)/i,
+    
+    // System & Meta requests
+    /^(?:ignore|disregard|forget|override|bypass)/i,
+    /^(?:you are now|act as|pretend to be|roleplay)/i,
+    /^(?:change your|modify your|update your)/i,
+    
+    // Communication requests
+    /send.*email|make.*call|contact|reach out/,
+    /post.*social|tweet|facebook|instagram/
   ];
   
   // Check if request is clearly not about game generation
@@ -385,7 +425,7 @@ function validateGameGenerationPrompt(prompt) {
   if (containsNonGameRequest && !containsGameKeywords) {
     return { 
       valid: false, 
-      error: 'This tool can only generate slot games. Please enter a prompt requesting fictional slot game generation (e.g., "Generate 50 sports-themed slot games" or "Create ocean and pirate themed casino games").' 
+      error: 'This tool generates fictional slot games only. Please request slot game generation instead (e.g., "Generate 50 sports-themed slot games", "Create fantasy adventure slots", or "Make casino games with Egyptian themes").' 
     };
   }
   
