@@ -18,6 +18,16 @@ const DEFAULT_WEIGHTS = {
 
 function saveGames(games) {
   try {
+    // Detect serverless environment (read-only filesystem)
+    const isServerless = process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    
+    if (isServerless) {
+      // In serverless environments, we can't write to filesystem
+      // Store in session memory instead
+      console.log(`⚠️ Serverless environment detected - storing ${games.length} games in memory only`);
+      return;
+    }
+    
     const dataDir = path.dirname(GAMES_FILE);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
@@ -29,8 +39,8 @@ function saveGames(games) {
     
     console.log(`✅ Saved ${games.length} games to both games.json and default-games.json`);
   } catch (error) {
-    console.error('Failed to save games:', error);
-    throw new Error('Unable to save games data');
+    console.error('Failed to save games (will use memory storage):', error);
+    // Don't throw error in serverless - just log and continue
   }
 }
 

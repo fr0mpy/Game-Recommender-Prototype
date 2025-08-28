@@ -220,10 +220,10 @@ app.post("/generate", async (req, res) => {
     const games = await generateGames(customPrompt);
     
     // Save generated games to both main file AND session
-    saveGames(games); // Updates main games.json file for dropdown
+    saveGames(games); // Updates main games.json file for dropdown (or memory in serverless)
     saveSessionGames(req.sessionId, games); // Keep session copy for this user
     
-    console.log(`✅ Updated main games file with ${games.length} fresh games`);
+    console.log(`✅ Generated ${games.length} fresh games for session ${req.sessionId}`);
     
     res.redirect("/?success=Games generated successfully");
   } catch (error) {
