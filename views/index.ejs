@@ -184,7 +184,7 @@
       📊 Game Dataset Generation
     </h2>
 
-    <form method="POST" action="/generate" class="space-y-4">
+    <form method="POST" action="/generate" class="space-y-4" id="generateForm">
       <div class="flex items-start justify-between gap-6">
         <div class="flex-1">
           <p class="text-casino-dark text-opacity-70 mb-2">
@@ -204,9 +204,7 @@
             rows="3"
             class="w-full p-3 border border-gray-300 rounded-md focus:ring-casino focus:border-casino"
             placeholder="Enter your custom prompt for generating slot games..."
-          >
-Generate 100 fictional slot games using AI</textarea
-          >
+          ><%= customPrompt || 'Generate 100 slot games' %></textarea>
           <p class="text-xs text-casino-dark text-opacity-60 mt-1">
             Customize how the AI generates your games.
           </p>
@@ -214,10 +212,9 @@ Generate 100 fictional slot games using AI</textarea
 
         <div class="flex flex-col gap-3">
           <button
-            type="submit"
+            type="button"
             id="generateButton"
-            onclick="handleGenerateSubmit(event)"
-            class="bg-casino-dark hover:bg-casino text-white font-bold py-2 px-4 rounded transition duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span id="generateButtonText">🤖 Generate Games</span>
             <span id="generateButtonSpinner" class="hidden">
@@ -317,8 +314,8 @@ Generate 100 fictional slot games using AI</textarea
           <option value="">Choose a game...</option>
           <% games.forEach(game => { %>
           <option value="<%= game.id %>">
-            <%= game.title %> - <%= game.studio %> (<%= game.volatility %>
-            volatility, <%= game.rtp %>% RTP)
+            <%- game.title %> - <%- game.studio %> (<%- game.volatility %>
+            volatility, <%- game.rtp %>% RTP)
           </option>
           <% }) %>
         </select>
@@ -492,6 +489,26 @@ Generate 100 fictional slot games using AI</textarea
 <script>
   // Session and context tracking
   const sessionId = "<%= sessionId %>";
+  
+  // Custom games storage in localStorage
+  function saveCustomGames(games) {
+    localStorage.setItem('slotForge_customGames', JSON.stringify(games));
+    localStorage.setItem('slotForge_hasCustomGames', 'true');
+  }
+  
+  function loadCustomGames() {
+    const hasCustom = localStorage.getItem('slotForge_hasCustomGames');
+    if (hasCustom === 'true') {
+      const customGames = localStorage.getItem('slotForge_customGames');
+      return customGames ? JSON.parse(customGames) : null;
+    }
+    return null;
+  }
+  
+  function clearCustomGames() {
+    localStorage.removeItem('slotForge_customGames');
+    localStorage.removeItem('slotForge_hasCustomGames');
+  }
 
   // Detect and send timezone and system theme
   function detectAndSendClientContext() {
@@ -628,73 +645,142 @@ Generate 100 fictional slot games using AI</textarea
     textarea.classList.add('border-gray-300', 'focus:border-casino', 'focus:ring-casino');
   }
 
+  // Progress source for Server-Sent Events (declared in broader scope)
+  let progressSource = null;
+
   function handleGenerateSubmit(event) {
-    event.preventDefault();
-
-    const customPromptField = document.getElementById("customPrompt");
-    const customPrompt = customPromptField.value.trim();
+    console.log('🚀 handleGenerateSubmit called - JavaScript working!');
+    console.log('Event type:', event.type);
+    console.log('Event target:', event.target);
     
-    // Validate prompt is for game generation only
-    if (customPrompt && !isGameGenerationPrompt(customPrompt)) {
-      showPromptError('This tool can only generate slot games. Please enter a prompt requesting fictional slot game generation (e.g., "Generate 50 sports-themed slot games" or "Create ocean and pirate themed casino games").');
-      return;
-    }
-    
-    // Clear any previous error
-    clearPromptError();
-
-    const button = document.getElementById("generateButton");
-    const buttonText = document.getElementById("generateButtonText");
-    const buttonSpinner = document.getElementById("generateButtonSpinner");
+    // Get UI elements in function scope (accessible to .then() and .catch() handlers)
     const progressArea = document.getElementById("generationProgress");
-    const progressMessage = document.getElementById("progressMessage");
+    const progressMessage = document.getElementById("progressMessage");  
     const progressBar = document.getElementById("progressBar");
-
-    // Show loading state
-    button.disabled = true;
-    buttonText.classList.add("hidden");
-    buttonSpinner.classList.remove("hidden");
-
-    // Show progress area
-    progressArea.classList.remove("hidden");
-
-    // Simulate progress for large generation
-    const customPrompt = document.getElementById("customPrompt").value;
-    const isLargeGeneration = customPrompt.includes("100");
-
-    if (isLargeGeneration) {
-      let progress = 0;
-      const progressInterval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 90) {
-          progress = 90;
-          clearInterval(progressInterval);
-          progressMessage.textContent = "Finalizing generation...";
-        }
-        progressBar.style.width = progress + "%";
-
-        if (progress <= 20) {
-          progressMessage.textContent = "Starting chunked generation...";
-        } else if (progress <= 40) {
-          progressMessage.textContent = "Generating chunk 1 of 5...";
-        } else if (progress <= 60) {
-          progressMessage.textContent = "Generating chunk 3 of 5...";
-        } else if (progress <= 80) {
-          progressMessage.textContent = "Generating final chunks...";
-        }
-      }, 800);
-
-      // Store interval for cleanup
-      window.generationInterval = progressInterval;
-    } else {
-      // Small generation
-      progressMessage.textContent = "Generating games...";
-      progressBar.style.width = "30%";
+    const button = document.getElementById("generateButton");
+    
+    try {
+      event.preventDefault();
+      console.log('✅ preventDefault called');
+      
+      // Show progress immediately
+      console.log('🔧 Looking for progress elements...');
+      
+      console.log('Progress elements found:', {
+        progressArea: !!progressArea,
+        progressMessage: !!progressMessage,
+        progressBar: !!progressBar
+      });
+      
+      if (progressArea) {
+        progressArea.classList.remove("hidden");
+        console.log('✅ Progress area shown');
+      } else {
+        console.error('❌ Progress area not found!');
+      }
+      
+      if (progressMessage) {
+        progressMessage.textContent = "Starting generation...";
+        console.log('✅ Progress message updated');
+      }
+      
+      if (progressBar) {
+        progressBar.style.width = "10%";
+        console.log('✅ Progress bar width set to 10%');
+      }
+      
+    } catch (error) {
+      console.error('❌ Error in handleGenerateSubmit:', error);
     }
 
-    // Submit the form
-    const form = event.target.closest("form");
-    form.submit();
+    // Set button state (button already declared in function scope)
+    if (button) {
+      button.disabled = true;
+      button.textContent = "⏳ Generating...";
+      button.classList.remove("bg-blue-600", "hover:bg-blue-700");
+      button.classList.add("bg-gray-400", "cursor-not-allowed");
+    }
+
+    // Submit form via AJAX to get games JSON and store in localStorage  
+    const form = document.getElementById("generateForm");
+    const formData = new FormData(form);
+    const urlEncoded = new URLSearchParams(formData);
+    
+    fetch('/generate', {
+      method: 'POST',
+      headers: {
+        'X-Session-ID': sessionId,
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: urlEncoded
+    })
+    .then(response => {
+      console.log('🔍 Fetch response received:', response.status, response.statusText);
+      console.log('🔍 Response headers:', response.headers);
+      console.log('🔍 Response content-type:', response.headers.get('content-type'));
+      return response.json();
+    })
+    .then(data => {
+      console.log('🔍 JSON parsing successful, data:', data);
+      // Close progress stream
+      if (progressSource) {
+        progressSource.close();
+      }
+      
+      // Reset button state
+      button.disabled = false;
+      button.textContent = "🎯 Generate Games";
+      button.classList.remove("bg-gray-400", "cursor-not-allowed");
+      button.classList.add("bg-blue-600", "hover:bg-blue-700");
+      
+      // Hide progress area
+      progressArea.classList.add("hidden");
+      
+      if (data.success) {
+        // Save generated games to localStorage
+        saveCustomGames(data.games);
+        
+        // Brief delay to show completion
+        setTimeout(() => {
+          window.location.href = `/?success=${encodeURIComponent(data.message)}&prompt=${encodeURIComponent(data.prompt)}`;
+        }, 500);
+      } else {
+        // Handle error
+        setTimeout(() => {
+          window.location.href = `/?error=${encodeURIComponent(data.message || 'Generation failed')}`;
+        }, 500);
+      }
+    })
+    .catch(error => {
+      // Reset button state on error
+      button.disabled = false;
+      button.textContent = "🎯 Generate Games";
+      button.classList.remove("bg-gray-400", "cursor-not-allowed");
+      button.classList.add("bg-blue-600", "hover:bg-blue-700");
+      
+      console.error('Generation failed:', error);
+      
+      // Provide more descriptive error messages based on error type
+      let errorMessage = 'Generation failed. Please try again.';
+      
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        errorMessage = 'Connection failed - please check your internet connection and try again.';
+      } else if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
+        errorMessage = 'Server response error - please refresh the page and try again.';
+      } else if (error.message && error.message.includes('rate limit')) {
+        errorMessage = 'Rate limit exceeded - please wait a moment and try again.';
+      } else if (error.message && error.message.includes('timeout')) {
+        errorMessage = 'Request timed out - please try again with fewer games or check your connection.';
+      } else if (error.message && error.message.includes('API key')) {
+        errorMessage = 'Configuration error - please contact support.';
+      } else if (error.message) {
+        errorMessage = `Generation failed: ${error.message}`;
+      }
+      
+      window.location.href = `/?error=${encodeURIComponent(errorMessage)}`;
+    });
   }
 
   function showProgressNotification(message, type = "info") {
@@ -735,8 +821,130 @@ Generate 100 fictional slot games using AI</textarea
   }
 
 
+  // Update game dropdown with custom games if available
+  function updateGameDropdown() {
+    const gameSelect = document.getElementById('gameId');
+    if (!gameSelect) return;
+    
+    const customGames = loadCustomGames();
+    
+    // Clear existing options except the first one ("Select a game...")
+    while (gameSelect.children.length > 1) {
+      gameSelect.removeChild(gameSelect.lastChild);
+    }
+    
+    if (customGames && customGames.length > 0) {
+      // Custom games take priority - add them first
+      customGames.forEach(game => {
+        const option = document.createElement('option');
+        option.value = game.id;
+        option.textContent = `${game.title} - ${game.studio} (${game.volatility} volatility, ${game.rtp}% RTP)`;
+        gameSelect.appendChild(option);
+      });
+      
+      // Add separator between custom and default games
+      const separator = document.createElement('option');
+      separator.disabled = true;
+      separator.textContent = '--- Default Games ---';
+      gameSelect.appendChild(separator);
+      
+      // Add default games after custom ones
+      <% games.forEach(function(game, index) { %>
+        const defaultOption<%= index %> = document.createElement('option');
+        defaultOption<%= index %>.value = '<%= game.id %>';
+        defaultOption<%= index %>.textContent = '<%= game.title %> - <%= game.studio %> (<%= game.volatility %> volatility, <%= game.rtp %>% RTP)';
+        gameSelect.appendChild(defaultOption<%= index %>);
+      <% }); %>
+      
+      // Update dataset count display to show custom games count
+      const countDisplay = document.querySelector('span.font-bold.text-casino');
+      if (countDisplay) {
+        countDisplay.textContent = customGames.length;
+      }
+    } else {
+      // No custom games - just show default games
+      <% games.forEach(function(game, index) { %>
+        const defaultGameOption<%= index %> = document.createElement('option');
+        defaultGameOption<%= index %>.value = '<%= game.id %>';
+        defaultGameOption<%= index %>.textContent = '<%= game.title %> - <%= game.studio %> (<%= game.volatility %> volatility, <%= game.rtp %>% RTP)';
+        gameSelect.appendChild(defaultGameOption<%= index %>);
+      <% }); %>
+    }
+  }
+
+  // Save custom prompt to sessionStorage
+  function saveCustomPrompt(prompt) {
+    sessionStorage.setItem('slotForge_customPrompt', prompt);
+  }
+  
+  // Load custom prompt from sessionStorage
+  function loadCustomPrompt() {
+    return sessionStorage.getItem('slotForge_customPrompt') || '';
+  }
+
   // Load saved preferences on page load
   document.addEventListener("DOMContentLoaded", function () {
+    console.log("🔧 DOM loaded, starting initialization...");
+    
+    // Load custom games and update dropdown (custom games take priority)
+    updateGameDropdown();
+    
+    // Load saved custom prompt
+    const customPromptField = document.getElementById('customPrompt');
+    if (customPromptField) {
+      const savedPrompt = loadCustomPrompt();
+      if (savedPrompt) {
+        customPromptField.value = savedPrompt;
+      }
+      
+      // Save prompt on every change
+      customPromptField.addEventListener('input', function() {
+        saveCustomPrompt(this.value);
+        
+        // Clear error when user starts typing
+        const existingError = document.getElementById('prompt-error');
+        if (existingError) {
+          clearPromptError();
+        }
+      });
+    }
+    
+    // CRITICAL: Attach button click handler via JavaScript
+    console.log("🔧 Looking for generateButton...");
+    const generateButton = document.getElementById('generateButton');
+    if (generateButton) {
+      console.log("✅ Found generateButton, attaching click handler");
+      console.log("Button element:", generateButton);
+      console.log("Button disabled?", generateButton.disabled);
+      console.log("Button style display:", getComputedStyle(generateButton).display);
+      
+      // Test basic click detection first
+      generateButton.addEventListener('click', function(event) {
+        alert('BUTTON CLICKED - JavaScript working!');
+        console.log('🔥 BUTTON CLICKED! Handler triggered');
+        console.log('Event details:', event);
+        handleGenerateSubmit(event);
+      });
+      console.log("✅ Click handler attached successfully");
+      
+      // Also try mousedown as backup
+      generateButton.addEventListener('mousedown', function() {
+        console.log('🖱️ MOUSEDOWN detected on button');
+      });
+      
+      // Also try mouseup
+      generateButton.addEventListener('mouseup', function() {
+        console.log('🖱️ MOUSEUP detected on button');
+        console.log('Manually triggering handleGenerateSubmit...');
+        handleGenerateSubmit({ type: 'mouseup', target: generateButton, preventDefault: () => {} });
+      });
+      
+    } else {
+      console.error('❌ Generate button not found!');
+      console.log('Available buttons:', document.querySelectorAll('button'));
+    }
+    
+    // Load saved slider preferences
     const savedPrefs = JSON.parse(
       localStorage.getItem("slotForge_weightPrefs") || "{}"
     );
@@ -752,16 +960,15 @@ Generate 100 fictional slot games using AI</textarea
     // Detect and send client context
     detectAndSendClientContext();
     
-    // Add event listener to clear error when user starts typing
-    const customPromptField = document.getElementById('customPrompt');
-    if (customPromptField) {
-      customPromptField.addEventListener('input', function() {
-        const existingError = document.getElementById('prompt-error');
-        if (existingError) {
-          clearPromptError();
-        }
-      });
-    }
+    console.log("🔧 Initialization complete. Checking all elements...");
+    console.log("Elements check:", {
+      generateButton: !!document.getElementById('generateButton'),
+      generateForm: !!document.getElementById('generateForm'),
+      progressArea: !!document.getElementById('generationProgress'),
+      progressMessage: !!document.getElementById('progressMessage'),
+      progressBar: !!document.getElementById('progressBar'),
+      customPrompt: !!document.getElementById('customPrompt')
+    });
   });
 </script>
 

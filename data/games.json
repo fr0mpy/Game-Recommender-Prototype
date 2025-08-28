@@ -1,3251 +1,3102 @@
 [
   {
-    "id": "game-001",
-    "title": "Stadium Rush",
-    "studio": "Champion Sports Gaming",
+    "id": "default-001",
+    "title": "Dragon's Fortune",
+    "studio": "Mythic Gaming",
     "theme": [
-      "Football",
-      "Stadium",
-      "Championship"
-    ],
-    "volatility": "medium",
-    "rtp": 96.1,
-    "maxWin": 8500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Win Multiplier Ladder"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Experience the thrill of championship football with wild goal celebrations and multiplying victory bonuses"
-  },
-  {
-    "id": "game-002",
-    "title": "Basketball Legends",
-    "studio": "Court Kings Studios",
-    "theme": [
-      "Basketball",
-      "Sports",
-      "Arena"
-    ],
-    "volatility": "high",
-    "rtp": 95.7,
-    "maxWin": 12000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Cascading Reels",
-      "Wild Symbols",
-      "Free Spins"
-    ],
-    "features": [
-      "Multi-Level Bonus"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.24,
-    "bonusFrequency": 0.005,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Slam dunk your way to victory with cascading hoops and legendary player free spin features"
-  },
-  {
-    "id": "game-003",
-    "title": "Racing Thunder",
-    "studio": "Velocity Gaming",
-    "theme": [
-      "Racing",
-      "Cars",
-      "Speed"
-    ],
-    "volatility": "ultra",
-    "rtp": 94.8,
-    "maxWin": 25000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Respins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Progressive Jackpot"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.16,
-    "bonusFrequency": 0.004,
-    "artStyle": "3D realistic",
-    "audioVibe": "Rock/metal",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Rev your engines for high-octane wins with expanding race car wilds and jackpot finish lines"
-  },
-  {
-    "id": "game-004",
-    "title": "Golden Goals",
-    "studio": "Premier Slots Co",
-    "theme": [
-      "Football",
-      "World Cup",
-      "Trophy"
-    ],
-    "volatility": "medium",
-    "rtp": 96.4,
-    "maxWin": 7500,
-    "reelLayout": "5x3",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.31,
-    "bonusFrequency": 0.008,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Score legendary wins in this World Cup inspired adventure with golden boot free spins"
-  },
-  {
-    "id": "game-005",
-    "title": "Tennis Championship",
-    "studio": "Ace Gaming Studios",
-    "theme": [
-      "Tennis",
-      "Tournament",
-      "Wimbledon"
-    ],
-    "volatility": "low",
-    "rtp": 97.2,
-    "maxWin": 3500,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Random Modifiers"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.38,
-    "bonusFrequency": 0.012,
-    "artStyle": "Minimalist/clean",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Serve up consistent wins on the championship courts with gentle multipliers and frequent rewards"
-  },
-  {
-    "id": "game-006",
-    "title": "Hockey Heroes",
-    "studio": "Ice Storm Games",
-    "theme": [
-      "Hockey",
-      "Ice Arena",
-      "Championship"
-    ],
-    "volatility": "high",
-    "rtp": 95.9,
-    "maxWin": 15000,
-    "reelLayout": "6x4",
-    "paylines": 64,
-    "mechanics": [
-      "Megaways",
-      "Wild Symbols",
-      "Free Spins"
-    ],
-    "features": [
-      "Sticky Wilds"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.21,
-    "bonusFrequency": 0.006,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Power play your way to victory with dynamic megaways and sticky wild puck symbols"
-  },
-  {
-    "id": "game-007",
-    "title": "Olympic Glory",
-    "studio": "Champion Sports Gaming",
-    "theme": [
-      "Olympics",
-      "Multi-Sport",
-      "Medal"
-    ],
-    "volatility": "medium",
-    "rtp": 96,
-    "maxWin": 10000,
-    "reelLayout": "5x4",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection"
-    ],
-    "features": [
-      "Multi-Level Bonus"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.29,
-    "bonusFrequency": 0.007,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Compete across multiple Olympic events collecting medals for progressive bonus rounds"
-  },
-  {
-    "id": "game-008",
-    "title": "Baseball Diamond",
-    "studio": "Home Run Studios",
-    "theme": [
-      "Baseball",
-      "Stadium",
-      "World Series"
-    ],
-    "volatility": "medium",
-    "rtp": 95.5,
-    "maxWin": 6000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Respins"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.33,
-    "bonusFrequency": 0.009,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Step up to the plate for home run wins with wild pitcher throws and grand slam respins"
-  },
-  {
-    "id": "game-009",
-    "title": "Golf Masters",
-    "studio": "Green Fairway Games",
-    "theme": [
-      "Golf",
-      "Tournament",
-      "Country Club"
-    ],
-    "volatility": "low",
-    "rtp": 96.8,
-    "maxWin": 4000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [],
-    "pace": "slow",
-    "hitFrequency": 0.41,
-    "bonusFrequency": 0.011,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Perfect your swing on pristine fairways with gentle multipliers and hole-in-one free spins"
-  },
-  {
-    "id": "game-010",
-    "title": "Boxing Ring",
-    "studio": "Knockout Gaming",
-    "theme": [
-      "Boxing",
-      "Championship",
-      "Arena"
-    ],
-    "volatility": "ultra",
-    "rtp": 94.2,
-    "maxWin": 30000,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Hold & Win",
-      "Multipliers"
-    ],
-    "features": [
-      "Progressive Jackpot"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.14,
-    "bonusFrequency": 0.003,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Rock/metal",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Enter the ring for knockout punches and championship belt jackpots with hold and win rounds"
-  },
-  {
-    "id": "game-011",
-    "title": "Surfing Paradise",
-    "studio": "Wave Rider Studios",
-    "theme": [
-      "Surfing",
-      "Beach",
-      "Ocean"
-    ],
-    "volatility": "medium",
-    "rtp": 96.3,
-    "maxWin": 8000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Cascading Reels",
-      "Wild Symbols",
-      "Free Spins"
-    ],
-    "features": [
-      "Walking Wilds"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.27,
-    "bonusFrequency": 0.008,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Ride the perfect wave with cascading ocean wins and walking wild surfer symbols"
-  },
-  {
-    "id": "game-012",
-    "title": "Cycling Tour",
-    "studio": "Pedal Power Games",
-    "theme": [
-      "Cycling",
-      "Mountain",
-      "Tour de France"
-    ],
-    "volatility": "medium",
-    "rtp": 95.8,
-    "maxWin": 9000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Symbol Collection"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.3,
-    "bonusFrequency": 0.007,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Pedal through mountain stages collecting yellow jersey symbols for expanding win combinations"
-  },
-  {
-    "id": "game-013",
-    "title": "Swimming Champions",
-    "studio": "Aquatic Gaming",
-    "theme": [
-      "Swimming",
-      "Pool",
-      "Olympics"
-    ],
-    "volatility": "low",
-    "rtp": 97.1,
-    "maxWin": 3000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [
-      "Random Modifiers"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.39,
-    "bonusFrequency": 0.013,
-    "artStyle": "3D realistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Dive into victory lanes with smooth swimming strokes and frequent medal-winning combinations"
-  },
-  {
-    "id": "game-014",
-    "title": "Ski Slopes",
-    "studio": "Alpine Adventures",
-    "theme": [
-      "Skiing",
-      "Winter Olympics",
-      "Mountains"
-    ],
-    "volatility": "high",
-    "rtp": 95.4,
-    "maxWin": 18000,
-    "reelLayout": "5x4",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Bonus Buy"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.23,
-    "bonusFrequency": 0.005,
-    "artStyle": "3D realistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Carve through powder snow with downhill multipliers and alpine free spin adventures"
-  },
-  {
-    "id": "game-015",
-    "title": "Volleyball Beach",
-    "studio": "Sand Court Gaming",
-    "theme": [
-      "Volleyball",
-      "Beach",
-      "Summer Olympics"
-    ],
-    "volatility": "medium",
-    "rtp": 96.2,
-    "maxWin": 7000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Respins",
-      "Multipliers"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.32,
-    "bonusFrequency": 0.009,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Spike your way to beach volleyball glory with sun-soaked respins and multiplying net wins"
-  },
-  {
-    "id": "game-016",
-    "title": "Martial Arts Dojo",
-    "studio": "Fighting Spirit Games",
-    "theme": [
-      "Martial Arts",
-      "Dojo",
-      "Tournament"
-    ],
-    "volatility": "high",
-    "rtp": 95.6,
-    "maxWin": 14000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Multi-Level Bonus"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.25,
-    "bonusFrequency": 0.006,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Cultural/ethnic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Master ancient fighting techniques with expanding kata symbols and multi-belt bonus rounds"
-  },
-  {
-    "id": "game-017",
-    "title": "Track & Field Stars",
-    "studio": "Olympic Dreams Studio",
-    "theme": [
-      "Track and Field",
-      "Athletics",
-      "Stadium"
-    ],
-    "volatility": "medium",
-    "rtp": 96,
-    "maxWin": 9500,
-    "reelLayout": "6x3",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Cascading Reels"
-    ],
-    "features": [
-      "Symbol Collection"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.008,
-    "artStyle": "3D realistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Sprint to victory across multiple track events with cascading medal wins and record-breaking bonuses"
-  },
-  {
-    "id": "game-018",
-    "title": "Fishing Tournament",
-    "studio": "Angler's Paradise Gaming",
-    "theme": [
-      "Fishing",
-      "Lake",
-      "Tournament"
-    ],
-    "volatility": "low",
-    "rtp": 96.9,
-    "maxWin": 4500,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [],
-    "pace": "slow",
-    "hitFrequency": 0.42,
-    "bonusFrequency": 0.014,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Cast your line for peaceful lake wins with gentle wild fish symbols and serene free spin rounds"
-  },
-  {
-    "id": "game-019",
-    "title": "Extreme Sports",
-    "studio": "Adrenaline Rush Games",
-    "theme": [
-      "Extreme Sports",
-      "Skateboard",
-      "BMX"
-    ],
-    "volatility": "ultra",
-    "rtp": 94.5,
-    "maxWin": 35000,
-    "reelLayout": "5x4",
-    "paylines": 25,
-    "mechanics": [
-      "Cluster Pays",
-      "Wild Symbols",
-      "Multipliers"
-    ],
-    "features": [
-      "Progressive Jackpot",
-      "Bonus Buy"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.18,
-    "bonusFrequency": 0.004,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Push the limits with radical cluster pays and progressive jackpot tricks in extreme sports action"
-  },
-  {
-    "id": "game-020",
-    "title": "Rugby Legends",
-    "studio": "Scrum Gaming Studios",
-    "theme": [
-      "Rugby",
-      "World Cup",
-      "Stadium"
-    ],
-    "volatility": "medium",
-    "rtp": 95.9,
-    "maxWin": 11000,
-    "reelLayout": "5x3",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Hold & Win"
-    ],
-    "features": [
-      "Progressive Multipliers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.26,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Tackle your way to championship glory with hold and win scrums and progressive try multipliers"
-  },
-  {
-    "id": "game-021",
-    "title": "Championship Glory",
-    "studio": "Stadium Studios",
-    "theme": [
-      "Football",
-      "Sports",
-      "Championship"
-    ],
-    "volatility": "medium",
-    "rtp": 95.8,
-    "maxWin": 7500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Score big wins with football-themed symbols and championship multipliers in this high-energy sports slot"
-  },
-  {
-    "id": "game-022",
-    "title": "Mystic Dragons",
-    "studio": "Fantasy Forge",
-    "theme": [
-      "Dragons",
       "Fantasy",
-      "Magic"
+      "Dragons"
     ],
-    "volatility": "high",
-    "rtp": 96.4,
-    "maxWin": 12000,
+    "volatility": "low",
+    "rtp": 96.32177355948535,
+    "maxWin": 2200,
     "reelLayout": "5x4",
-    "paylines": 40,
+    "paylines": 20,
     "mechanics": [
-      "Expanding Symbols",
-      "Wild Symbols",
-      "Cascading"
+      "Wild",
+      "Scatter"
     ],
     "features": [
-      "Multi-Level Bonus",
-      "Sticky Wilds"
+      "Bonus Round",
+      "Progressive"
     ],
-    "pace": "medium",
-    "hitFrequency": 0.24,
-    "bonusFrequency": 0.005,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
+    "pace": "slow",
+    "hitFrequency": 31.548684255916363,
+    "bonusFrequency": 0.8126675958858249,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
     "mobileOptimized": true,
     "releaseYear": 2023,
-    "description": "Unleash the power of ancient dragons with expanding symbols and magical cascading wins"
+    "description": "Epic fantasy adventure with magical creatures and enchanted rewards."
   },
   {
-    "id": "game-023",
-    "title": "Basketball Legends",
-    "studio": "Sports Central Gaming",
+    "id": "default-002",
+    "title": "Mystic Realms",
+    "studio": "Frontier Studios",
     "theme": [
-      "Basketball",
-      "Sports",
-      "Arena"
+      "Western",
+      "Gold Mining"
     ],
     "volatility": "medium",
-    "rtp": 95.2,
+    "rtp": 95.48757601469521,
+    "maxWin": 6400,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 22.71854335118268,
+    "bonusFrequency": 0.8300835561355759,
+    "artStyle": "Cartoon",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Strike it rich in the Old West with expanding reels and gold rush bonuses."
+  },
+  {
+    "id": "default-003",
+    "title": "Enchanted Forest",
+    "studio": "Cosmic Entertainment",
+    "theme": [
+      "Ancient",
+      "Egypt"
+    ],
+    "volatility": "high",
+    "rtp": 94.66240964086289,
     "maxWin": 6000,
     "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Respins",
-      "Multipliers"
-    ],
-    "features": [
-      "Bonus Buy"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.32,
-    "bonusFrequency": 0.008,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Slam dunk your way to victory with basketball-themed respins and arena atmosphere"
-  },
-  {
-    "id": "game-024",
-    "title": "Ocean Treasures",
-    "studio": "Aqua Gaming",
-    "theme": [
-      "Ocean",
-      "Underwater",
-      "Adventure"
-    ],
-    "volatility": "low",
-    "rtp": 94.8,
-    "maxWin": 3500,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [],
-    "pace": "slow",
-    "hitFrequency": 0.38,
-    "bonusFrequency": 0.012,
-    "artStyle": "3D realistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Dive deep into ocean treasures with gentle waves of frequent wins and peaceful underwater ambiance"
-  },
-  {
-    "id": "game-025",
-    "title": "Racing Thunder",
-    "studio": "Velocity Games",
-    "theme": [
-      "Racing",
-      "Cars",
-      "Speed"
-    ],
-    "volatility": "high",
-    "rtp": 96.8,
-    "maxWin": 15000,
-    "reelLayout": "5x3",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Walking Wilds"
-    ],
-    "features": [
-      "Progressive Jackpot"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.21,
-    "bonusFrequency": 0.004,
-    "artStyle": "3D realistic",
-    "audioVibe": "Rock/metal",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Feel the adrenaline rush with high-speed racing action and progressive jackpot opportunities"
-  },
-  {
-    "id": "game-026",
-    "title": "Golden Pharaoh",
-    "studio": "Ancient Wonders",
-    "theme": [
-      "Egypt",
-      "Pharaoh",
-      "Ancient"
-    ],
-    "volatility": "medium",
-    "rtp": 95.6,
-    "maxWin": 8000,
-    "reelLayout": "5x4",
     "paylines": 30,
     "mechanics": [
-      "Wild Symbols",
-      "Expanding Symbols",
-      "Free Spins"
+      "Expanding Reels",
+      "Cascade"
     ],
     "features": [
-      "Symbol Collection"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.29,
-    "bonusFrequency": 0.006,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "standard",
-    "mobileOptimized": false,
-    "releaseYear": 2021,
-    "description": "Uncover ancient Egyptian treasures with expanding pharaoh symbols and mysterious bonus collections"
-  },
-  {
-    "id": "game-027",
-    "title": "Soccer World Cup",
-    "studio": "Global Sports Gaming",
-    "theme": [
-      "Soccer",
-      "World Cup",
-      "Tournament"
-    ],
-    "volatility": "medium",
-    "rtp": 96.1,
-    "maxWin": 9000,
-    "reelLayout": "5x3",
-    "paylines": 243,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Gamble Feature",
-      "Random Modifiers"
+      "Pick Feature",
+      "Gamble"
     ],
     "pace": "fast",
-    "hitFrequency": 0.31,
-    "bonusFrequency": 0.009,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Experience World Cup excitement with 243 ways to win and tournament-style bonus features"
-  },
-  {
-    "id": "game-028",
-    "title": "Fruit Fiesta Classic",
-    "studio": "Retro Reels",
-    "theme": [
-      "Fruit",
-      "Classic",
-      "Traditional"
-    ],
-    "volatility": "low",
-    "rtp": 93.8,
-    "maxWin": 2500,
-    "reelLayout": "3x3",
-    "paylines": 5,
-    "mechanics": [
-      "Wild Symbols"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.42,
-    "bonusFrequency": 0.015,
-    "artStyle": "Retro/pixel",
-    "audioVibe": "Retro/chiptune",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2020,
-    "description": "Classic fruit machine nostalgia with simple gameplay and frequent small wins for traditional players"
-  },
-  {
-    "id": "game-029",
-    "title": "Tennis Grand Slam",
-    "studio": "Court Games",
-    "theme": [
-      "Tennis",
-      "Sports",
-      "Tournament"
-    ],
-    "volatility": "medium",
-    "rtp": 95.4,
-    "maxWin": 6500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Respins"
-    ],
-    "features": [],
-    "pace": "medium",
-    "hitFrequency": 0.33,
-    "bonusFrequency": 0.01,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Serve up winning combinations in this tennis-themed slot with Grand Slam tournament atmosphere"
-  },
-  {
-    "id": "game-030",
-    "title": "Vampire's Castle",
-    "studio": "Dark Moon Studios",
-    "theme": [
-      "Horror",
-      "Vampire",
-      "Gothic"
-    ],
-    "volatility": "ultra",
-    "rtp": 97.2,
-    "maxWin": 25000,
-    "reelLayout": "5x4",
-    "paylines": 1024,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Megaways"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Multi-Level Bonus"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.16,
-    "bonusFrequency": 0.003,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Enter the vampire's lair with ultra-high volatility Megaways and spine-chilling bonus features"
-  },
-  {
-    "id": "game-031",
-    "title": "Lucky Pandas",
-    "studio": "Eastern Fortune",
-    "theme": [
-      "Panda",
-      "Asian",
-      "Lucky"
-    ],
-    "volatility": "low",
-    "rtp": 94.2,
-    "maxWin": 4000,
-    "reelLayout": "5x3",
-    "paylines": 18,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [
-      "Symbol Collection"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.36,
-    "bonusFrequency": 0.014,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Cultural/ethnic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Find fortune with adorable pandas in this gentle Asian-themed slot with lucky symbol collections"
-  },
-  {
-    "id": "game-032",
-    "title": "Hockey Heroes",
-    "studio": "Ice Rink Gaming",
-    "theme": [
-      "Hockey",
-      "Ice",
-      "Sports"
-    ],
-    "volatility": "high",
-    "rtp": 96.6,
-    "maxWin": 11000,
-    "reelLayout": "5x3",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Hold & Win"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.26,
-    "bonusFrequency": 0.005,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Score championship wins with hockey-themed action and ice-cold Hold & Win features"
-  },
-  {
-    "id": "game-033",
-    "title": "Space Odyssey",
-    "studio": "Cosmic Gaming",
-    "theme": [
-      "Space",
-      "Sci-Fi",
-      "Future"
-    ],
-    "volatility": "medium",
-    "rtp": 95.9,
-    "maxWin": 7800,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Wild Symbols",
-      "Cascading",
-      "Free Spins"
-    ],
-    "features": [
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.27,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Journey through the cosmos with cascading wins and futuristic random modifier features"
-  },
-  {
-    "id": "game-034",
-    "title": "Baseball Stadium",
-    "studio": "Diamond Games",
-    "theme": [
-      "Baseball",
-      "Stadium",
-      "Sports"
-    ],
-    "volatility": "medium",
-    "rtp": 95.7,
-    "maxWin": 8500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Win Multiplier Ladder"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.3,
-    "bonusFrequency": 0.008,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Hit home runs with expanding baseball symbols and climbing win multiplier ladders"
-  },
-  {
-    "id": "game-035",
-    "title": "Wild Safari",
-    "studio": "Nature's Best",
-    "theme": [
-      "Safari",
-      "Animals",
-      "Africa"
-    ],
-    "volatility": "medium",
-    "rtp": 96,
-    "maxWin": 9500,
-    "reelLayout": "5x4",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [],
-    "pace": "medium",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.009,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Explore the African wilderness with majestic animals and wild multiplier adventures"
-  },
-  {
-    "id": "game-036",
-    "title": "Neon City",
-    "studio": "Urban Lights",
-    "theme": [
-      "City",
-      "Neon",
-      "Modern"
-    ],
-    "volatility": "high",
-    "rtp": 96.9,
-    "maxWin": 14000,
-    "reelLayout": "6x4",
-    "paylines": 64,
-    "mechanics": [
-      "Wild Symbols",
-      "Cluster Pays",
-      "Cascading"
-    ],
-    "features": [
-      "Bonus Buy"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.23,
-    "bonusFrequency": 0.004,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
+    "hitFrequency": 23.635413380813596,
+    "bonusFrequency": 0.8864028154534433,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Ambient Electronic",
     "visualDensity": "busy",
     "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Light up the night in this vibrant city-themed slot with cluster pays and neon-bright features"
+    "releaseYear": 2023,
+    "description": "Uncover ancient treasures and pharaoh's gold in this Egyptian adventure."
   },
   {
-    "id": "game-037",
-    "title": "Golf Championship",
-    "studio": "Green Gaming",
-    "theme": [
-      "Golf",
-      "Sports",
-      "Tournament"
-    ],
-    "volatility": "low",
-    "rtp": 94.6,
-    "maxWin": 5000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.34,
-    "bonusFrequency": 0.011,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Perfect your swing in this relaxing golf-themed slot with championship tournament atmosphere"
-  },
-  {
-    "id": "game-038",
-    "title": "Pirate's Gold",
-    "studio": "Treasure Hunt Games",
+    "id": "default-004",
+    "title": "Crystal Kingdom",
+    "studio": "Ocean Deep Games",
     "theme": [
       "Pirates",
-      "Treasure",
-      "Adventure"
-    ],
-    "volatility": "high",
-    "rtp": 97.1,
-    "maxWin": 18000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Progressive Jackpot",
-      "Multi-Level Bonus"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.22,
-    "bonusFrequency": 0.003,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": false,
-    "releaseYear": 2023,
-    "description": "Set sail for treasure with expanding pirate symbols and multi-level progressive jackpot adventures"
-  },
-  {
-    "id": "game-039",
-    "title": "Boxing Ring",
-    "studio": "Fight Night Studios",
-    "theme": [
-      "Boxing",
-      "Sports",
-      "Combat"
-    ],
-    "volatility": "ultra",
-    "rtp": 97.8,
-    "maxWin": 30000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Hold & Win"
-    ],
-    "features": [
-      "Bonus Buy"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.18,
-    "bonusFrequency": 0.002,
-    "artStyle": "3D realistic",
-    "audioVibe": "Rock/metal",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Enter the ring for championship glory with ultra-high volatility and knockout Hold & Win features"
-  },
-  {
-    "id": "game-040",
-    "title": "Cherry Blossoms",
-    "studio": "Zen Gardens",
-    "theme": [
-      "Nature",
-      "Japanese",
-      "Flowers"
+      "Treasure"
     ],
     "volatility": "low",
-    "rtp": 93.5,
-    "maxWin": 3000,
-    "reelLayout": "5x3",
-    "paylines": 10,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins"
-    ],
-    "features": [],
-    "pace": "slow",
-    "hitFrequency": 0.4,
-    "bonusFrequency": 0.016,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2021,
-    "description": "Find peace among blooming cherry blossoms with gentle gameplay and frequent small wins"
-  },
-  {
-    "id": "game-041",
-    "title": "Championship Glory",
-    "studio": "Sports Vision Games",
-    "theme": [
-      "Football",
-      "Championship",
-      "Victory"
-    ],
-    "volatility": "medium",
-    "rtp": 95.8,
-    "maxWin": 8500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Progressive Multipliers",
-      "Gamble Feature"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Experience the thrill of championship football with progressive multipliers and victory celebrations in every spin"
-  },
-  {
-    "id": "game-042",
-    "title": "Basketball Slam Dunk",
-    "studio": "Court Masters Gaming",
-    "theme": [
-      "Basketball",
-      "Sports Arena",
-      "Competition"
-    ],
-    "volatility": "high",
-    "rtp": 96.4,
-    "maxWin": 12000,
+    "rtp": 97.1546590591037,
+    "maxWin": 2900,
     "reelLayout": "5x4",
     "paylines": 40,
     "mechanics": [
-      "Expanding Wilds",
-      "Cascading Reels",
-      "Free Spins"
+      "Pick Bonus",
+      "Respins"
     ],
     "features": [
-      "Bonus Buy",
-      "Multi-Level Bonus"
+      "Bonus Wheel",
+      "Cash Collect"
     ],
-    "pace": "fast",
-    "hitFrequency": 0.24,
-    "bonusFrequency": 0.005,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
+    "pace": "slow",
+    "hitFrequency": 15.716016202214963,
+    "bonusFrequency": 0.8835173005820187,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
     "mobileOptimized": true,
     "releaseYear": 2024,
-    "description": "Shoot for the stars with cascading slam dunk wins and expanding court wilds in this high-energy basketball adventure"
+    "description": "Set sail for treasure with pirate captains and hidden gold."
   },
   {
-    "id": "game-043",
-    "title": "Racing Thunder",
-    "studio": "Speed Track Studios",
+    "id": "default-005",
+    "title": "Magic Quest",
+    "studio": "Adventure Studios",
     "theme": [
-      "Car Racing",
-      "Speed",
-      "Adrenaline"
+      "Space",
+      "Aliens"
     ],
-    "volatility": "ultra",
-    "rtp": 96.1,
-    "maxWin": 25000,
+    "volatility": "medium",
+    "rtp": 96.47091063121866,
+    "maxWin": 6600,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 15.412893821772617,
+    "bonusFrequency": 1.7185709581922617,
+    "artStyle": "Stylized",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Explore alien worlds and cosmic rewards in this space odyssey."
+  },
+  {
+    "id": "default-006",
+    "title": "Fairy Tale Spins",
+    "studio": "Norse Gaming",
+    "theme": [
+      "Underwater",
+      "Ocean"
+    ],
+    "volatility": "high",
+    "rtp": 97.13324278317226,
+    "maxWin": 6800,
     "reelLayout": "5x3",
     "paylines": 20,
     "mechanics": [
-      "Wild Symbols",
-      "Respins",
-      "Multipliers"
+      "Megaways",
+      "Hold & Win"
     ],
     "features": [
-      "Hold & Win",
-      "Random Modifiers"
+      "Buy Feature",
+      "Ante Bet"
     ],
     "pace": "fast",
-    "hitFrequency": 0.18,
-    "bonusFrequency": 0.004,
-    "artStyle": "3D realistic",
-    "audioVibe": "Rock/metal",
+    "hitFrequency": 16.79597243511371,
+    "bonusFrequency": 1.271075470211648,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Dive deep for ocean treasures and mermaid's bounty."
+  },
+  {
+    "id": "default-007",
+    "title": "Wizard's Tower",
+    "studio": "Enchanted Slots",
+    "theme": [
+      "Jungle",
+      "Adventure"
+    ],
+    "volatility": "low",
+    "rtp": 94.62403231698875,
+    "maxWin": 3000,
+    "reelLayout": "5x4",
+    "paylines": 25,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 25.27974285380436,
+    "bonusFrequency": 1.726388274088674,
+    "artStyle": "Cartoon",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Navigate the wild jungle to discover ancient temple treasures."
+  },
+  {
+    "id": "default-008",
+    "title": "Phoenix Rising",
+    "studio": "Gem Works",
+    "theme": [
+      "Norse",
+      "Vikings"
+    ],
+    "volatility": "medium",
+    "rtp": 95.63209587330091,
+    "maxWin": 7800,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 27.69930480585609,
+    "bonusFrequency": 1.9904891557561095,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Join Viking warriors in their quest for Valhalla's riches."
+  },
+  {
+    "id": "default-009",
+    "title": "Unicorn Dreams",
+    "studio": "Classic Gaming",
+    "theme": [
+      "Magic",
+      "Wizards"
+    ],
+    "volatility": "high",
+    "rtp": 95.24236076014695,
+    "maxWin": 5300,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 31.961349372958054,
+    "bonusFrequency": 1.7594444930960242,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Ambient Electronic",
     "visualDensity": "busy",
     "mobileOptimized": true,
     "releaseYear": 2023,
-    "description": "Feel the rush of high-speed racing with thunderous wins and adrenaline-pumping hold and win features"
+    "description": "Cast powerful spells and unlock mystical rewards."
   },
   {
-    "id": "game-044",
-    "title": "Soccer World Cup",
-    "studio": "Global Sports Gaming",
+    "id": "default-010",
+    "title": "Magical Crystals",
+    "studio": "Wild Studios",
     "theme": [
-      "Soccer",
-      "World Cup",
-      "International"
+      "Gems",
+      "Jewels"
+    ],
+    "volatility": "low",
+    "rtp": 96.05370962163018,
+    "maxWin": 3800,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 25.337343757515285,
+    "bonusFrequency": 0.8652600203176641,
+    "artStyle": "Stylized",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Hunt for precious gems and sparkling diamond wins."
+  },
+  {
+    "id": "default-011",
+    "title": "Gold Rush Valley",
+    "studio": "Mystery House",
+    "theme": [
+      "Fruits",
+      "Classic"
     ],
     "volatility": "medium",
-    "rtp": 95.5,
+    "rtp": 95.6806267996077,
+    "maxWin": 9900,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 20.829019129896764,
+    "bonusFrequency": 0.6557799913421207,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-012",
+    "title": "Wild West Showdown",
+    "studio": "Dark Moon Games",
+    "theme": [
+      "Animals",
+      "Safari"
+    ],
+    "volatility": "high",
+    "rtp": 96.28915062791556,
+    "maxWin": 9700,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 21.671975145730134,
+    "bonusFrequency": 2.4931596107461798,
+    "artStyle": "Cartoon",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-013",
+    "title": "Cowboy's Luck",
+    "studio": "Romance Studios",
+    "theme": [
+      "Mystery",
+      "Detective"
+    ],
+    "volatility": "low",
+    "rtp": 96.23780080424999,
+    "maxWin": 8800,
+    "reelLayout": "5x4",
+    "paylines": 30,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 19.497150093242826,
+    "bonusFrequency": 0.5030894002844564,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-014",
+    "title": "Desert Fortune",
+    "studio": "Rock Gaming",
+    "theme": [
+      "Horror",
+      "Gothic"
+    ],
+    "volatility": "medium",
+    "rtp": 96.05644467073803,
+    "maxWin": 5700,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 19.978093622836546,
+    "bonusFrequency": 1.0862991841973195,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-015",
+    "title": "Saloon Riches",
+    "studio": "Gourmet Games",
+    "theme": [
+      "Romance",
+      "Love"
+    ],
+    "volatility": "high",
+    "rtp": 96.75087322196178,
+    "maxWin": 8600,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 29.997786699690472,
+    "bonusFrequency": 0.7422541264726794,
+    "artStyle": "Stylized",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-016",
+    "title": "Bandit's Bounty",
+    "studio": "Explorer Entertainment",
+    "theme": [
+      "Music",
+      "Rock"
+    ],
+    "volatility": "low",
+    "rtp": 94.65176999760504,
+    "maxWin": 3300,
+    "reelLayout": "5x4",
+    "paylines": 20,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 25.690724092236685,
+    "bonusFrequency": 2.3968358790236053,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-017",
+    "title": "Sheriff's Gold",
+    "studio": "Castle Gaming",
+    "theme": [
+      "Food",
+      "Cooking"
+    ],
+    "volatility": "medium",
+    "rtp": 95.23520394226992,
+    "maxWin": 7300,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 19.279445733806337,
+    "bonusFrequency": 1.2210900189621516,
+    "artStyle": "Cartoon",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-018",
+    "title": "Outlaw's Escape",
+    "studio": "Future Studios",
+    "theme": [
+      "Travel",
+      "Exploration"
+    ],
+    "volatility": "high",
+    "rtp": 95.8683078712131,
+    "maxWin": 8300,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 19.553903381633088,
+    "bonusFrequency": 2.2272990174241274,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-019",
+    "title": "Mining Fever",
+    "studio": "Epic Games",
+    "theme": [
+      "Medieval",
+      "Knights"
+    ],
+    "volatility": "low",
+    "rtp": 96.22553960851975,
+    "maxWin": 7700,
+    "reelLayout": "5x4",
+    "paylines": 40,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 31.25075091265707,
+    "bonusFrequency": 1.510077929899412,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-020",
+    "title": "Frontier Justice",
+    "studio": "Dream Works Gaming",
+    "theme": [
+      "Futuristic",
+      "Cyberpunk"
+    ],
+    "volatility": "medium",
+    "rtp": 97.47312629546944,
+    "maxWin": 6000,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 31.346451454920054,
+    "bonusFrequency": 1.7292973519666908,
+    "artStyle": "Stylized",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-021",
+    "title": "Pharaoh's Gold",
+    "studio": "Mythic Gaming",
+    "theme": [
+      "Fantasy",
+      "Dragons"
+    ],
+    "volatility": "high",
+    "rtp": 95.21686164469592,
+    "maxWin": 5100,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 20.885355644562615,
+    "bonusFrequency": 2.2733568676290408,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Epic fantasy adventure with magical creatures and enchanted rewards."
+  },
+  {
+    "id": "default-022",
+    "title": "Temple of Riches",
+    "studio": "Frontier Studios",
+    "theme": [
+      "Western",
+      "Gold Mining"
+    ],
+    "volatility": "low",
+    "rtp": 97.49691701039708,
+    "maxWin": 6600,
+    "reelLayout": "5x4",
+    "paylines": 25,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 16.320723231011918,
+    "bonusFrequency": 2.2394595965780013,
+    "artStyle": "Cartoon",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Strike it rich in the Old West with expanding reels and gold rush bonuses."
+  },
+  {
+    "id": "default-023",
+    "title": "Egyptian Treasures",
+    "studio": "Cosmic Entertainment",
+    "theme": [
+      "Ancient",
+      "Egypt"
+    ],
+    "volatility": "medium",
+    "rtp": 96.75250877970872,
+    "maxWin": 3300,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 31.970000723150772,
+    "bonusFrequency": 1.3019980400889244,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Uncover ancient treasures and pharaoh's gold in this Egyptian adventure."
+  },
+  {
+    "id": "default-024",
+    "title": "Pyramid Quest",
+    "studio": "Ocean Deep Games",
+    "theme": [
+      "Pirates",
+      "Treasure"
+    ],
+    "volatility": "high",
+    "rtp": 95.54289111043093,
+    "maxWin": 2000,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 16.945024136592146,
+    "bonusFrequency": 1.3913427391229671,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Set sail for treasure with pirate captains and hidden gold."
+  },
+  {
+    "id": "default-025",
+    "title": "Cleopatra's Jewels",
+    "studio": "Adventure Studios",
+    "theme": [
+      "Space",
+      "Aliens"
+    ],
+    "volatility": "low",
+    "rtp": 95.07513726675188,
+    "maxWin": 7100,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 17.94849322144821,
+    "bonusFrequency": 2.375123368485542,
+    "artStyle": "Stylized",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Explore alien worlds and cosmic rewards in this space odyssey."
+  },
+  {
+    "id": "default-026",
+    "title": "Ancient Scrolls",
+    "studio": "Norse Gaming",
+    "theme": [
+      "Underwater",
+      "Ocean"
+    ],
+    "volatility": "medium",
+    "rtp": 96.01634049349944,
+    "maxWin": 6000,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 22.841049186237296,
+    "bonusFrequency": 1.8984015789960709,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Dive deep for ocean treasures and mermaid's bounty."
+  },
+  {
+    "id": "default-027",
+    "title": "Sphinx Secrets",
+    "studio": "Enchanted Slots",
+    "theme": [
+      "Jungle",
+      "Adventure"
+    ],
+    "volatility": "high",
+    "rtp": 95.66328038354754,
+    "maxWin": 3100,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 29.92921106802936,
+    "bonusFrequency": 2.354230752555812,
+    "artStyle": "Cartoon",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Navigate the wild jungle to discover ancient temple treasures."
+  },
+  {
+    "id": "default-028",
+    "title": "Tomb Raiders",
+    "studio": "Gem Works",
+    "theme": [
+      "Norse",
+      "Vikings"
+    ],
+    "volatility": "low",
+    "rtp": 95.6451352368635,
+    "maxWin": 8400,
+    "reelLayout": "5x4",
+    "paylines": 30,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 28.86217382896586,
+    "bonusFrequency": 1.2181506524499435,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Join Viking warriors in their quest for Valhalla's riches."
+  },
+  {
+    "id": "default-029",
+    "title": "Hieroglyph Hunt",
+    "studio": "Classic Gaming",
+    "theme": [
+      "Magic",
+      "Wizards"
+    ],
+    "volatility": "medium",
+    "rtp": 97.1320753238606,
+    "maxWin": 7500,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 29.204632989165557,
+    "bonusFrequency": 2.279616094020592,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Cast powerful spells and unlock mystical rewards."
+  },
+  {
+    "id": "default-030",
+    "title": "Nile Treasures",
+    "studio": "Wild Studios",
+    "theme": [
+      "Gems",
+      "Jewels"
+    ],
+    "volatility": "high",
+    "rtp": 95.55360855900409,
+    "maxWin": 4800,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 16.12767707502131,
+    "bonusFrequency": 1.4161105522447115,
+    "artStyle": "Stylized",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Hunt for precious gems and sparkling diamond wins."
+  },
+  {
+    "id": "default-031",
+    "title": "Treasure Island",
+    "studio": "Mystery House",
+    "theme": [
+      "Fruits",
+      "Classic"
+    ],
+    "volatility": "low",
+    "rtp": 97.00653136351352,
+    "maxWin": 6800,
+    "reelLayout": "5x4",
+    "paylines": 20,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 24.921987508939857,
+    "bonusFrequency": 1.051047239346445,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-032",
+    "title": "Pirate's Bounty",
+    "studio": "Dark Moon Games",
+    "theme": [
+      "Animals",
+      "Safari"
+    ],
+    "volatility": "medium",
+    "rtp": 95.96280644092373,
+    "maxWin": 2700,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 24.19701115973436,
+    "bonusFrequency": 2.4610926118720307,
+    "artStyle": "Cartoon",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-033",
+    "title": "Skull & Crossbones",
+    "studio": "Romance Studios",
+    "theme": [
+      "Mystery",
+      "Detective"
+    ],
+    "volatility": "high",
+    "rtp": 96.24829931627913,
     "maxWin": 6000,
     "reelLayout": "5x3",
     "paylines": 30,
     "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
+      "Expanding Reels",
+      "Cascade"
     ],
     "features": [
-      "Gamble Feature"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.32,
-    "bonusFrequency": 0.008,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Celebrate the beautiful game with international flair and penalty shootout bonus rounds for championship rewards"
-  },
-  {
-    "id": "game-045",
-    "title": "Tennis Grand Slam",
-    "studio": "Court Masters Gaming",
-    "theme": [
-      "Tennis",
-      "Championship",
-      "Elegance"
-    ],
-    "volatility": "low",
-    "rtp": 94.8,
-    "maxWin": 3500,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Progressive Multipliers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.38,
-    "bonusFrequency": 0.012,
-    "artStyle": "Minimalist/clean",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Ace your way to victory with elegant tennis action and progressive multipliers that build match after match"
-  },
-  {
-    "id": "game-046",
-    "title": "Hockey Ice Storm",
-    "studio": "Winter Sports Studios",
-    "theme": [
-      "Hockey",
-      "Ice Arena",
-      "Winter Sports"
-    ],
-    "volatility": "high",
-    "rtp": 96.8,
-    "maxWin": 15000,
-    "reelLayout": "6x4",
-    "paylines": 50,
-    "mechanics": [
-      "Expanding Symbols",
-      "Free Spins",
-      "Wild Symbols"
-    ],
-    "features": [
-      "Sticky Wilds",
-      "Multi-Level Bonus"
+      "Pick Feature",
+      "Gamble"
     ],
     "pace": "fast",
-    "hitFrequency": 0.26,
-    "bonusFrequency": 0.006,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Power play through icy rinks with expanding symbols and sticky wild pucks that freeze wins in place"
-  },
-  {
-    "id": "game-047",
-    "title": "Olympic Champions",
-    "studio": "Elite Sports Gaming",
-    "theme": [
-      "Olympics",
-      "Multi-Sport",
-      "Achievement"
-    ],
-    "volatility": "medium",
-    "rtp": 96.2,
-    "maxWin": 10000,
-    "reelLayout": "5x4",
-    "paylines": 35,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Win Multiplier Ladder"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.3,
-    "bonusFrequency": 0.009,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Compete across multiple Olympic sports with medal collection features and podium-worthy multiplier ladders"
-  },
-  {
-    "id": "game-048",
-    "title": "Baseball Home Run Hero",
-    "studio": "Diamond Dreams Gaming",
-    "theme": [
-      "Baseball",
-      "Stadium",
-      "American Sports"
-    ],
-    "volatility": "medium",
-    "rtp": 95.1,
-    "maxWin": 7500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Respins"
-    ],
-    "features": [
-      "Walking Wilds",
-      "Gamble Feature"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.29,
-    "bonusFrequency": 0.007,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
+    "hitFrequency": 22.098887690964606,
+    "bonusFrequency": 1.2863985862230356,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
     "mobileOptimized": true,
     "releaseYear": 2023,
-    "description": "Step up to the plate with walking wild batters and grand slam free spins in this classic American pastime"
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-049",
-    "title": "Surfing Paradise",
-    "studio": "Wave Rider Games",
+    "id": "default-034",
+    "title": "Captain's Gold",
+    "studio": "Rock Gaming",
     "theme": [
-      "Surfing",
-      "Beach Sports",
-      "Ocean"
+      "Horror",
+      "Gothic"
     ],
     "volatility": "low",
-    "rtp": 94.3,
-    "maxWin": 4000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Random Modifiers"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.42,
-    "bonusFrequency": 0.011,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Ride the perfect wave with cascading ocean wins and random tide modifiers in this tropical surfing adventure"
-  },
-  {
-    "id": "game-050",
-    "title": "Cricket Championship",
-    "studio": "Wicket Warriors Gaming",
-    "theme": [
-      "Cricket",
-      "International Sports",
-      "Competition"
-    ],
-    "volatility": "medium",
-    "rtp": 95.9,
-    "maxWin": 8000,
-    "reelLayout": "5x4",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Progressive Multipliers",
-      "Symbol Collection"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.31,
-    "bonusFrequency": 0.008,
-    "artStyle": "3D realistic",
-    "audioVibe": "Cultural/ethnic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Bowl strikes and hit sixes with progressive multipliers and wicket collection features in this cricket spectacular"
-  },
-  {
-    "id": "game-051",
-    "title": "Volleyball Beach Party",
-    "studio": "Sand Court Studios",
-    "theme": [
-      "Volleyball",
-      "Beach",
-      "Summer Sports"
-    ],
-    "volatility": "low",
-    "rtp": 93.8,
-    "maxWin": 3000,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Scatter Pays"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.44,
-    "bonusFrequency": 0.014,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Spike your way to beach volleyball victory with sunny scatter pays and tropical free spin celebrations"
-  },
-  {
-    "id": "game-052",
-    "title": "Boxing Ring Knockout",
-    "studio": "Fight Night Gaming",
-    "theme": [
-      "Boxing",
-      "Combat Sports",
-      "Championship"
-    ],
-    "volatility": "high",
-    "rtp": 96.7,
-    "maxWin": 18000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Expanding Wilds",
-      "Respins",
-      "Multipliers"
-    ],
-    "features": [
-      "Hold & Win",
-      "Progressive Multipliers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.23,
-    "bonusFrequency": 0.005,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Rock/metal",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Fight for the championship belt with knockout expanding wilds and progressive power punches"
-  },
-  {
-    "id": "game-053",
-    "title": "Golf Masters Tournament",
-    "studio": "Green Fairway Games",
-    "theme": [
-      "Golf",
-      "Tournament",
-      "Prestige"
-    ],
-    "volatility": "low",
-    "rtp": 94.6,
-    "maxWin": 2500,
-    "reelLayout": "5x3",
-    "paylines": 18,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Win Multiplier Ladder"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.4,
-    "bonusFrequency": 0.013,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Perfect your swing on prestigious courses with hole-in-one multiplier ladders and tournament prestige"
-  },
-  {
-    "id": "game-054",
-    "title": "Swimming Pool Champions",
-    "studio": "Aquatic Sports Gaming",
-    "theme": [
-      "Swimming",
-      "Pool",
-      "Competition"
-    ],
-    "volatility": "medium",
-    "rtp": 95.4,
-    "maxWin": 6500,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Sticky Wilds",
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.33,
-    "bonusFrequency": 0.009,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Dive into victory with cascading pool wins and sticky wild swimmers racing for championship glory"
-  },
-  {
-    "id": "game-055",
-    "title": "Skiing Alpine Adventure",
-    "studio": "Mountain Peak Studios",
-    "theme": [
-      "Skiing",
-      "Winter Sports",
-      "Mountains"
-    ],
-    "volatility": "medium",
-    "rtp": 96,
-    "maxWin": 9000,
+    "rtp": 95.85543011575385,
+    "maxWin": 5900,
     "reelLayout": "5x4",
     "paylines": 40,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
+      "Pick Bonus",
+      "Respins"
     ],
     "features": [
-      "Multi-Level Bonus",
-      "Walking Wilds"
+      "Bonus Wheel",
+      "Cash Collect"
     ],
-    "pace": "fast",
-    "hitFrequency": 0.27,
-    "bonusFrequency": 0.006,
+    "pace": "slow",
+    "hitFrequency": 21.071878108365322,
+    "bonusFrequency": 0.7306013532550257,
     "artStyle": "Photorealistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
     "mobileOptimized": true,
     "releaseYear": 2024,
-    "description": "Carve through powder snow with expanding avalanche symbols and walking wild skiers down the slopes"
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-056",
-    "title": "Track and Field Glory",
-    "studio": "Athletic Arena Games",
+    "id": "default-035",
+    "title": "Black Pearl",
+    "studio": "Gourmet Games",
     "theme": [
-      "Track and Field",
-      "Athletics",
-      "Speed"
+      "Romance",
+      "Love"
     ],
     "volatility": "medium",
-    "rtp": 95.7,
-    "maxWin": 7000,
+    "rtp": 97.31253634426467,
+    "maxWin": 8100,
     "reelLayout": "5x3",
-    "paylines": 25,
+    "paylines": 50,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
+      "Stacked Wilds",
+      "Mystery Symbol"
     ],
     "features": [
-      "Progressive Multipliers",
-      "Symbol Collection"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.3,
-    "bonusFrequency": 0.008,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Sprint to victory with record-breaking multipliers and medal collection features across all track events"
-  },
-  {
-    "id": "game-057",
-    "title": "Cycling Tour Champion",
-    "studio": "Pedal Power Gaming",
-    "theme": [
-      "Cycling",
-      "Racing",
-      "Endurance"
-    ],
-    "volatility": "high",
-    "rtp": 96.5,
-    "maxWin": 14000,
-    "reelLayout": "6x3",
-    "paylines": 30,
-    "mechanics": [
-      "Expanding Wilds",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Multi-Level Bonus"
+      "Super Stacks",
+      "Expanding Symbols"
     ],
     "pace": "medium",
-    "hitFrequency": 0.25,
-    "bonusFrequency": 0.005,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "busy",
+    "hitFrequency": 29.704302631281262,
+    "bonusFrequency": 2.1180786414410075,
+    "artStyle": "Stylized",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
     "mobileOptimized": true,
     "releaseYear": 2023,
-    "description": "Pedal through mountain stages with expanding peloton wilds and cascading victory celebrations"
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-058",
-    "title": "Martial Arts Dojo",
-    "studio": "Warrior Spirit Games",
+    "id": "default-036",
+    "title": "Jolly Roger",
+    "studio": "Explorer Entertainment",
     "theme": [
-      "Martial Arts",
-      "Combat",
-      "Discipline"
+      "Music",
+      "Rock"
     ],
     "volatility": "high",
-    "rtp": 97.1,
-    "maxWin": 16000,
+    "rtp": 96.41488473904596,
+    "maxWin": 9400,
     "reelLayout": "5x3",
     "paylines": 20,
     "mechanics": [
-      "Wild Symbols",
-      "Respins",
-      "Expanding Symbols"
+      "Megaways",
+      "Hold & Win"
     ],
     "features": [
-      "Hold & Win",
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.24,
-    "bonusFrequency": 0.004,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Cultural/ethnic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Master ancient fighting techniques with expanding kata symbols and disciplined hold and win features"
-  },
-  {
-    "id": "game-059",
-    "title": "Stadium Lights",
-    "studio": "Arena Atmosphere Gaming",
-    "theme": [
-      "Stadium",
-      "Sports Atmosphere",
-      "Crowd"
-    ],
-    "volatility": "low",
-    "rtp": 93.5,
-    "maxWin": 3500,
-    "reelLayout": "5x3",
-    "paylines": 10,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Scatter Pays"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.45,
-    "bonusFrequency": 0.015,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Feel the electric atmosphere of packed stadiums with crowd-roaring scatter pays and spotlight free spins"
-  },
-  {
-    "id": "game-060",
-    "title": "Extreme Sports Rush",
-    "studio": "Adrenaline Gaming",
-    "theme": [
-      "Extreme Sports",
-      "Adventure",
-      "Risk"
-    ],
-    "volatility": "ultra",
-    "rtp": 97.8,
-    "maxWin": 50000,
-    "reelLayout": "5x4",
-    "paylines": 50,
-    "mechanics": [
-      "Megaways Dynamic",
-      "Wild Symbols",
-      "Free Spins"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Progressive Jackpot"
+      "Buy Feature",
+      "Ante Bet"
     ],
     "pace": "fast",
-    "hitFrequency": 0.16,
-    "bonusFrequency": 0.003,
-    "artStyle": "3D realistic",
-    "audioVibe": "Rock/metal",
+    "hitFrequency": 25.325355029334023,
+    "bonusFrequency": 2.125789099595626,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Jazz",
     "visualDensity": "busy",
     "mobileOptimized": true,
     "releaseYear": 2024,
-    "description": "Push limits with death-defying megaways action and progressive jackpots that reward the ultimate risk-takers"
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-061",
-    "title": "Championship Glory",
-    "studio": "Victory Sports Games",
+    "id": "default-037",
+    "title": "Buccaneer's Loot",
+    "studio": "Castle Gaming",
     "theme": [
-      "Football",
-      "Championship",
-      "Trophy"
+      "Food",
+      "Cooking"
     ],
-    "volatility": "medium",
-    "rtp": 96.1,
-    "maxWin": 8500,
-    "reelLayout": "5x3",
+    "volatility": "low",
+    "rtp": 95.43850207908349,
+    "maxWin": 7900,
+    "reelLayout": "5x4",
     "paylines": 25,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
+      "Wild",
+      "Scatter"
     ],
     "features": [
-      "Progressive Multipliers",
-      "Bonus Buy"
+      "Bonus Round",
+      "Progressive"
     ],
-    "pace": "fast",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
+    "pace": "slow",
+    "hitFrequency": 15.507774142539574,
+    "bonusFrequency": 2.1471684981572388,
+    "artStyle": "Cartoon",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
     "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Experience the thrill of championship football with progressive multipliers and trophy bonus rounds in this high-energy slot",
-    "sportsInfluence": "Football championship theme with stadium atmosphere and trophy symbols"
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-062",
-    "title": "Mystic Dragons",
-    "studio": "Mythical Reels Co",
+    "id": "default-038",
+    "title": "Parrot's Prize",
+    "studio": "Future Studios",
     "theme": [
-      "Dragons",
+      "Travel",
+      "Exploration"
+    ],
+    "volatility": "medium",
+    "rtp": 96.21928856632273,
+    "maxWin": 5100,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 32.986686450561564,
+    "bonusFrequency": 1.6568787256986885,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-039",
+    "title": "Kraken's Curse",
+    "studio": "Epic Games",
+    "theme": [
+      "Medieval",
+      "Knights"
+    ],
+    "volatility": "high",
+    "rtp": 96.81438292839486,
+    "maxWin": 6100,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 17.45101063166155,
+    "bonusFrequency": 2.0754009061219327,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-040",
+    "title": "Ship of Gold",
+    "studio": "Dream Works Gaming",
+    "theme": [
+      "Futuristic",
+      "Cyberpunk"
+    ],
+    "volatility": "low",
+    "rtp": 94.97841095668251,
+    "maxWin": 8800,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 23.08736699908379,
+    "bonusFrequency": 1.5289266632587295,
+    "artStyle": "Stylized",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-041",
+    "title": "Galactic Fortune",
+    "studio": "Mythic Gaming",
+    "theme": [
       "Fantasy",
-      "Magic"
-    ],
-    "volatility": "high",
-    "rtp": 95.4,
-    "maxWin": 12000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Expanding Wilds",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Symbol Collection"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.24,
-    "bonusFrequency": 0.005,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Journey through mystical realms with expanding dragon wilds and cascading magical wins across ancient temples"
-  },
-  {
-    "id": "game-063",
-    "title": "Racing Legends",
-    "studio": "Speed Games Studio",
-    "theme": [
-      "Racing",
-      "Cars",
-      "Competition"
+      "Dragons"
     ],
     "volatility": "medium",
-    "rtp": 96.8,
-    "maxWin": 7500,
+    "rtp": 94.55724652228076,
+    "maxWin": 7600,
     "reelLayout": "5x3",
     "paylines": 20,
     "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Respins"
+      "Stacked Wilds",
+      "Mystery Symbol"
     ],
     "features": [
-      "Gamble Feature",
-      "Random Modifiers"
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 22.723645753293724,
+    "bonusFrequency": 0.5224389637219238,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Epic fantasy adventure with magical creatures and enchanted rewards."
+  },
+  {
+    "id": "default-042",
+    "title": "Star Quest",
+    "studio": "Frontier Studios",
+    "theme": [
+      "Western",
+      "Gold Mining"
+    ],
+    "volatility": "high",
+    "rtp": 94.87247925968026,
+    "maxWin": 6900,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
     ],
     "pace": "fast",
-    "hitFrequency": 0.32,
-    "bonusFrequency": 0.009,
-    "artStyle": "3D realistic",
-    "audioVibe": "Rock/metal",
+    "hitFrequency": 21.667258337982766,
+    "bonusFrequency": 2.038233056489605,
+    "artStyle": "Cartoon",
+    "audioVibe": "Jazz",
     "visualDensity": "busy",
     "mobileOptimized": true,
     "releaseYear": 2024,
-    "description": "Feel the adrenaline of high-speed racing with turbo respins and championship bonus features",
-    "sportsInfluence": "Motor racing theme with speedway tracks and racing car symbols"
+    "description": "Strike it rich in the Old West with expanding reels and gold rush bonuses."
   },
   {
-    "id": "game-064",
-    "title": "Golden Fruits Deluxe",
-    "studio": "Classic Slots Inc",
+    "id": "default-043",
+    "title": "Cosmic Riches",
+    "studio": "Cosmic Entertainment",
     "theme": [
-      "Fruit",
-      "Classic",
-      "Gold"
+      "Ancient",
+      "Egypt"
     ],
     "volatility": "low",
-    "rtp": 94.2,
-    "maxWin": 2500,
-    "reelLayout": "3x3",
-    "paylines": 5,
+    "rtp": 94.50412186502489,
+    "maxWin": 2000,
+    "reelLayout": "5x4",
+    "paylines": 30,
     "mechanics": [
-      "Wild Symbols",
-      "Multipliers"
+      "Wild",
+      "Scatter"
     ],
     "features": [
-      "Gamble Feature"
+      "Bonus Round",
+      "Progressive"
     ],
     "pace": "slow",
-    "hitFrequency": 0.42,
-    "bonusFrequency": 0.012,
-    "artStyle": "Retro/pixel",
-    "audioVibe": "Retro/chiptune",
-    "visualDensity": "minimal",
+    "hitFrequency": 18.61073776183622,
+    "bonusFrequency": 0.6150234061449593,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
     "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Classic fruit machine charm meets golden multipliers in this timeless slot experience"
+    "releaseYear": 2023,
+    "description": "Uncover ancient treasures and pharaoh's gold in this Egyptian adventure."
   },
   {
-    "id": "game-065",
-    "title": "Basketball Arena",
-    "studio": "Court Kings Gaming",
+    "id": "default-044",
+    "title": "Alien Worlds",
+    "studio": "Ocean Deep Games",
     "theme": [
-      "Basketball",
-      "Arena",
-      "Championship"
-    ],
-    "volatility": "high",
-    "rtp": 96.5,
-    "maxWin": 15000,
-    "reelLayout": "5x4",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Hold & Win",
-      "Progressive Jackpot"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.21,
-    "bonusFrequency": 0.004,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Slam dunk into big wins with expanding basketball symbols and arena crowd bonus rounds",
-    "sportsInfluence": "Basketball arena setting with court action and championship trophy features"
-  },
-  {
-    "id": "game-066",
-    "title": "Ocean Treasures",
-    "studio": "Deep Sea Gaming",
-    "theme": [
-      "Ocean",
-      "Underwater",
+      "Pirates",
       "Treasure"
     ],
     "volatility": "medium",
-    "rtp": 95.9,
-    "maxWin": 6000,
+    "rtp": 95.64147135882465,
+    "maxWin": 4400,
     "reelLayout": "5x3",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [
-      "Symbol Collection",
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.29,
-    "bonusFrequency": 0.008,
-    "artStyle": "3D realistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Dive deep for underwater riches with pearl wilds and treasure chest bonus features"
-  },
-  {
-    "id": "game-067",
-    "title": "Tennis Masters",
-    "studio": "Victory Sports Games",
-    "theme": [
-      "Tennis",
-      "Tournament",
-      "Champions"
-    ],
-    "volatility": "medium",
-    "rtp": 96.3,
-    "maxWin": 9000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Multipliers",
-      "Respins"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Bonus Buy"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.27,
-    "bonusFrequency": 0.006,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Serve up ace wins with tennis ball multipliers and championship court bonus rounds",
-    "sportsInfluence": "Professional tennis tournament with Wimbledon-style court and trophy symbols"
-  },
-  {
-    "id": "game-068",
-    "title": "Wild West Showdown",
-    "studio": "Frontier Games",
-    "theme": [
-      "Western",
-      "Cowboys",
-      "Saloon"
-    ],
-    "volatility": "high",
-    "rtp": 95.7,
-    "maxWin": 11000,
-    "reelLayout": "5x4",
     "paylines": 40,
     "mechanics": [
-      "Wild Symbols",
       "Free Spins",
-      "Walking Wilds"
+      "Multiplier"
     ],
     "features": [
-      "Sticky Wilds",
-      "Gamble Feature"
+      "Free Spins",
+      "Wild Multiplier"
     ],
     "pace": "medium",
-    "hitFrequency": 0.23,
-    "bonusFrequency": 0.005,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": false,
-    "releaseYear": 2022,
-    "description": "Draw your pistols for wild west action with walking sheriff wilds and saloon bonus shootouts"
-  },
-  {
-    "id": "game-069",
-    "title": "Soccer World Cup",
-    "studio": "Global Sports Gaming",
-    "theme": [
-      "Soccer",
-      "World Cup",
-      "International"
-    ],
-    "volatility": "medium",
-    "rtp": 96.7,
-    "maxWin": 10000,
-    "reelLayout": "5x3",
-    "paylines": 243,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Cascading Reels"
-    ],
-    "features": [
-      "Progressive Multipliers",
-      "Symbol Collection"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.31,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
+    "hitFrequency": 18.731446278187825,
+    "bonusFrequency": 1.524635287972893,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
     "mobileOptimized": true,
     "releaseYear": 2024,
-    "description": "Score big in the world's greatest tournament with cascading goals and trophy multiplier rounds",
-    "sportsInfluence": "FIFA World Cup inspired with national flags, stadiums and golden boot symbols"
+    "description": "Set sail for treasure with pirate captains and hidden gold."
   },
   {
-    "id": "game-070",
-    "title": "Egyptian Pharaoh",
-    "studio": "Ancient Wonders Ltd",
-    "theme": [
-      "Egyptian",
-      "Pharaoh",
-      "Ancient"
-    ],
-    "volatility": "high",
-    "rtp": 94.8,
-    "maxWin": 20000,
-    "reelLayout": "5x3",
-    "paylines": 10,
-    "mechanics": [
-      "Expanding Wilds",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Progressive Jackpot"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.19,
-    "bonusFrequency": 0.003,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Uncover pharaoh's riches in ancient tombs with expanding golden symbols and pyramid bonus chambers"
-  },
-  {
-    "id": "game-071",
-    "title": "Hockey Heroes",
-    "studio": "Ice Arena Studios",
-    "theme": [
-      "Hockey",
-      "Ice",
-      "Championship"
-    ],
-    "volatility": "high",
-    "rtp": 96,
-    "maxWin": 12500,
-    "reelLayout": "5x4",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Sticky Wilds"
-    ],
-    "features": [
-      "Hold & Win",
-      "Random Modifiers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.2,
-    "bonusFrequency": 0.005,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Hit the ice for championship glory with sticky puck wilds and power play bonus features",
-    "sportsInfluence": "Professional hockey with ice rink setting and Stanley Cup style trophy symbols"
-  },
-  {
-    "id": "game-072",
-    "title": "Space Adventure",
-    "studio": "Cosmic Gaming Co",
+    "id": "default-045",
+    "title": "Space Odyssey",
+    "studio": "Adventure Studios",
     "theme": [
       "Space",
-      "Sci-Fi",
       "Aliens"
     ],
-    "volatility": "ultra",
-    "rtp": 97.1,
-    "maxWin": 25000,
-    "reelLayout": "6x4",
-    "paylines": 4096,
-    "mechanics": [
-      "Megaways",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Win Multiplier Ladder"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.16,
-    "bonusFrequency": 0.002,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Explore distant galaxies with megaways mechanics and alien technology multiplier ladders"
-  },
-  {
-    "id": "game-073",
-    "title": "Golf Championship",
-    "studio": "Green Fairway Games",
-    "theme": [
-      "Golf",
-      "Country Club",
-      "Tournament"
-    ],
-    "volatility": "low",
-    "rtp": 95.2,
-    "maxWin": 4000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Multipliers"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.38,
-    "bonusFrequency": 0.011,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Perfect your swing for genteel wins with golf ball scatters and clubhouse multiplier features",
-    "sportsInfluence": "Professional golf tournament with Augusta National inspired course and green jacket symbols"
-  },
-  {
-    "id": "game-074",
-    "title": "Viking Conquest",
-    "studio": "Nordic Legends",
-    "theme": [
-      "Vikings",
-      "Norse",
-      "Warriors"
-    ],
     "volatility": "high",
-    "rtp": 96.4,
-    "maxWin": 16000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Expanding Wilds",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Sticky Wilds"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.22,
-    "bonusFrequency": 0.004,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Raid for Norse riches with expanding berserker wilds and Valhalla bonus battles"
-  },
-  {
-    "id": "game-075",
-    "title": "Baseball Stadium",
-    "studio": "Diamond Sports Gaming",
-    "theme": [
-      "Baseball",
-      "Stadium",
-      "Home Run"
-    ],
-    "volatility": "medium",
-    "rtp": 96.2,
-    "maxWin": 8000,
-    "reelLayout": "5x3",
-    "paylines": 30,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Respins"
-    ],
-    "features": [
-      "Progressive Multipliers",
-      "Hold & Win"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.3,
-    "bonusFrequency": 0.008,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Step up to the plate for grand slam wins with baseball wilds and stadium crowd bonus rounds",
-    "sportsInfluence": "Major league baseball with Yankee Stadium atmosphere and World Series trophy symbols"
-  },
-  {
-    "id": "game-076",
-    "title": "Jungle Explorer",
-    "studio": "Adventure Quest Studios",
-    "theme": [
-      "Jungle",
-      "Explorer",
-      "Adventure"
-    ],
-    "volatility": "medium",
-    "rtp": 95.6,
-    "maxWin": 7000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.26,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Trek through dense rainforests with explorer wilds and hidden temple bonus discoveries"
-  },
-  {
-    "id": "game-077",
-    "title": "Formula Racing Pro",
-    "studio": "Speed Games Studio",
-    "theme": [
-      "Formula 1",
-      "Racing",
-      "Grand Prix"
-    ],
-    "volatility": "high",
-    "rtp": 96.9,
-    "maxWin": 18000,
-    "reelLayout": "5x3",
-    "paylines": 243,
-    "mechanics": [
-      "Wild Symbols",
-      "Cascading Reels",
-      "Multipliers"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Progressive Multipliers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.19,
-    "bonusFrequency": 0.003,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "busy",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Race to victory in Formula 1 style with cascading lap multipliers and podium finish bonuses",
-    "sportsInfluence": "Formula 1 Grand Prix with Monaco circuit and championship trophy symbols"
-  },
-  {
-    "id": "game-078",
-    "title": "Cherry Blossom",
-    "studio": "Sakura Gaming",
-    "theme": [
-      "Japanese",
-      "Cherry Blossom",
-      "Spring"
-    ],
-    "volatility": "low",
-    "rtp": 94.7,
-    "maxWin": 3500,
-    "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins"
-    ],
-    "features": [
-      "Symbol Collection"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.41,
-    "bonusFrequency": 0.01,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Find tranquil wins among falling cherry blossoms with gentle wilds and garden bonus features"
-  },
-  {
-    "id": "game-079",
-    "title": "Olympic Games",
-    "studio": "Global Sports Gaming",
-    "theme": [
-      "Olympics",
-      "Athletics",
-      "International"
-    ],
-    "volatility": "medium",
-    "rtp": 96.6,
-    "maxWin": 12000,
-    "reelLayout": "5x4",
-    "paylines": 50,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Progressive Multipliers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.006,
-    "artStyle": "3D realistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Compete for gold with Olympic torch wilds and medal ceremony multiplier rounds",
-    "sportsInfluence": "Summer Olympics with torch relay, podium ceremonies and gold medal symbols"
-  },
-  {
-    "id": "game-080",
-    "title": "Pirate's Gold",
-    "studio": "Buccaneer Games",
-    "theme": [
-      "Pirates",
-      "Treasure",
-      "Adventure"
-    ],
-    "volatility": "high",
-    "rtp": 95.3,
-    "maxWin": 14000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Hold & Win",
-      "Gamble Feature"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.21,
-    "bonusFrequency": 0.004,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": false,
-    "releaseYear": 2022,
-    "description": "Sail the seven seas for buried treasure with expanding pirate wilds and ship battle bonuses"
-  },
-  {
-    "id": "game-081",
-    "title": "Champions League Glory",
-    "studio": "Stadium Sports Games",
-    "theme": [
-      "Football",
-      "Championship",
-      "European"
-    ],
-    "volatility": "high",
-    "rtp": 96.4,
-    "maxWin": 15000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Progressive Multipliers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.24,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Score big wins in Europe's premier football competition with expanding trophy symbols and championship bonus rounds"
-  },
-  {
-    "id": "game-082",
-    "title": "Golden Basket Slam",
-    "studio": "Court King Productions",
-    "theme": [
-      "Basketball",
-      "Urban",
-      "Championship"
-    ],
-    "volatility": "medium",
-    "rtp": 95.2,
-    "maxWin": 8000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Respins"
-    ],
-    "features": [
-      "Gamble Feature",
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.31,
-    "bonusFrequency": 0.005,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Dunk your way to victory with slam dunk respins and buzzer-beater bonus features on the hardwood"
-  },
-  {
-    "id": "game-083",
-    "title": "Formula Thunder Racing",
-    "studio": "Velocity Gaming",
-    "theme": [
-      "Racing",
-      "Speed",
-      "Formula One"
-    ],
-    "volatility": "high",
-    "rtp": 97.1,
-    "maxWin": 25000,
-    "reelLayout": "6x4",
-    "paylines": 4096,
-    "mechanics": [
-      "Cascading Reels",
-      "Wild Symbols",
-      "Multipliers"
-    ],
-    "features": [
-      "Sticky Wilds",
-      "Win Multiplier Ladder"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.19,
-    "bonusFrequency": 0.008,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
-    "visualDensity": "busy",
-    "mobileOptimized": false,
-    "releaseYear": 2024,
-    "description": "Race to pole position with cascading wins and turbo-charged multipliers on the championship circuit"
-  },
-  {
-    "id": "game-084",
-    "title": "Tennis Grand Slam",
-    "studio": "Ace Sports Interactive",
-    "theme": [
-      "Tennis",
-      "Wimbledon",
-      "Championship"
-    ],
-    "volatility": "medium",
-    "rtp": 94.8,
+    "rtp": 95.44565212214884,
     "maxWin": 6000,
     "reelLayout": "5x3",
-    "paylines": 15,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection"
-    ],
-    "features": [
-      "Multi-Level Bonus"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.29,
-    "bonusFrequency": 0.006,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Serve up wins on grass courts with trophy collections and championship match bonus rounds"
-  },
-  {
-    "id": "game-085",
-    "title": "Baseball Home Run Hero",
-    "studio": "Diamond Dynasty Games",
-    "theme": [
-      "Baseball",
-      "American",
-      "Stadium"
-    ],
-    "volatility": "low",
-    "rtp": 93.5,
-    "maxWin": 3000,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.38,
-    "bonusFrequency": 0.004,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2021,
-    "description": "Hit it out of the park with classic baseball action and grand slam free spin innings"
-  },
-  {
-    "id": "game-086",
-    "title": "Olympic Gold Rush",
-    "studio": "Champion Studios",
-    "theme": [
-      "Olympics",
-      "Multi-Sport",
-      "International"
-    ],
-    "volatility": "medium",
-    "rtp": 96,
-    "maxWin": 12000,
-    "reelLayout": "5x4",
     "paylines": 50,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers",
-      "Expanding Symbols"
+      "Expanding Reels",
+      "Cascade"
     ],
     "features": [
-      "Symbol Collection",
-      "Progressive Multipliers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.27,
-    "bonusFrequency": 0.009,
-    "artStyle": "3D realistic",
-    "audioVibe": "Epic/orchestral",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Compete for gold medals across multiple Olympic events with medal-collecting bonus features"
-  },
-  {
-    "id": "game-087",
-    "title": "Ice Hockey Power Play",
-    "studio": "Frozen Puck Productions",
-    "theme": [
-      "Hockey",
-      "Ice Rink",
-      "Winter Sports"
-    ],
-    "volatility": "high",
-    "rtp": 95.9,
-    "maxWin": 18000,
-    "reelLayout": "5x3",
-    "paylines": 243,
-    "mechanics": [
-      "Wild Symbols",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Walking Wilds",
-      "Random Modifiers"
+      "Pick Feature",
+      "Gamble"
     ],
     "pace": "fast",
-    "hitFrequency": 0.21,
-    "bonusFrequency": 0.007,
-    "artStyle": "3D realistic",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "standard",
+    "hitFrequency": 26.840806660722354,
+    "bonusFrequency": 0.6306562481255082,
+    "artStyle": "Stylized",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
     "mobileOptimized": true,
     "releaseYear": 2023,
-    "description": "Score power play goals with walking wild hockey players and penalty shot bonus rounds"
+    "description": "Explore alien worlds and cosmic rewards in this space odyssey."
   },
   {
-    "id": "game-088",
-    "title": "Boxing Championship Belt",
-    "studio": "Ringside Gaming",
+    "id": "default-046",
+    "title": "Nebula Navigator",
+    "studio": "Norse Gaming",
     "theme": [
-      "Boxing",
-      "Championship",
-      "Combat Sports"
-    ],
-    "volatility": "ultra",
-    "rtp": 97.8,
-    "maxWin": 50000,
-    "reelLayout": "5x3",
-    "paylines": 10,
-    "mechanics": [
-      "Wild Symbols",
-      "Hold & Win",
-      "Multipliers"
-    ],
-    "features": [
-      "Bonus Buy",
-      "Progressive Jackpot"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.16,
-    "bonusFrequency": 0.003,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Rock/metal",
-    "visualDensity": "minimal",
-    "mobileOptimized": false,
-    "releaseYear": 2024,
-    "description": "Fight for the championship belt with knockout multipliers and title bout progressive jackpots"
-  },
-  {
-    "id": "game-089",
-    "title": "Golf Masters Tournament",
-    "studio": "Green Fairway Games",
-    "theme": [
-      "Golf",
-      "Country Club",
-      "Tournament"
+      "Underwater",
+      "Ocean"
     ],
     "volatility": "low",
-    "rtp": 94.2,
-    "maxWin": 4000,
-    "reelLayout": "5x3",
-    "paylines": 18,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection"
-    ],
-    "features": [
-      "Gamble Feature"
-    ],
-    "pace": "slow",
-    "hitFrequency": 0.42,
-    "bonusFrequency": 0.005,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Tee off for victory with hole-in-one wilds and Masters jacket bonus collection features"
-  },
-  {
-    "id": "game-090",
-    "title": "Soccer World Cup Fever",
-    "studio": "Global Football Studios",
-    "theme": [
-      "Football",
-      "World Cup",
-      "International"
-    ],
-    "volatility": "medium",
-    "rtp": 96.3,
-    "maxWin": 10000,
+    "rtp": 95.51283317248777,
+    "maxWin": 3300,
     "reelLayout": "5x4",
-    "paylines": 32,
+    "paylines": 20,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols",
-      "Multipliers"
-    ],
-    "features": [
-      "Multi-Level Bonus",
-      "Random Modifiers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.26,
-    "bonusFrequency": 0.008,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "high",
-    "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Experience World Cup excitement with penalty shootout bonuses and trophy-expanding symbol features"
-  },
-  {
-    "id": "game-091",
-    "title": "Swimming Pool Champions",
-    "studio": "Aquatic Sports Games",
-    "theme": [
-      "Swimming",
-      "Olympics",
-      "Pool"
-    ],
-    "volatility": "medium",
-    "rtp": 95.4,
-    "maxWin": 7500,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Cascading Reels",
-      "Free Spins"
-    ],
-    "features": [
-      "Sticky Wilds"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.3,
-    "bonusFrequency": 0.006,
-    "artStyle": "3D realistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Dive into victory with cascading pool lane wins and medal-winning sticky wild features"
-  },
-  {
-    "id": "game-092",
-    "title": "Cricket Stadium Sixes",
-    "studio": "Wicket Warriors Gaming",
-    "theme": [
-      "Cricket",
-      "Stadium",
-      "Championship"
-    ],
-    "volatility": "high",
-    "rtp": 96.8,
-    "maxWin": 20000,
-    "reelLayout": "5x4",
-    "paylines": 40,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Multipliers",
+      "Pick Bonus",
       "Respins"
     ],
     "features": [
-      "Bonus Buy",
-      "Win Multiplier Ladder"
+      "Bonus Wheel",
+      "Cash Collect"
     ],
-    "pace": "medium",
-    "hitFrequency": 0.23,
-    "bonusFrequency": 0.007,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Cultural/ethnic",
-    "visualDensity": "standard",
+    "pace": "slow",
+    "hitFrequency": 28.484553904565907,
+    "bonusFrequency": 0.9165109896198982,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
     "mobileOptimized": true,
     "releaseYear": 2024,
-    "description": "Hit boundary sixes with cricket bat wilds and century-scoring multiplier ladder bonuses"
+    "description": "Dive deep for ocean treasures and mermaid's bounty."
   },
   {
-    "id": "game-093",
-    "title": "Track & Field Sprint",
-    "studio": "Athletic Performance Games",
+    "id": "default-047",
+    "title": "Asteroid Belt",
+    "studio": "Enchanted Slots",
     "theme": [
-      "Track and Field",
-      "Running",
-      "Olympics"
-    ],
-    "volatility": "low",
-    "rtp": 93.8,
-    "maxWin": 3500,
-    "reelLayout": "5x3",
-    "paylines": 20,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection"
-    ],
-    "features": [
-      "Progressive Multipliers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.36,
-    "bonusFrequency": 0.005,
-    "artStyle": "Minimalist/clean",
-    "audioVibe": "Upbeat/energetic",
-    "visualDensity": "minimal",
-    "mobileOptimized": true,
-    "releaseYear": 2021,
-    "description": "Sprint to the finish line with relay baton wilds and record-breaking multiplier collections"
-  },
-  {
-    "id": "game-094",
-    "title": "Volleyball Beach Party",
-    "studio": "Sand Court Studios",
-    "theme": [
-      "Volleyball",
-      "Beach",
-      "Summer Sports"
+      "Jungle",
+      "Adventure"
     ],
     "volatility": "medium",
-    "rtp": 95.7,
-    "maxWin": 8500,
+    "rtp": 95.07464205952822,
+    "maxWin": 3100,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 21.44232094347453,
+    "bonusFrequency": 2.052741937198579,
+    "artStyle": "Cartoon",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Navigate the wild jungle to discover ancient temple treasures."
+  },
+  {
+    "id": "default-048",
+    "title": "Solar Flare",
+    "studio": "Gem Works",
+    "theme": [
+      "Norse",
+      "Vikings"
+    ],
+    "volatility": "high",
+    "rtp": 96.9147178009885,
+    "maxWin": 2400,
     "reelLayout": "5x3",
     "paylines": 30,
     "mechanics": [
-      "Wild Symbols",
-      "Scatter Pays",
-      "Free Spins",
-      "Expanding Symbols"
+      "Megaways",
+      "Hold & Win"
     ],
     "features": [
-      "Random Modifiers"
-    ],
-    "pace": "medium",
-    "hitFrequency": 0.28,
-    "bonusFrequency": 0.006,
-    "artStyle": "Cartoon/animated",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "standard",
-    "mobileOptimized": true,
-    "releaseYear": 2023,
-    "description": "Spike your way to beach volleyball victory with net-expanding symbols and sunset bonus spins"
-  },
-  {
-    "id": "game-095",
-    "title": "Cycling Tour Victory",
-    "studio": "Pedal Power Gaming",
-    "theme": [
-      "Cycling",
-      "Tour de France",
-      "Mountain"
-    ],
-    "volatility": "high",
-    "rtp": 96.5,
-    "maxWin": 15000,
-    "reelLayout": "6x3",
-    "paylines": 729,
-    "mechanics": [
-      "Cascading Reels",
-      "Wild Symbols",
-      "Multipliers"
-    ],
-    "features": [
-      "Walking Wilds",
-      "Progressive Multipliers"
+      "Buy Feature",
+      "Ante Bet"
     ],
     "pace": "fast",
-    "hitFrequency": 0.2,
-    "bonusFrequency": 0.008,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Atmospheric/immersive",
-    "visualDensity": "high",
-    "mobileOptimized": false,
-    "releaseYear": 2024,
-    "description": "Climb mountain stages with cascading wins and yellow jersey walking wilds through alpine passes"
-  },
-  {
-    "id": "game-096",
-    "title": "Skateboard Street Pro",
-    "studio": "Urban Wheels Games",
-    "theme": [
-      "Skateboarding",
-      "Street",
-      "Urban Sports"
-    ],
-    "volatility": "medium",
-    "rtp": 94.9,
-    "maxWin": 9000,
-    "reelLayout": "5x3",
-    "paylines": 25,
-    "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Cascading Reels"
-    ],
-    "features": [
-      "Sticky Wilds",
-      "Random Modifiers"
-    ],
-    "pace": "fast",
-    "hitFrequency": 0.32,
-    "bonusFrequency": 0.007,
-    "artStyle": "Retro/pixel",
-    "audioVibe": "Rock/metal",
+    "hitFrequency": 28.616026478586328,
+    "bonusFrequency": 1.8254082286887399,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Jazz",
     "visualDensity": "busy",
     "mobileOptimized": true,
-    "releaseYear": 2022,
-    "description": "Grind through street courses with trick combo cascades and half-pipe sticky wild features"
+    "releaseYear": 2024,
+    "description": "Join Viking warriors in their quest for Valhalla's riches."
   },
   {
-    "id": "game-097",
-    "title": "Surfing Wave Riders",
-    "studio": "Ocean Sports Gaming",
+    "id": "default-049",
+    "title": "Rocket Riches",
+    "studio": "Classic Gaming",
     "theme": [
-      "Surfing",
-      "Ocean",
-      "Beach Sports"
+      "Magic",
+      "Wizards"
     ],
     "volatility": "low",
-    "rtp": 93.2,
-    "maxWin": 4500,
-    "reelLayout": "5x3",
-    "paylines": 15,
+    "rtp": 95.20833422005256,
+    "maxWin": 9300,
+    "reelLayout": "5x4",
+    "paylines": 40,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Expanding Symbols"
+      "Wild",
+      "Scatter"
     ],
     "features": [
-      "Gamble Feature"
+      "Bonus Round",
+      "Progressive"
     ],
     "pace": "slow",
-    "hitFrequency": 0.4,
-    "bonusFrequency": 0.004,
-    "artStyle": "Illustrated/artistic",
-    "audioVibe": "Relaxing/ambient",
-    "visualDensity": "standard",
+    "hitFrequency": 26.184211621445034,
+    "bonusFrequency": 1.2811927843563007,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
     "mobileOptimized": true,
-    "releaseYear": 2021,
-    "description": "Ride perfect waves with expanding surfboard symbols and barrel roll bonus free spins"
+    "releaseYear": 2023,
+    "description": "Cast powerful spells and unlock mystical rewards."
   },
   {
-    "id": "game-098",
-    "title": "Martial Arts Dojo Master",
-    "studio": "Fighting Spirit Studios",
+    "id": "default-050",
+    "title": "Interstellar",
+    "studio": "Wild Studios",
     "theme": [
-      "Martial Arts",
-      "Dojo",
-      "Asian Combat"
+      "Gems",
+      "Jewels"
     ],
-    "volatility": "ultra",
-    "rtp": 97.5,
-    "maxWin": 40000,
+    "volatility": "medium",
+    "rtp": 96.78257996319104,
+    "maxWin": 6900,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 32.2978198752012,
+    "bonusFrequency": 1.298134839657128,
+    "artStyle": "Stylized",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Hunt for precious gems and sparkling diamond wins."
+  },
+  {
+    "id": "default-051",
+    "title": "Ocean's Treasure",
+    "studio": "Mystery House",
+    "theme": [
+      "Fruits",
+      "Classic"
+    ],
+    "volatility": "high",
+    "rtp": 96.38401798278255,
+    "maxWin": 2700,
     "reelLayout": "5x3",
     "paylines": 20,
     "mechanics": [
-      "Wild Symbols",
-      "Hold & Win",
-      "Multipliers"
+      "Expanding Reels",
+      "Cascade"
     ],
     "features": [
-      "Progressive Jackpot",
-      "Symbol Collection"
+      "Pick Feature",
+      "Gamble"
     ],
-    "pace": "medium",
-    "hitFrequency": 0.14,
-    "bonusFrequency": 0.003,
-    "artStyle": "Dark/gothic",
-    "audioVibe": "Cultural/ethnic",
-    "visualDensity": "minimal",
+    "pace": "fast",
+    "hitFrequency": 30.176936337446286,
+    "bonusFrequency": 2.471911227517269,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
     "mobileOptimized": true,
-    "releaseYear": 2024,
-    "description": "Master ancient fighting techniques with belt-ranking symbol collections and grand master jackpots"
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-099",
-    "title": "Fishing Tournament Pro",
-    "studio": "Angler's Paradise Games",
+    "id": "default-052",
+    "title": "Atlantis Gold",
+    "studio": "Dark Moon Games",
     "theme": [
-      "Fishing",
-      "Lake",
-      "Tournament"
+      "Animals",
+      "Safari"
     ],
-    "volatility": "medium",
-    "rtp": 95.1,
-    "maxWin": 6500,
-    "reelLayout": "5x3",
-    "paylines": 243,
+    "volatility": "low",
+    "rtp": 96.28211712215138,
+    "maxWin": 2200,
+    "reelLayout": "5x4",
+    "paylines": 25,
     "mechanics": [
-      "Wild Symbols",
-      "Free Spins",
-      "Symbol Collection",
+      "Pick Bonus",
       "Respins"
     ],
     "features": [
-      "Multi-Level Bonus"
+      "Bonus Wheel",
+      "Cash Collect"
     ],
     "pace": "slow",
-    "hitFrequency": 0.34,
-    "bonusFrequency": 0.006,
-    "artStyle": "Photorealistic",
-    "audioVibe": "Relaxing/ambient",
+    "hitFrequency": 29.3064502484946,
+    "bonusFrequency": 2.036531801122741,
+    "artStyle": "Cartoon",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-053",
+    "title": "Deep Sea Riches",
+    "studio": "Romance Studios",
+    "theme": [
+      "Mystery",
+      "Detective"
+    ],
+    "volatility": "medium",
+    "rtp": 96.96301053690881,
+    "maxWin": 2600,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 25.29395167532503,
+    "bonusFrequency": 1.4858524583417254,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Rock",
     "visualDensity": "standard",
     "mobileOptimized": true,
     "releaseYear": 2023,
-    "description": "Cast your line for trophy fish with tackle box collections and big catch tournament bonuses"
+    "description": "An exciting slot adventure with great rewards and features."
   },
   {
-    "id": "game-100",
-    "title": "Extreme Sports X-Games",
-    "studio": "Adrenaline Rush Gaming",
+    "id": "default-054",
+    "title": "Mermaid's Fortune",
+    "studio": "Rock Gaming",
     "theme": [
-      "Extreme Sports",
-      "X-Games",
-      "Adventure"
+      "Horror",
+      "Gothic"
     ],
-    "volatility": "ultra",
-    "rtp": 98,
-    "maxWin": 75000,
-    "reelLayout": "6x4",
-    "paylines": 4096,
+    "volatility": "high",
+    "rtp": 95.57549380633463,
+    "maxWin": 3900,
+    "reelLayout": "5x3",
+    "paylines": 40,
     "mechanics": [
       "Megaways",
-      "Wild Symbols",
-      "Cascading Reels",
-      "Multipliers"
+      "Hold & Win"
     ],
     "features": [
-      "Bonus Buy",
-      "Progressive Jackpot",
-      "Random Modifiers"
+      "Buy Feature",
+      "Ante Bet"
     ],
     "pace": "fast",
-    "hitFrequency": 0.18,
-    "bonusFrequency": 0.004,
-    "artStyle": "3D realistic",
-    "audioVibe": "Electronic/EDM",
+    "hitFrequency": 26.80776346209553,
+    "bonusFrequency": 0.9702474067485536,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Jazz",
     "visualDensity": "busy",
-    "mobileOptimized": false,
-    "releaseYear": 2025,
-    "description": "Push limits with extreme sport megaways featuring BMX, snowboard, and motocross jackpot competitions"
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-055",
+    "title": "Coral Kingdom",
+    "studio": "Gourmet Games",
+    "theme": [
+      "Romance",
+      "Love"
+    ],
+    "volatility": "low",
+    "rtp": 95.08123026026311,
+    "maxWin": 3300,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 25.97288028927362,
+    "bonusFrequency": 0.7921727945753831,
+    "artStyle": "Stylized",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-056",
+    "title": "Submarine Voyage",
+    "studio": "Explorer Entertainment",
+    "theme": [
+      "Music",
+      "Rock"
+    ],
+    "volatility": "medium",
+    "rtp": 95.39131625708953,
+    "maxWin": 6000,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 28.925288915277765,
+    "bonusFrequency": 1.459502526710486,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-057",
+    "title": "Whale Song",
+    "studio": "Castle Gaming",
+    "theme": [
+      "Food",
+      "Cooking"
+    ],
+    "volatility": "high",
+    "rtp": 96.88326609650771,
+    "maxWin": 4500,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 18.32255291731322,
+    "bonusFrequency": 1.8765696972479575,
+    "artStyle": "Cartoon",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-058",
+    "title": "Shark Attack",
+    "studio": "Future Studios",
+    "theme": [
+      "Travel",
+      "Exploration"
+    ],
+    "volatility": "low",
+    "rtp": 94.65452263077127,
+    "maxWin": 7600,
+    "reelLayout": "5x4",
+    "paylines": 30,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 21.94212883926477,
+    "bonusFrequency": 2.0461349868681835,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-059",
+    "title": "Tidal Wave",
+    "studio": "Epic Games",
+    "theme": [
+      "Medieval",
+      "Knights"
+    ],
+    "volatility": "medium",
+    "rtp": 94.52502773579235,
+    "maxWin": 5200,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 25.889944865147804,
+    "bonusFrequency": 2.212107709849489,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-060",
+    "title": "Shipwreck Gold",
+    "studio": "Dream Works Gaming",
+    "theme": [
+      "Futuristic",
+      "Cyberpunk"
+    ],
+    "volatility": "high",
+    "rtp": 95.5968289568851,
+    "maxWin": 6600,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 33.667748334874894,
+    "bonusFrequency": 1.0697703843551896,
+    "artStyle": "Stylized",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-061",
+    "title": "Amazon Quest",
+    "studio": "Mythic Gaming",
+    "theme": [
+      "Fantasy",
+      "Dragons"
+    ],
+    "volatility": "low",
+    "rtp": 96.88203671948833,
+    "maxWin": 5700,
+    "reelLayout": "5x4",
+    "paylines": 20,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 17.280253606363324,
+    "bonusFrequency": 1.9487902788100921,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Epic fantasy adventure with magical creatures and enchanted rewards."
+  },
+  {
+    "id": "default-062",
+    "title": "Jungle Treasures",
+    "studio": "Frontier Studios",
+    "theme": [
+      "Western",
+      "Gold Mining"
+    ],
+    "volatility": "medium",
+    "rtp": 94.60211336926105,
+    "maxWin": 6000,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 32.29289851730681,
+    "bonusFrequency": 0.7888761719806268,
+    "artStyle": "Cartoon",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Strike it rich in the Old West with expanding reels and gold rush bonuses."
+  },
+  {
+    "id": "default-063",
+    "title": "Wild Expedition",
+    "studio": "Cosmic Entertainment",
+    "theme": [
+      "Ancient",
+      "Egypt"
+    ],
+    "volatility": "high",
+    "rtp": 95.73555692398739,
+    "maxWin": 4000,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 22.59559460477865,
+    "bonusFrequency": 0.9234731419595374,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Uncover ancient treasures and pharaoh's gold in this Egyptian adventure."
+  },
+  {
+    "id": "default-064",
+    "title": "Temple Raiders",
+    "studio": "Ocean Deep Games",
+    "theme": [
+      "Pirates",
+      "Treasure"
+    ],
+    "volatility": "low",
+    "rtp": 94.62151063604996,
+    "maxWin": 8700,
+    "reelLayout": "5x4",
+    "paylines": 40,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 30.83873532646917,
+    "bonusFrequency": 1.3308969660765793,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Set sail for treasure with pirate captains and hidden gold."
+  },
+  {
+    "id": "default-065",
+    "title": "Rainforest Riches",
+    "studio": "Adventure Studios",
+    "theme": [
+      "Space",
+      "Aliens"
+    ],
+    "volatility": "medium",
+    "rtp": 96.28317171499933,
+    "maxWin": 3900,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 32.673524091513514,
+    "bonusFrequency": 2.2439043525462465,
+    "artStyle": "Stylized",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Explore alien worlds and cosmic rewards in this space odyssey."
+  },
+  {
+    "id": "default-066",
+    "title": "Monkey Business",
+    "studio": "Norse Gaming",
+    "theme": [
+      "Underwater",
+      "Ocean"
+    ],
+    "volatility": "high",
+    "rtp": 95.05045011448969,
+    "maxWin": 6300,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 20.306632291347597,
+    "bonusFrequency": 0.8225352467436884,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Dive deep for ocean treasures and mermaid's bounty."
+  },
+  {
+    "id": "default-067",
+    "title": "Tiger's Eye",
+    "studio": "Enchanted Slots",
+    "theme": [
+      "Jungle",
+      "Adventure"
+    ],
+    "volatility": "low",
+    "rtp": 97.01761105160125,
+    "maxWin": 9700,
+    "reelLayout": "5x4",
+    "paylines": 25,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 16.05336222376514,
+    "bonusFrequency": 1.2259606511437608,
+    "artStyle": "Cartoon",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Navigate the wild jungle to discover ancient temple treasures."
+  },
+  {
+    "id": "default-068",
+    "title": "Vine Swing",
+    "studio": "Gem Works",
+    "theme": [
+      "Norse",
+      "Vikings"
+    ],
+    "volatility": "medium",
+    "rtp": 95.1268320301312,
+    "maxWin": 8900,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 18.15240803927535,
+    "bonusFrequency": 1.382499104620801,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Join Viking warriors in their quest for Valhalla's riches."
+  },
+  {
+    "id": "default-069",
+    "title": "Tribal Totems",
+    "studio": "Classic Gaming",
+    "theme": [
+      "Magic",
+      "Wizards"
+    ],
+    "volatility": "high",
+    "rtp": 94.84730253330048,
+    "maxWin": 8200,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 26.009302958083644,
+    "bonusFrequency": 0.715051250355804,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Cast powerful spells and unlock mystical rewards."
+  },
+  {
+    "id": "default-070",
+    "title": "Lost City",
+    "studio": "Wild Studios",
+    "theme": [
+      "Gems",
+      "Jewels"
+    ],
+    "volatility": "low",
+    "rtp": 95.31257873339977,
+    "maxWin": 4500,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 21.520329179392633,
+    "bonusFrequency": 1.3443497268930815,
+    "artStyle": "Stylized",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Hunt for precious gems and sparkling diamond wins."
+  },
+  {
+    "id": "default-071",
+    "title": "Viking's Gold",
+    "studio": "Mystery House",
+    "theme": [
+      "Fruits",
+      "Classic"
+    ],
+    "volatility": "medium",
+    "rtp": 96.91132805864343,
+    "maxWin": 9600,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 27.65747452883831,
+    "bonusFrequency": 1.7335044843472023,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-072",
+    "title": "Valhalla Riches",
+    "studio": "Dark Moon Games",
+    "theme": [
+      "Animals",
+      "Safari"
+    ],
+    "volatility": "high",
+    "rtp": 95.42314247199782,
+    "maxWin": 8400,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 18.904480195426334,
+    "bonusFrequency": 0.5417509034168342,
+    "artStyle": "Cartoon",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-073",
+    "title": "Norse Legend",
+    "studio": "Romance Studios",
+    "theme": [
+      "Mystery",
+      "Detective"
+    ],
+    "volatility": "low",
+    "rtp": 96.32845675662796,
+    "maxWin": 6200,
+    "reelLayout": "5x4",
+    "paylines": 30,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 24.779544860170667,
+    "bonusFrequency": 2.3677640208605633,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-074",
+    "title": "Thor's Hammer",
+    "studio": "Rock Gaming",
+    "theme": [
+      "Horror",
+      "Gothic"
+    ],
+    "volatility": "medium",
+    "rtp": 96.28828634319433,
+    "maxWin": 5400,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 32.001765218554034,
+    "bonusFrequency": 2.359687649766236,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-075",
+    "title": "Odin's Fortune",
+    "studio": "Gourmet Games",
+    "theme": [
+      "Romance",
+      "Love"
+    ],
+    "volatility": "high",
+    "rtp": 97.0155000256345,
+    "maxWin": 9500,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 33.76667700517319,
+    "bonusFrequency": 1.6720062712272123,
+    "artStyle": "Stylized",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-076",
+    "title": "Berserker Rage",
+    "studio": "Explorer Entertainment",
+    "theme": [
+      "Music",
+      "Rock"
+    ],
+    "volatility": "low",
+    "rtp": 94.65667191253492,
+    "maxWin": 8200,
+    "reelLayout": "5x4",
+    "paylines": 20,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 34.41651867881197,
+    "bonusFrequency": 0.6164660915082605,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-077",
+    "title": "Longship Voyage",
+    "studio": "Castle Gaming",
+    "theme": [
+      "Food",
+      "Cooking"
+    ],
+    "volatility": "medium",
+    "rtp": 94.81430194065346,
+    "maxWin": 5300,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 32.17995088304921,
+    "bonusFrequency": 2.392715039820582,
+    "artStyle": "Cartoon",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-078",
+    "title": "Rune Stones",
+    "studio": "Future Studios",
+    "theme": [
+      "Travel",
+      "Exploration"
+    ],
+    "volatility": "high",
+    "rtp": 94.66669183541502,
+    "maxWin": 5200,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 34.60295576414961,
+    "bonusFrequency": 1.8297699016999718,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-079",
+    "title": "Mjolnir Power",
+    "studio": "Epic Games",
+    "theme": [
+      "Medieval",
+      "Knights"
+    ],
+    "volatility": "low",
+    "rtp": 94.95392613260125,
+    "maxWin": 3400,
+    "reelLayout": "5x4",
+    "paylines": 40,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 24.960125579636475,
+    "bonusFrequency": 2.378885182048946,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-080",
+    "title": "Asgard Gates",
+    "studio": "Dream Works Gaming",
+    "theme": [
+      "Futuristic",
+      "Cyberpunk"
+    ],
+    "volatility": "medium",
+    "rtp": 96.88903329457058,
+    "maxWin": 9000,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 31.44176954333847,
+    "bonusFrequency": 2.3042103841496946,
+    "artStyle": "Stylized",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-081",
+    "title": "Spell Caster",
+    "studio": "Mythic Gaming",
+    "theme": [
+      "Fantasy",
+      "Dragons"
+    ],
+    "volatility": "high",
+    "rtp": 95.77961426489567,
+    "maxWin": 7100,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 31.366784798881298,
+    "bonusFrequency": 1.0540330890240477,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Epic fantasy adventure with magical creatures and enchanted rewards."
+  },
+  {
+    "id": "default-082",
+    "title": "Magic Crystals",
+    "studio": "Frontier Studios",
+    "theme": [
+      "Western",
+      "Gold Mining"
+    ],
+    "volatility": "low",
+    "rtp": 96.93745720817687,
+    "maxWin": 9000,
+    "reelLayout": "5x4",
+    "paylines": 25,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 26.734890298252424,
+    "bonusFrequency": 0.6202756127389524,
+    "artStyle": "Cartoon",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Strike it rich in the Old West with expanding reels and gold rush bonuses."
+  },
+  {
+    "id": "default-083",
+    "title": "Enchanted Spells",
+    "studio": "Cosmic Entertainment",
+    "theme": [
+      "Ancient",
+      "Egypt"
+    ],
+    "volatility": "medium",
+    "rtp": 94.78889447725328,
+    "maxWin": 2900,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 17.044117716113476,
+    "bonusFrequency": 1.7144173678672057,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Uncover ancient treasures and pharaoh's gold in this Egyptian adventure."
+  },
+  {
+    "id": "default-084",
+    "title": "Mystic Powers",
+    "studio": "Ocean Deep Games",
+    "theme": [
+      "Pirates",
+      "Treasure"
+    ],
+    "volatility": "high",
+    "rtp": 94.89298854882111,
+    "maxWin": 9300,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 24.62428495613111,
+    "bonusFrequency": 0.9689423272791715,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Set sail for treasure with pirate captains and hidden gold."
+  },
+  {
+    "id": "default-085",
+    "title": "Potion Master",
+    "studio": "Adventure Studios",
+    "theme": [
+      "Space",
+      "Aliens"
+    ],
+    "volatility": "low",
+    "rtp": 94.83833325828368,
+    "maxWin": 7400,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 23.197373990083925,
+    "bonusFrequency": 0.5268535071079485,
+    "artStyle": "Stylized",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Explore alien worlds and cosmic rewards in this space odyssey."
+  },
+  {
+    "id": "default-086",
+    "title": "Crystal Ball",
+    "studio": "Norse Gaming",
+    "theme": [
+      "Underwater",
+      "Ocean"
+    ],
+    "volatility": "medium",
+    "rtp": 95.23561096183771,
+    "maxWin": 6100,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 23.737544607945367,
+    "bonusFrequency": 0.9039132231873759,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Dive deep for ocean treasures and mermaid's bounty."
+  },
+  {
+    "id": "default-087",
+    "title": "Magic Wand",
+    "studio": "Enchanted Slots",
+    "theme": [
+      "Jungle",
+      "Adventure"
+    ],
+    "volatility": "high",
+    "rtp": 96.8206628333635,
+    "maxWin": 6400,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 29.749939344639902,
+    "bonusFrequency": 2.0573067560572875,
+    "artStyle": "Cartoon",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Navigate the wild jungle to discover ancient temple treasures."
+  },
+  {
+    "id": "default-088",
+    "title": "Cauldron Brew",
+    "studio": "Gem Works",
+    "theme": [
+      "Norse",
+      "Vikings"
+    ],
+    "volatility": "low",
+    "rtp": 96.3010360777769,
+    "maxWin": 9000,
+    "reelLayout": "5x4",
+    "paylines": 30,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 24.97796780612998,
+    "bonusFrequency": 2.3240939304013857,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Join Viking warriors in their quest for Valhalla's riches."
+  },
+  {
+    "id": "default-089",
+    "title": "Sorcerer's Stone",
+    "studio": "Classic Gaming",
+    "theme": [
+      "Magic",
+      "Wizards"
+    ],
+    "volatility": "medium",
+    "rtp": 95.98540302745886,
+    "maxWin": 9000,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 34.56308699154498,
+    "bonusFrequency": 0.518868232396787,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "Cast powerful spells and unlock mystical rewards."
+  },
+  {
+    "id": "default-090",
+    "title": "Arcane Mysteries",
+    "studio": "Wild Studios",
+    "theme": [
+      "Gems",
+      "Jewels"
+    ],
+    "volatility": "high",
+    "rtp": 94.91172511194696,
+    "maxWin": 6700,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 24.67198563956083,
+    "bonusFrequency": 1.6246124235125396,
+    "artStyle": "Stylized",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "Hunt for precious gems and sparkling diamond wins."
+  },
+  {
+    "id": "default-091",
+    "title": "Diamond Dreams",
+    "studio": "Mystery House",
+    "theme": [
+      "Fruits",
+      "Classic"
+    ],
+    "volatility": "low",
+    "rtp": 96.74230001971138,
+    "maxWin": 9700,
+    "reelLayout": "5x4",
+    "paylines": 20,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 25.330147276621958,
+    "bonusFrequency": 2.08596914419016,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-092",
+    "title": "Jewel Quest",
+    "studio": "Dark Moon Games",
+    "theme": [
+      "Animals",
+      "Safari"
+    ],
+    "volatility": "medium",
+    "rtp": 96.35608642737233,
+    "maxWin": 8200,
+    "reelLayout": "5x3",
+    "paylines": 25,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 20.11837744178802,
+    "bonusFrequency": 1.5504162321466408,
+    "artStyle": "Cartoon",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-093",
+    "title": "Precious Stones",
+    "studio": "Romance Studios",
+    "theme": [
+      "Mystery",
+      "Detective"
+    ],
+    "volatility": "high",
+    "rtp": 97.1827358497838,
+    "maxWin": 5000,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 23.701073930525,
+    "bonusFrequency": 2.0784804277806126,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-094",
+    "title": "Crystal Cascade",
+    "studio": "Rock Gaming",
+    "theme": [
+      "Horror",
+      "Gothic"
+    ],
+    "volatility": "low",
+    "rtp": 95.16658351995596,
+    "maxWin": 6600,
+    "reelLayout": "5x4",
+    "paylines": 40,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 28.093571768287635,
+    "bonusFrequency": 2.49621171895303,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-095",
+    "title": "Gem Hunter",
+    "studio": "Gourmet Games",
+    "theme": [
+      "Romance",
+      "Love"
+    ],
+    "volatility": "medium",
+    "rtp": 95.597983010582,
+    "maxWin": 3000,
+    "reelLayout": "5x3",
+    "paylines": 50,
+    "mechanics": [
+      "Stacked Wilds",
+      "Mystery Symbol"
+    ],
+    "features": [
+      "Super Stacks",
+      "Expanding Symbols"
+    ],
+    "pace": "medium",
+    "hitFrequency": 21.761150753955462,
+    "bonusFrequency": 0.8777077865213725,
+    "artStyle": "Stylized",
+    "audioVibe": "Rock",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-096",
+    "title": "Ruby Rush",
+    "studio": "Explorer Entertainment",
+    "theme": [
+      "Music",
+      "Rock"
+    ],
+    "volatility": "high",
+    "rtp": 95.39509683852405,
+    "maxWin": 4200,
+    "reelLayout": "5x3",
+    "paylines": 20,
+    "mechanics": [
+      "Megaways",
+      "Hold & Win"
+    ],
+    "features": [
+      "Buy Feature",
+      "Ante Bet"
+    ],
+    "pace": "fast",
+    "hitFrequency": 34.949212034059315,
+    "bonusFrequency": 2.2997344299882183,
+    "artStyle": "Detailed 3D",
+    "audioVibe": "Jazz",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-097",
+    "title": "Emerald Empire",
+    "studio": "Castle Gaming",
+    "theme": [
+      "Food",
+      "Cooking"
+    ],
+    "volatility": "low",
+    "rtp": 97.0693081785641,
+    "maxWin": 2200,
+    "reelLayout": "5x4",
+    "paylines": 25,
+    "mechanics": [
+      "Wild",
+      "Scatter"
+    ],
+    "features": [
+      "Bonus Round",
+      "Progressive"
+    ],
+    "pace": "slow",
+    "hitFrequency": 34.29858002892959,
+    "bonusFrequency": 1.024928268139599,
+    "artStyle": "Cartoon",
+    "audioVibe": "Epic Fantasy",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-098",
+    "title": "Sapphire Skies",
+    "studio": "Future Studios",
+    "theme": [
+      "Travel",
+      "Exploration"
+    ],
+    "volatility": "medium",
+    "rtp": 95.17390449769705,
+    "maxWin": 3100,
+    "reelLayout": "5x3",
+    "paylines": 30,
+    "mechanics": [
+      "Free Spins",
+      "Multiplier"
+    ],
+    "features": [
+      "Free Spins",
+      "Wild Multiplier"
+    ],
+    "pace": "medium",
+    "hitFrequency": 33.568520403370705,
+    "bonusFrequency": 1.3958093482967304,
+    "artStyle": "2D Illustrated",
+    "audioVibe": "Country Western",
+    "visualDensity": "standard",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-099",
+    "title": "Opal Oracle",
+    "studio": "Epic Games",
+    "theme": [
+      "Medieval",
+      "Knights"
+    ],
+    "volatility": "high",
+    "rtp": 95.16268789330407,
+    "maxWin": 2900,
+    "reelLayout": "5x3",
+    "paylines": 40,
+    "mechanics": [
+      "Expanding Reels",
+      "Cascade"
+    ],
+    "features": [
+      "Pick Feature",
+      "Gamble"
+    ],
+    "pace": "fast",
+    "hitFrequency": 19.520883828970646,
+    "bonusFrequency": 1.5916787832282453,
+    "artStyle": "Photorealistic",
+    "audioVibe": "Ambient Electronic",
+    "visualDensity": "busy",
+    "mobileOptimized": true,
+    "releaseYear": 2023,
+    "description": "An exciting slot adventure with great rewards and features."
+  },
+  {
+    "id": "default-100",
+    "title": "Platinum Prize",
+    "studio": "Dream Works Gaming",
+    "theme": [
+      "Futuristic",
+      "Cyberpunk"
+    ],
+    "volatility": "low",
+    "rtp": 95.85673919549359,
+    "maxWin": 6900,
+    "reelLayout": "5x4",
+    "paylines": 50,
+    "mechanics": [
+      "Pick Bonus",
+      "Respins"
+    ],
+    "features": [
+      "Bonus Wheel",
+      "Cash Collect"
+    ],
+    "pace": "slow",
+    "hitFrequency": 26.809426486208956,
+    "bonusFrequency": 0.54214216694213,
+    "artStyle": "Stylized",
+    "audioVibe": "Orchestral",
+    "visualDensity": "clean",
+    "mobileOptimized": true,
+    "releaseYear": 2024,
+    "description": "An exciting slot adventure with great rewards and features."
   }
 ]

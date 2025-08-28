@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 const GAMES_FILE = path.join(__dirname, '..', 'data', 'games.json');
-const DEFAULT_GAMES_FILE = path.join(__dirname, '..', 'data', 'default-games.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'user-settings.json');
 
 // In-memory session storage for temporary games
@@ -33,11 +32,10 @@ function saveGames(games) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
     
-    // Save to both files so fresh games appear in dropdown
+    // Save to games file
     fs.writeFileSync(GAMES_FILE, JSON.stringify(games, null, 2));
-    fs.writeFileSync(DEFAULT_GAMES_FILE, JSON.stringify(games, null, 2));
     
-    console.log(`✅ Saved ${games.length} games to both games.json and default-games.json`);
+    console.log(`✅ Saved ${games.length} games to games.json`);
   } catch (error) {
     console.error('Failed to save games (will use memory storage):', error);
     // Don't throw error in serverless - just log and continue
@@ -51,23 +49,68 @@ function loadGames(sessionId = null) {
       return sessionGames.get(sessionId);
     }
 
-    // Try to load default games first
-    if (fs.existsSync(DEFAULT_GAMES_FILE)) {
-      const data = fs.readFileSync(DEFAULT_GAMES_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-
-    // Fallback to current games.json
+    // Load from games.json
     if (fs.existsSync(GAMES_FILE)) {
       const data = fs.readFileSync(GAMES_FILE, 'utf8');
       return JSON.parse(data);
     }
 
-    return [];
+    // Return generic default games if no file exists
+    return getDefaultGames();
   } catch (error) {
     console.error('Failed to load games:', error);
-    return [];
+    return getDefaultGames();
   }
+}
+
+// Generic default games for initial load
+function getDefaultGames() {
+  return [
+    {
+      id: 'default-001',
+      title: 'Dragon\'s Fortune',
+      studio: 'Mythic Gaming',
+      theme: ['Fantasy', 'Dragons'],
+      volatility: 'high',
+      rtp: 96.5,
+      maxWin: 10000,
+      reelLayout: '5x3',
+      paylines: 25,
+      mechanics: ['Wild', 'Scatter', 'Free Spins'],
+      features: ['Multiplier', 'Bonus Round'],
+      pace: 'medium',
+      hitFrequency: 22.1,
+      bonusFrequency: 8.3,
+      artStyle: 'Detailed 3D',
+      audioVibe: 'Epic Fantasy',
+      visualDensity: 'standard',
+      mobileOptimized: true,
+      releaseYear: 2024,
+      description: 'Epic dragon-themed slot with cascading wins and fire-breathing bonus features.'
+    },
+    {
+      id: 'default-002',
+      title: 'Wild West Gold Rush',
+      studio: 'Frontier Studios',
+      theme: ['Western', 'Gold Mining'],
+      volatility: 'medium',
+      rtp: 95.8,
+      maxWin: 7500,
+      reelLayout: '5x4',
+      paylines: 40,
+      mechanics: ['Wild', 'Expanding Reels'],
+      features: ['Pick Bonus', 'Progressive'],
+      pace: 'fast',
+      hitFrequency: 28.7,
+      bonusFrequency: 12.1,
+      artStyle: 'Cartoon',
+      audioVibe: 'Country Western',
+      visualDensity: 'busy',
+      mobileOptimized: true,
+      releaseYear: 2024,
+      description: 'Strike it rich in the Old West with expanding reels and gold rush bonuses.'
+    }
+  ];
 }
 
 function saveSettings(settings) {

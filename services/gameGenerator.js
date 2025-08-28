@@ -17,7 +17,7 @@ const GENERATION_INSTRUCTIONS_FILE = path.join(__dirname, '..', 'prompts', 'slot
 const JSON_FORMAT_FILE = path.join(__dirname, '..', 'prompts', 'json-output-format.md');
 
 // Chunked generation for large game requests
-async function generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, customPrompt, totalCount) {
+async function generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, customPrompt, totalCount, sessionId = null) {
   const chunkSize = 20; // 20 games per chunk - Claude 4 with 15K tokens can handle this
   const chunks = Math.ceil(totalCount / chunkSize);
   const allGames = [];
@@ -25,6 +25,17 @@ async function generateGamesInChunks(systemPrompt, generationInstructions, jsonF
 
   console.log(`Generating ${totalCount} games in ${chunks} chunks of ${chunkSize} games each`);
   console.log('🚀 Using PARALLEL processing for maximum speed!');
+  
+  // Send progress update
+  if (sessionId && global.sendProgressUpdate) {
+    global.sendProgressUpdate(sessionId, {
+      type: 'progress',  
+      message: `Generating ${totalCount} games in ${chunks} chunks`,
+      progress: 5,
+      chunksTotal: chunks,
+      chunksCompleted: 0
+    });
+  }
 
   // Create all chunk promises to run in parallel
   const chunkPromises = [];
@@ -35,7 +46,6 @@ async function generateGamesInChunks(systemPrompt, generationInstructions, jsonF
     const startingGameId = (i * chunkSize) + 1;
     
     console.log(`Preparing chunk ${i + 1}/${chunks}: ${gamesInThisChunk} games (starting from game-${startingGameId.toString().padStart(3, '0')})`);
-    
     const chunkPrompt = `CRITICAL: You must output ONLY a valid JSON array. No explanations, no markdown, no text before or after.
 
 Generate exactly ${gamesInThisChunk} games for chunk ${i + 1} of ${chunks}:
@@ -109,32 +119,49 @@ OUTPUT ONLY THE JSON ARRAY - NO OTHER TEXT:`;
       } catch (error) {
         console.error(`❌ Error in chunk ${chunkIndex + 1}:`, error.message);
         
-        // Generate fallback games
+        // Generate fallback games from default games.json
+        const { loadGames } = require('../utils/storage');
+        const defaultGames = loadGames(); // Load default games
         const fallbackGames = [];
         const startingId = (chunkIndex * chunkSize) + 1;
-        for (let j = 0; j < gamesInThisChunk; j++) {
-          fallbackGames.push({
-            id: `game-${(startingId + j).toString().padStart(3, '0')}`,
-            title: `Generated Game ${startingId + j}`,
-            studio: 'Fallback Studios',
-            theme: ['Generic'],
-            volatility: 'medium',
-            rtp: 95.0,
-            maxWin: 1000,
-            reelLayout: '5x3',
-            paylines: 25,
-            mechanics: ['Wild', 'Scatter'],
-            features: ['Free Spins'],
-            pace: 'medium',
-            hitFrequency: 0.3,
-            bonusFrequency: 0.01,
-            artStyle: 'Cartoon/animated',
-            audioVibe: 'Upbeat/energetic',
-            visualDensity: 'standard',
-            mobileOptimized: true,
-            releaseYear: 2024,
-            description: `Fallback generated game ${startingId + j} due to generation error`
-          });
+        
+        // If we have default games, use random ones as fallback
+        if (defaultGames.length > 0) {
+          for (let j = 0; j < gamesInThisChunk; j++) {
+            const randomIndex = Math.floor(Math.random() * defaultGames.length);
+            const baseGame = defaultGames[randomIndex];
+            fallbackGames.push({
+              ...baseGame,
+              id: `game-${(startingId + j).toString().padStart(3, '0')}`, // Keep requested ID format
+              title: `${baseGame.title} (Custom)` // Mark as custom fallback
+            });
+          }
+        } else {
+          // Ultimate fallback if no default games
+          for (let j = 0; j < gamesInThisChunk; j++) {
+            fallbackGames.push({
+              id: `game-${(startingId + j).toString().padStart(3, '0')}`,
+              title: `Generated Game ${startingId + j}`,
+              studio: 'Fallback Studios',
+              theme: ['Generic'],
+              volatility: 'medium',
+              rtp: 95.0,
+              maxWin: 1000,
+              reelLayout: '5x3',
+              paylines: 25,
+              mechanics: ['Wild', 'Scatter'],
+              features: ['Free Spins'],
+              pace: 'medium',
+              hitFrequency: 0.3,
+              bonusFrequency: 0.01,
+              artStyle: 'Cartoon/animated',
+              audioVibe: 'Upbeat/energetic',
+              visualDensity: 'standard',
+              mobileOptimized: true,
+              releaseYear: 2024,
+              description: `Fallback generated game ${startingId + j} due to generation error`
+            });
+          }
         }
         
         console.log(`⚠️ Using fallback games for chunk ${chunkIndex + 1}`);
@@ -160,8 +187,7 @@ OUTPUT ONLY THE JSON ARRAY - NO OTHER TEXT:`;
 
   console.log(`✅ Parallel generation completed: ${allGames.length} total games`);
   
-  // Save all games at once
-  saveGames(allGames);
+  // DO NOT SAVE - Games will be saved to session storage only by server.js
   return allGames;
 }
 
@@ -217,7 +243,7 @@ function validateGameGenerationPrompt(prompt) {
   return { valid: true, sanitized: cleaned };
 }
 
-async function generateGames(customPrompt = null) {
+async function generateGames(customPrompt = null, sessionId = null) {
   try {
     // Load system, generation instructions, and JSON format prompts
     const systemPrompt = fs.readFileSync(SYSTEM_PROMPT_FILE, 'utf8');
@@ -250,7 +276,7 @@ async function generateGames(customPrompt = null) {
     // For large generations (>25 games), use chunked approach
     if (requestedCount > 25) {
       console.log(`Large generation (${requestedCount} games) - using chunked approach`);
-      return await generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, sanitizedPrompt, requestedCount);
+      return await generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, sanitizedPrompt, requestedCount, sessionId);
     }
     
     // Single generation for smaller requests
@@ -350,8 +376,7 @@ async function generateGames(customPrompt = null) {
       throw new Error('LLM returned empty games array');
     }
 
-    // Save generated games
-    saveGames(games);
+    // DO NOT SAVE - Games will be saved to session storage only by server.js
     
     console.log(`Successfully generated ${games.length} games`);
     return games;
@@ -420,7 +445,7 @@ function generateMockGames() {
     }
   ];
   
-  saveGames(mockGames);
+  // DO NOT SAVE - Mock games should not overwrite main games.json
   console.log(`Generated ${mockGames.length} mock games for testing`);
   return mockGames;
 }

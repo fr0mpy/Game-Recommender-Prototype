@@ -131,6 +131,9 @@ let tokenUsage = {
   lastUpdated: Date.now()
 };
 
+// Track active generations per session to prevent concurrent requests
+const activeGenerations = new Set();
+
 // Express configuration
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -183,7 +186,7 @@ function renderError(res, error) {
 // Home page (with message handling)
 app.get("/", (req, res) => {
   try {
-    const games = loadGames(); // Always load from main file so fresh games appear in dropdown
+    const games = loadGames(req.sessionId); // Load session-specific games if available
     const settings = loadSettings();
 
     let message = null;
@@ -199,6 +202,9 @@ app.get("/", (req, res) => {
     // Detect Bally's Sports cross-sell opportunities
     const crossSell = contextTracker.detectBallysSportsCrossSell(req.playerContext);
 
+    // Get preserved custom prompt from query params
+    const customPrompt = req.query.prompt ? decodeURIComponent(req.query.prompt) : 'Generate 100 slot games';
+
     res.render("index", {
       games,
       settings,
@@ -206,7 +212,8 @@ app.get("/", (req, res) => {
       playerContext: req.playerContext,
       crossSell,
       sessionId: req.sessionId,
-      tokenUsage
+      tokenUsage,
+      customPrompt
     });
   } catch (error) {
     renderError(res, error);
@@ -216,32 +223,95 @@ app.get("/", (req, res) => {
 // Generate games via LLM
 app.post("/generate", async (req, res) => {
   try {
-    const customPrompt = req.body.customPrompt;
-    const games = await generateGames(customPrompt);
+    // Prevent concurrent generations for the same session
+    if (activeGenerations.has(req.sessionId)) {
+      console.log(`🚫 Generation already in progress for session: ${req.sessionId}`);
+      const games = loadGames(req.sessionId);
+      const settings = loadSettings();
+      return res.render("index", {
+        games,
+        settings,
+        message: {
+          type: "error",
+          text: "Generation already in progress. Please wait for the current generation to complete.",
+        },
+        playerContext: req.playerContext,
+        crossSell: null,
+        sessionId: req.sessionId,
+        tokenUsage,
+        customPrompt: req.body?.customPrompt || 'Generate 100 slot games'
+      });
+    }
+
+    // Mark session as having active generation
+    activeGenerations.add(req.sessionId);
     
-    // Save generated games to both main file AND session
-    saveGames(games); // Updates main games.json file for dropdown (or memory in serverless)
+    const customPrompt = req.body.customPrompt;
+    const games = await generateGames(customPrompt, req.sessionId);
+    
+    // Save generated games to SESSION ONLY - NEVER overwrite main games.json file
     saveSessionGames(req.sessionId, games); // Keep session copy for this user
     
     console.log(`✅ Generated ${games.length} fresh games for session ${req.sessionId}`);
     
-    res.redirect("/?success=Games generated successfully");
+    // Clear active generation lock
+    activeGenerations.delete(req.sessionId);
+    
+    // Check if this is an AJAX request
+    const isAjaxRequest = req.headers['x-requested-with'] === 'XMLHttpRequest';
+    
+    console.log('X-Requested-With:', req.headers['x-requested-with']);
+    console.log('Is AJAX:', isAjaxRequest);
+    
+    if (isAjaxRequest) {
+      // Return JSON for localStorage storage (AJAX request)
+      console.log('Returning JSON response');
+      res.json({
+        success: true,
+        games: games,
+        message: 'Games generated successfully',
+        prompt: customPrompt || 'Generate 100 slot games'
+      });
+    } else {
+      // Traditional form submission - redirect with success message
+      console.log('Redirecting to home page');
+      const encodedMessage = encodeURIComponent('Games generated successfully');
+      const encodedPrompt = encodeURIComponent(customPrompt || 'Generate 100 slot games');
+      res.redirect(`/?success=${encodedMessage}&prompt=${encodedPrompt}`);
+    }
   } catch (error) {
-    const games = loadGames(req.sessionId);
-    const settings = loadSettings();
+    // Clear active generation lock on error
+    activeGenerations.delete(req.sessionId);
+    
+    // Check if this is an AJAX request for error handling too
+    const isAjaxRequest = req.headers['x-requested-with'] === 'XMLHttpRequest';
+    
+    if (isAjaxRequest) {
+      // Return JSON error for AJAX request
+      console.log('Returning JSON error response');
+      res.status(500).json({
+        success: false,
+        error: error.message || "Failed to generate games"
+      });
+    } else {
+      // Traditional error page for non-AJAX requests
+      const games = loadGames(req.sessionId);
+      const settings = loadSettings();
 
-    res.render("index", {
-      games,
-      settings,
-      message: {
-        type: "error",
-        text: error.message || "Failed to generate games",
-      },
-      playerContext: req.playerContext,
-      crossSell: null,
-      sessionId: req.sessionId,
-      tokenUsage
-    });
+      res.render("index", {
+        games,
+        settings,
+        message: {
+          type: "error",
+          text: error.message || "Failed to generate games",
+        },
+        playerContext: req.playerContext,
+        crossSell: null,
+        sessionId: req.sessionId,
+        tokenUsage,
+        customPrompt: req.body?.customPrompt || 'Generate 100 slot games'
+      });
+    }
   }
 });
 
@@ -346,6 +416,38 @@ app.get("/api/token-usage", (req, res) => {
   res.json(tokenUsage);
 });
 
+// Server-Sent Events endpoint for generation progress
+app.get("/api/generation-progress/:sessionId", (req, res) => {
+  const sessionId = req.params.sessionId;
+  
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*'
+  });
+  
+  // Store SSE connection for this session
+  if (!global.sseConnections) global.sseConnections = new Map();
+  global.sseConnections.set(sessionId, res);
+  
+  // Send initial connection message
+  res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Progress tracking started' })}\n\n`);
+  
+  // Cleanup on disconnect
+  req.on('close', () => {
+    global.sseConnections.delete(sessionId);
+  });
+});
+
+// Helper function to send progress updates
+function sendProgressUpdate(sessionId, data) {
+  if (global.sseConnections && global.sseConnections.has(sessionId)) {
+    const res = global.sseConnections.get(sessionId);
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  }
+}
+
 // API endpoint to update client context
 app.post("/api/update-context", (req, res) => {
   try {
@@ -358,7 +460,7 @@ app.post("/api/update-context", (req, res) => {
       contextTracker.contexts[sessionId].systemTheme = systemTheme || 'unknown';
       contextTracker.contexts[sessionId].userAgent = userAgent;
       contextTracker.contexts[sessionId].acceptLanguage = language;
-      contextTracker.saveContexts();
+      // Context saved in memory only - session-based for each unique user
     }
     
     res.json({ success: true });
@@ -413,6 +515,9 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   renderError(res, err);
 });
+
+// Make sendProgressUpdate globally available
+global.sendProgressUpdate = sendProgressUpdate;
 
 app.listen(PORT, () => {
   console.log(`🎰 Slot Forge running on port ${PORT}`);

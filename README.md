@@ -46,6 +46,14 @@ When a casino player finishes playing a slot game, the system suggests:
 
 ## ✨ Latest Improvements (August 2025)
 
+### **Production-Ready Reliability & UX**
+- **Vercel Deployment Fixed**: Resolved file system issues for serverless deployment
+- **100 Generic Default Games**: Ships with diverse themes (fantasy, adventure, sci-fi, western, etc.) instead of sports-only
+- **Session-Based Game Management**: Generated games replace defaults only for current session
+- **Double-Click Protection**: Prevents concurrent generations and button hanging issues
+- **Dynamic Context Tracking**: Real user data tracking without static files
+- **Custom Prompt Persistence**: User inputs persist after generation (e.g., "ALIEN FOCUSED" stays in field)
+
 ### **Revolutionary Speed & Performance Improvements**
 - **Parallel Chunk Processing**: All chunks now generate simultaneously instead of sequentially
 - **5x Speed Improvement**: 100-game generation reduced from 6.7 minutes to 1.3 minutes
@@ -54,19 +62,20 @@ When a casino player finishes playing a slot game, the system suggests:
 - **Smart Load Balancing**: Distributes generation load across multiple concurrent API calls
 
 ### **Enhanced AI Security & Reliability**
-- **Prompt Injection Protection**: Sanitizes user inputs to prevent malicious prompt manipulation
+- **Non-Game Request Filtering**: Blocks requests for code writing, explanations, etc. with red error messages
+- **Prompt Injection Protection**: Sanitizes user inputs while preserving legitimate game generation requests
 - **Enhanced JSON Parsing**: Improved error recovery with robust cleanup for malformed AI responses
 - **Modular Prompt Architecture**: Separated system prompts, generation instructions, and JSON formatting rules
 - **Extended Timeout Handling**: 90-second timeouts per chunk with parallel processing
-- **Smart Content Filtering**: Custom prompts are validated and cleaned while preserving legitimate requests
 
 ### **Custom Generation Features**
-- **Sports-Focused Generation**: Specialized handling for sports-themed game requests (e.g., "Generate 100 sports games")
-- **Custom Prompt Support**: Users can specify themes, counts, and requirements via natural language
-- **Input Validation**: Prevents injection attacks while allowing creative game generation requests
-- **Fallback Generation**: If AI generation fails, system falls back to high-quality pre-generated games
+- **Thematic Specialization**: Custom prompts like "ALIEN FOCUSED" or "ocean and pirate themed" work perfectly
+- **Session Isolation**: Generated games don't affect other users - each session gets its own game set
+- **Smart Input Validation**: Allows creative game requests while blocking non-game generation attempts
+- **Prompt Simplification**: Default changed from "Generate 100 fictional slot games using AI" to "Generate 100 slot games"
 
 ### **Enhanced Player Context Analysis**
+- **Dynamic Session Tracking**: No static files - each user gets real-time context analysis
 - **Real-time System Detection**: Automatically detects user's system theme (dark/light mode) and timezone
 - **European Market Focus**: Updated holidays and sports seasons for EU audience (Premier League, Champions League, Euros, Oktoberfest, etc.)
 - **Advanced Context Confidence Scoring**: 30-100% confidence based on available data quality

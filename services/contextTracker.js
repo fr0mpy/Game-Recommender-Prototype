@@ -1,7 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-
-const CONTEXT_FILE = path.join(__dirname, '..', 'data', 'player-context.json');
+// Dynamic in-memory context tracking - no static files needed
 
 // Holiday and special event definitions for EU
 const HOLIDAYS = {
@@ -50,7 +47,6 @@ class ContextTracker {
     };
 
     this.contexts[sessionId] = context;
-    this.saveContexts();
     return context;
   }
 
@@ -297,30 +293,15 @@ class ContextTracker {
     return weights[holidayName] || 0.3;
   }
 
-  // Persistence methods
+  // In-memory persistence methods (no files needed)
   loadContexts() {
-    try {
-      if (!fs.existsSync(CONTEXT_FILE)) {
-        return {};
-      }
-      const data = fs.readFileSync(CONTEXT_FILE, 'utf8');
-      return JSON.parse(data);
-    } catch (error) {
-      console.error('Failed to load player contexts:', error);
-      return {};
-    }
+    // Always start fresh - contexts are session-based and dynamic
+    return {};
   }
 
   saveContexts() {
-    try {
-      const dataDir = path.dirname(CONTEXT_FILE);
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-      }
-      fs.writeFileSync(CONTEXT_FILE, JSON.stringify(this.contexts, null, 2));
-    } catch (error) {
-      console.error('Failed to save player contexts:', error);
-    }
+    // No-op - contexts are kept in memory only
+    // In production, this could write to Redis, database, etc.
   }
 
   // Generate LLM summary of player context for recommendations
@@ -422,8 +403,7 @@ Provide a 1-2 sentence summary of what this context means for game recommendatio
     }
 
     if (cleaned > 0) {
-      this.saveContexts();
-      console.log(`Cleaned up ${cleaned} old player contexts`);
+      console.log(`Cleaned up ${cleaned} old player contexts from memory`);
     }
   }
 }
