@@ -136,12 +136,32 @@ Generate 100 diverse slots with various themes
 - `ANTHROPIC_API_KEY` environment variable
 - ~50MB memory + generated game storage
 
+## 📚 Developer Resources
+
+### 🏗️ Architecture & Development
+- **[Complete Developer Guide](docs/DEVELOPER_GUIDE.md)** - Comprehensive technical documentation
+  - Project structure and file organization
+  - Data flows and integration points  
+  - API reference and technical patterns
+  - Development setup and deployment
+  - Technical debt and known constraints
+
+### 📋 Technical Documentation
+- **[Tech Stack](docs/architecture/tech-stack.md)** - Technology choices and rationale
+- **[Coding Standards](docs/architecture/coding-standards.md)** - Development patterns and rules
+- **[User Flows](docs/flows/user-flows.md)** - User interaction documentation
+- **[LLM Flows](docs/flows/llm-flows.md)** - AI processing workflows
+
+### 🎯 Project Analysis  
+- **[Assessment Comparison](ASSESSMENT_COMPARISON.md)** - Project vs. original Bally's brief analysis
+
 ## 🔍 Troubleshooting
 
 **Generation Issues**: Check API key and credits
 **Recommendation Errors**: Generate games first, refresh if needed  
 **Slider Problems**: Clear localStorage, refresh page
 **Context Issues**: Check browser console for analysis logs
+**Session Issues**: See [Developer Guide](docs/DEVELOPER_GUIDE.md#technical-debt-and-known-constraints) for session management details
 
 ---
 

@@ -2,6 +2,7 @@ node_modules/
 .env
 data/player-context.json
 data/user-settings.json
+data/temp-sessions/
 package-lock.json
 *.log
 .DS_Store
