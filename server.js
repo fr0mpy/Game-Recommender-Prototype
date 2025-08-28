@@ -461,7 +461,7 @@ app.post("/recommend", async (req, res) => {
     saveSettings(weights);
 
     // Load games using the effective session ID
-    let games = loadGames(effectiveSessionId);
+    let games = await loadGames(effectiveSessionId);
     console.log(`📚 Loaded ${games.length} games for session ${effectiveSessionId}`);
     
     // CRITICAL FIX: If no session games found, check if gameId looks like a custom game
