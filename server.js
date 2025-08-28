@@ -245,10 +245,20 @@ app.get("/", (req, res) => {
 
 // Generate games via LLM
 app.post("/generate", async (req, res) => {
+  console.log('🚀 SERVER: /generate route hit');
+  console.log('🚀 SERVER: Request body:', req.body);
+  console.log('🚀 SERVER: Session ID:', req.sessionId);
+  console.log('🚀 SERVER: User Agent:', req.headers['user-agent']);
+  console.log('🚀 SERVER: Environment check:', {
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL: process.env.VERCEL,
+    API_KEY_EXISTS: !!process.env.ANTHROPIC_API_KEY
+  });
+  
   try {
     // Prevent concurrent generations for the same session
     if (activeGenerations.has(req.sessionId)) {
-      console.log(`🚫 Generation already in progress for session: ${req.sessionId}`);
+      console.log(`🚫 SERVER: Generation already in progress for session: ${req.sessionId}`);
       const games = loadGames(req.sessionId);
       const settings = loadSettings();
       return res.render("index", {
@@ -266,11 +276,17 @@ app.post("/generate", async (req, res) => {
       });
     }
 
+    console.log('✅ SERVER: No concurrent generation, proceeding...');
     // Mark session as having active generation
     activeGenerations.add(req.sessionId);
     
     const customPrompt = req.body.customPrompt;
+    console.log('🔍 SERVER: Custom prompt:', customPrompt);
+    console.log('🔍 SERVER: Calling generateGames...');
+    
     const games = await generateGames(customPrompt, req.sessionId);
+    console.log('✅ SERVER: generateGames completed successfully');
+    console.log('🔍 SERVER: Generated games count:', games?.length);
     
     // Save generated games to SESSION ONLY - NEVER overwrite main games.json file
     saveSessionGames(req.sessionId, games); // Keep session copy for this user
@@ -303,23 +319,33 @@ app.post("/generate", async (req, res) => {
       res.redirect(`/?success=${encodedMessage}&prompt=${encodedPrompt}`);
     }
   } catch (error) {
+    console.error('❌ SERVER: Generation failed with error:', error);
+    console.error('❌ SERVER: Error name:', error.name);
+    console.error('❌ SERVER: Error message:', error.message);
+    console.error('❌ SERVER: Error stack:', error.stack);
+    
     // Clear active generation lock on error
     activeGenerations.delete(req.sessionId);
+    console.log('🔧 SERVER: Cleared active generation lock for session:', req.sessionId);
     
     // Check if this is an AJAX request for error handling too
     const isAjaxRequest = req.headers['x-requested-with'] === 'XMLHttpRequest';
+    console.log('🔍 SERVER: Is AJAX request:', isAjaxRequest);
     
     if (isAjaxRequest) {
       // Return JSON error for AJAX request
-      console.log('Returning JSON error response');
+      console.log('📤 SERVER: Returning JSON error response for AJAX');
       res.status(500).json({
         success: false,
         error: error.message || "Failed to generate games"
       });
     } else {
       // Traditional error page for non-AJAX requests
+      console.log('📤 SERVER: Returning error page for traditional request');
       const games = loadGames(req.sessionId);
       const settings = loadSettings();
+      console.log('🔍 SERVER: Loaded games count for error page:', games?.length);
+      console.log('🔍 SERVER: Loaded settings for error page:', settings);
 
       res.render("index", {
         games,

@@ -5,10 +5,18 @@ const contextTracker = require('./contextTracker');
 // Initialize Anthropic API
 let anthropic = null;
 
+console.log('🔍 INIT: Checking Anthropic API key...');
+console.log('🔍 INIT: API key exists:', !!process.env.ANTHROPIC_API_KEY);
+console.log('🔍 INIT: API key length:', process.env.ANTHROPIC_API_KEY ? process.env.ANTHROPIC_API_KEY.length : 0);
+
 if (process.env.ANTHROPIC_API_KEY) {
+  console.log('🔍 INIT: Creating Anthropic client...');
   anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   });
+  console.log('✅ INIT: Anthropic client created successfully');
+} else {
+  console.error('❌ INIT: No ANTHROPIC_API_KEY found in environment');
 }
 
 // Embedded prompts for serverless compatibility
@@ -113,13 +121,21 @@ Before outputting, verify:
 
 // Chunked generation for large game requests
 async function generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, customPrompt, totalCount, sessionId = null) {
+  console.log('🔄 CHUNKS: Starting chunked generation');
+  console.log('🔄 CHUNKS: totalCount:', totalCount);
+  console.log('🔄 CHUNKS: sessionId:', sessionId);
+  
   const chunkSize = 20; // 20 games per chunk - Claude 4 with 15K tokens can handle this
   const chunks = Math.ceil(totalCount / chunkSize);
   const allGames = [];
   let gameIdCounter = 1;
 
-  console.log(`Generating ${totalCount} games in ${chunks} chunks of ${chunkSize} games each`);
-  console.log('🚀 Using PARALLEL processing for maximum speed!');
+  console.log(`🔄 CHUNKS: Generating ${totalCount} games in ${chunks} chunks of ${chunkSize} games each`);
+  console.log('🚀 CHUNKS: Using PARALLEL processing for maximum speed!');
+  console.log('🔍 CHUNKS: Environment check:', {
+    anthropicExists: !!anthropic,
+    apiKeyExists: !!process.env.ANTHROPIC_API_KEY
+  });
   
   // Send progress update
   if (sessionId && global.sendProgressUpdate) {
@@ -339,18 +355,31 @@ function validateGameGenerationPrompt(prompt) {
 }
 
 async function generateGames(customPrompt = null, sessionId = null) {
+  console.log('🎮 GENERATE: Starting generateGames function');
+  console.log('🎮 GENERATE: customPrompt:', customPrompt);
+  console.log('🎮 GENERATE: sessionId:', sessionId);
+  
   try {
+    console.log('🔍 GENERATE: Loading embedded prompts...');
     // Use embedded prompts for serverless compatibility
     const systemPrompt = SYSTEM_PROMPT;
     const generationInstructions = GENERATION_INSTRUCTIONS;
     const jsonFormatRules = JSON_FORMAT_RULES;
+    console.log('✅ GENERATE: Embedded prompts loaded');
+    console.log('🔍 GENERATE: System prompt length:', systemPrompt.length);
+    console.log('🔍 GENERATE: Generation instructions length:', generationInstructions.length);
+    console.log('🔍 GENERATE: JSON format rules length:', jsonFormatRules.length);
     
+    console.log('🔍 GENERATE: Validating custom prompt...');
     // Validate and sanitize custom prompt
     const validation = validateGameGenerationPrompt(customPrompt);
+    console.log('🔍 GENERATE: Validation result:', validation);
     if (!validation.valid) {
+      console.error('❌ GENERATE: Prompt validation failed:', validation.error);
       throw new Error(validation.error);
     }
     const sanitizedPrompt = validation.sanitized;
+    console.log('✅ GENERATE: Prompt validated, sanitized:', sanitizedPrompt);
     
     let requestedCount = 100; // Default from generator prompt
     if (sanitizedPrompt && sanitizedPrompt.trim()) {
@@ -371,11 +400,19 @@ async function generateGames(customPrompt = null, sessionId = null) {
     
     console.log(`✅ Validated game count: ${requestedCount} (within 1-100 limit)`);
 
+    console.log('🔍 GENERATE: Checking Anthropic client availability...');
+    console.log('🔍 GENERATE: anthropic client exists:', !!anthropic);
+    console.log('🔍 GENERATE: API key exists:', !!process.env.ANTHROPIC_API_KEY);
+    
     // Use Anthropic Claude Haiku
     if (!anthropic || !process.env.ANTHROPIC_API_KEY) {
+      console.error('❌ GENERATE: Anthropic not configured');
+      console.error('❌ GENERATE: anthropic client:', !!anthropic);
+      console.error('❌ GENERATE: API key exists:', !!process.env.ANTHROPIC_API_KEY);
       throw new Error('Anthropic API key not configured. Please set ANTHROPIC_API_KEY environment variable.');
     }
 
+    console.log('✅ GENERATE: Anthropic client ready');
     console.log('Generating games via Anthropic Claude 4 Sonnet...');
     
     // For large generations (>25 games), use chunked approach
@@ -385,9 +422,17 @@ async function generateGames(customPrompt = null, sessionId = null) {
     }
     
     // Single generation for smaller requests
+    console.log('🔍 GENERATE: Building user prompt...');
     const userPrompt = sanitizedPrompt && sanitizedPrompt.trim() 
       ? `${generationInstructions}\n\nCUSTOM INSTRUCTIONS: ${sanitizedPrompt}\n\nGenerate exactly ${requestedCount} games.\n\n${jsonFormatRules}`
       : `${generationInstructions}\n\n${jsonFormatRules}`;
+    console.log('✅ GENERATE: User prompt built, length:', userPrompt.length);
+    console.log('🔍 GENERATE: User prompt preview:', userPrompt.substring(0, 300) + '...');
+
+    console.log('🔍 GENERATE: Making Anthropic API call...');
+    console.log('🔍 GENERATE: Model: claude-sonnet-4-20250514');
+    console.log('🔍 GENERATE: Max tokens: 15000');
+    console.log('🔍 GENERATE: Temperature: 0.7');
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514', // Claude 4 Sonnet for superior JSON generation
@@ -399,41 +444,59 @@ async function generateGames(customPrompt = null, sessionId = null) {
         content: userPrompt
       }]
     });
+    
+    console.log('✅ GENERATE: API call completed successfully');
+    console.log('🔍 GENERATE: Response object keys:', Object.keys(response));
+    console.log('🔍 GENERATE: Response content array length:', response.content?.length);
 
     // Track token usage - note: this requires the tokenUsage object to be passed in or made global
 
+    console.log('🔍 GENERATE: Extracting response content...');
     const content = response.content[0]?.text;
+    console.log('🔍 GENERATE: Content exists:', !!content);
+    console.log('🔍 GENERATE: Content length:', content?.length);
+    
     if (!content) {
+      console.error('❌ GENERATE: No response content from Anthropic');
+      console.error('❌ GENERATE: Response structure:', JSON.stringify(response, null, 2));
       throw new Error('No response content from Anthropic');
     }
 
-    console.log('Successfully used Anthropic Claude 4 Sonnet');
-
-    if (!content) {
-      throw new Error('No content received from API');
-    }
+    console.log('✅ GENERATE: Successfully used Anthropic Claude 4 Sonnet');
     
     // Parse JSON response from LLM
-    console.log('LLM Response Preview:', content.substring(0, 200) + '...');
+    console.log('🔍 GENERATE: LLM Response Preview:', content.substring(0, 200) + '...');
     
+    console.log('🔍 GENERATE: Extracting JSON from response...');
     // Extract JSON from Claude's response (it might have explanatory text)
     let jsonContent = content;
+    console.log('🔍 GENERATE: Initial content has JSON markers:', content.includes('['), content.includes(']'));
+    
     if (content.includes('[') && content.includes(']')) {
       const startIndex = content.indexOf('[');
       const endIndex = content.lastIndexOf(']') + 1;
+      console.log('🔍 GENERATE: JSON markers found at positions:', startIndex, 'to', endIndex);
       jsonContent = content.substring(startIndex, endIndex);
+      console.log('🔍 GENERATE: Extracted JSON content length:', jsonContent.length);
+    } else {
+      console.log('⚠️ GENERATE: No JSON array markers found in response');
     }
     
     // Clean up any potential formatting issues
     jsonContent = jsonContent.trim();
+    console.log('🔍 GENERATE: Cleaned JSON content length:', jsonContent.length);
     
     let games;
+    console.log('🔍 GENERATE: Attempting to parse JSON...');
     try {
       games = JSON.parse(jsonContent);
+      console.log('✅ GENERATE: JSON parsed successfully');
+      console.log('🔍 GENERATE: Parsed games array length:', Array.isArray(games) ? games.length : 'not an array');
     } catch (parseError) {
-      console.error('JSON Parse Error:', parseError.message);
-      console.error('JSON Content preview:', jsonContent.substring(0, 500) + '...');
-      console.error('Attempting to fix JSON formatting...');
+      console.error('❌ GENERATE: JSON Parse Error:', parseError.message);
+      console.error('❌ GENERATE: JSON Content preview:', jsonContent.substring(0, 500) + '...');
+      console.error('❌ GENERATE: JSON Content end preview:', '...' + jsonContent.substring(jsonContent.length - 200));
+      console.log('🔧 GENERATE: Attempting to fix JSON formatting...');
       
       // Try to fix common JSON issues
       let fixedJson = jsonContent
@@ -483,20 +546,27 @@ async function generateGames(customPrompt = null, sessionId = null) {
 
     // DO NOT SAVE - Games will be saved to session storage only by server.js
     
-    console.log(`Successfully generated ${games.length} games`);
+    console.log(`✅ GENERATE: Successfully generated ${games.length} games`);
+    console.log('🔍 GENERATE: Final games sample:', games[0] ? Object.keys(games[0]) : 'no games');
     return games;
     
   } catch (error) {
-    console.error('Game generation failed:', error);
+    console.error('❌ GENERATE: Game generation failed:', error);
+    console.error('❌ GENERATE: Error name:', error.name);
+    console.error('❌ GENERATE: Error message:', error.message);
+    console.error('❌ GENERATE: Error stack:', error.stack);
     
     if (error.message.includes('JSON')) {
+      console.error('❌ GENERATE: JSON parsing error detected');
       throw new Error('Unable to parse games from LLM response. Please try again.');
     }
     
     if (error.message.includes('API key') || error.message.includes('Anthropic')) {
+      console.error('❌ GENERATE: API key configuration error detected');
       throw new Error('Anthropic API key not configured. Please check your environment variables.');
     }
     
+    console.error('❌ GENERATE: Generic generation failure');
     throw new Error('Unable to generate games. Please try again later.');
   }
 }
