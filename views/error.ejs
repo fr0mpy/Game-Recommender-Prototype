@@ -27,10 +27,10 @@
         <div class="flex items-start">
           <span class="text-red-500 mr-3">🔑</span>
           <div>
-            <strong>OpenAI API Key Issues:</strong>
+            <strong>Anthropic API Key Issues:</strong>
             <p>
               Make sure your <code>.env</code> file contains a valid
-              <code>OPENAI_API_KEY</code>. Copy from
+              <code>ANTHROPIC_API_KEY</code>. Copy from
               <code>.env.example</code> and add your key.
             </p>
           </div>
@@ -109,16 +109,13 @@
           %>
         </div>
         <div>
-          <strong>API Key Set:</strong> <%= process.env.OPENAI_API_KEY ? 'Yes
-          (✓)' : 'No (✗)' %>
+          <strong>API Key Set:</strong> <%= process.env.ANTHROPIC_API_KEY ? 'Yes (✓)' : 'No (✗)' %>
         </div>
         <div><strong>Timestamp:</strong> <%= new Date().toISOString() %></div>
         <% if (typeof stack !== 'undefined') { %>
         <div class="mt-2">
           <strong>Stack Trace:</strong>
-          <pre class="text-xs bg-yellow-100 p-2 rounded mt-1 overflow-x-auto">
-<%= stack %></pre
-          >
+          <pre class="text-xs bg-yellow-100 p-2 rounded mt-1 overflow-x-auto"><%= stack %></pre>
         </div>
         <% } %>
       </div>

@@ -11,7 +11,7 @@ if (process.env.ANTHROPIC_API_KEY) {
   });
 }
 
-const EXPLANATION_PROMPT_FILE = path.join(__dirname, '..', 'match-explanation-prompt.md');
+const EXPLANATION_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'match-explanation-prompt.md');
 
 // Cache for similarity calculations
 const gameCache = new Map();
@@ -57,8 +57,8 @@ function calculateSimilarity(game1, game2, weights = DEFAULT_WEIGHTS) {
   return Math.min(score, 1.0);
 }
 
-function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5) {
-  const games = loadGames();
+function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesArray = null) {
+  const games = gamesArray || loadGames();
   
   if (games.length === 0) {
     return [];

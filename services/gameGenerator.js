@@ -12,8 +12,8 @@ if (process.env.ANTHROPIC_API_KEY) {
   });
 }
 
-const SYSTEM_PROMPT_FILE = path.join(__dirname, '..', 'slot-forge-system-prompt.md');
-const GENERATOR_PROMPT_FILE = path.join(__dirname, '..', 'slot-forge-generator-prompt.md');
+const SYSTEM_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'slot-forge-system-prompt.md');
+const GENERATOR_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'slot-forge-generator-prompt.md');
 
 // Chunked generation for large game requests
 async function generateGamesInChunks(systemPrompt, generatorPrompt, customPrompt, totalCount) {
@@ -165,7 +165,9 @@ async function generateGames(customPrompt = null) {
       }]
     });
 
-    content = response.content[0]?.text;
+    // Track token usage - note: this requires the tokenUsage object to be passed in or made global
+
+    const content = response.content[0]?.text;
     if (!content) {
       throw new Error('No response content from Anthropic');
     }

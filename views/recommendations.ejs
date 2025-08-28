@@ -6,7 +6,7 @@
   <div class="mb-6">
     <a
       href="/"
-      class="inline-flex items-center text-casino hover:text-casino-dark transition duration-200"
+      class="inline-flex items-center text-casino-dark hover:text-casino transition duration-200"
     >
       <svg
         class="w-5 h-5 mr-2"
@@ -208,7 +208,14 @@
           </p>
           <div class="text-sm text-casino-dark text-opacity-80">
             <% if (rec.explanation) { %>
-              <p><%= rec.explanation %></p>
+              <p id="explanation-<%= recommendations.indexOf(rec) %>" class="explanation-text"><%= rec.explanation %></p>
+              <div id="loading-<%= recommendations.indexOf(rec) %>" class="loading-indicator flex items-center text-xs text-blue-600 mt-2">
+                <svg class="animate-spin -ml-1 mr-2 h-3 w-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Analyzing with our AI for the best recommendation insights...
+              </div>
             <% } else { %>
               <div class="text-xs space-y-1">
                 <% if (selectedGame && rec.game.theme && selectedGame.theme) { %> <%
@@ -266,5 +273,79 @@
     <% } %>
   </div>
 </div>
+
+<script>
+// Enhanced explanation loading
+document.addEventListener('DOMContentLoaded', function() {
+  const recommendationsData = {
+    selectedGameId: '<%= selectedGame.id %>',
+    recommendations: <%- JSON.stringify(recommendations.map(rec => ({ game: rec.game, confidence: rec.confidence }))) %>,
+    weights: <%- JSON.stringify(weights) %>,
+    playerContext: <%- JSON.stringify(playerContext) %>
+  };
+
+  // Call API to enhance explanations
+  fetch('/api/enhance-explanations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(recommendationsData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success && data.explanations) {
+      // Update token counter
+      fetch('/api/token-usage')
+        .then(response => response.json())
+        .then(tokenData => {
+          const tokenCountElement = document.getElementById('token-count');
+          if (tokenCountElement) {
+            tokenCountElement.textContent = tokenData.totalTokens.toLocaleString();
+          }
+        })
+        .catch(console.error);
+
+      // Update each explanation
+      data.explanations.forEach(item => {
+        const explanationElement = document.getElementById(`explanation-${item.index}`);
+        const loadingElement = document.getElementById(`loading-${item.index}`);
+        
+        if (explanationElement && loadingElement) {
+          // Hide loading indicator
+          loadingElement.style.display = 'none';
+          
+          // Update explanation with enhanced version
+          explanationElement.innerHTML = item.explanation;
+          
+          // Add a subtle animation to show it's been updated
+          explanationElement.style.background = '#f0f9ff';
+          explanationElement.style.padding = '8px';
+          explanationElement.style.borderRadius = '4px';
+          explanationElement.style.border = '1px solid #bfdbfe';
+          
+          setTimeout(() => {
+            explanationElement.style.background = 'transparent';
+            explanationElement.style.border = 'none';
+          }, 2000);
+        }
+      });
+    } else {
+      console.error('Failed to enhance explanations:', data.error);
+      // Hide all loading indicators if API fails
+      document.querySelectorAll('.loading-indicator').forEach(el => {
+        el.style.display = 'none';
+      });
+    }
+  })
+  .catch(error => {
+    console.error('Error enhancing explanations:', error);
+    // Hide all loading indicators on error
+    document.querySelectorAll('.loading-indicator').forEach(el => {
+      el.style.display = 'none';
+    });
+  });
+});
+</script>
 
 <%- include('partials/footer') %>

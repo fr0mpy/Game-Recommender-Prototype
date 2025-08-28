@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 const GAMES_FILE = path.join(__dirname, '..', 'data', 'games.json');
+const DEFAULT_GAMES_FILE = path.join(__dirname, '..', 'data', 'default-games.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'user-settings.json');
+
+// In-memory session storage for temporary games
+const sessionGames = new Map();
 
 // Default weight configuration
 const DEFAULT_WEIGHTS = {
@@ -25,13 +29,26 @@ function saveGames(games) {
   }
 }
 
-function loadGames() {
+function loadGames(sessionId = null) {
   try {
-    if (!fs.existsSync(GAMES_FILE)) {
-      return [];
+    // If sessionId provided and has session games, return those
+    if (sessionId && sessionGames.has(sessionId)) {
+      return sessionGames.get(sessionId);
     }
-    const data = fs.readFileSync(GAMES_FILE, 'utf8');
-    return JSON.parse(data);
+
+    // Try to load default games first
+    if (fs.existsSync(DEFAULT_GAMES_FILE)) {
+      const data = fs.readFileSync(DEFAULT_GAMES_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+
+    // Fallback to current games.json
+    if (fs.existsSync(GAMES_FILE)) {
+      const data = fs.readFileSync(GAMES_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+
+    return [];
   } catch (error) {
     console.error('Failed to load games:', error);
     return [];
@@ -64,10 +81,28 @@ function loadSettings() {
   }
 }
 
+// Session-based game storage functions
+function saveSessionGames(sessionId, games) {
+  sessionGames.set(sessionId, games);
+  console.log(`Saved ${games.length} games for session: ${sessionId}`);
+}
+
+function clearSessionGames(sessionId) {
+  sessionGames.delete(sessionId);
+  console.log(`Cleared session games for: ${sessionId}`);
+}
+
+function hasSessionGames(sessionId) {
+  return sessionGames.has(sessionId);
+}
+
 module.exports = {
   saveGames,
   loadGames,
   saveSettings,
   loadSettings,
+  saveSessionGames,
+  clearSessionGames,
+  hasSessionGames,
   DEFAULT_WEIGHTS
 };

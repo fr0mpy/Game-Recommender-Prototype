@@ -3,17 +3,133 @@ const express = require("express");
 const path = require("path");
 
 // Import services
-const { loadGames, loadSettings, saveSettings } = require("./utils/storage");
+const { loadGames, loadSettings, saveSettings, saveSessionGames, hasSessionGames } = require("./utils/storage");
 const {
   generateGames,
   generateMockGames,
 } = require("./services/gameGenerator");
 const { getRecommendations, generateMatchExplanation } = require("./services/similarityEngine");
+
+// Unified function to generate all recommendation explanations in a single LLM call
+async function generateAllRecommendationExplanations(selectedGame, recommendations, weights, playerContext, allGames) {
+  const Anthropic = require('@anthropic-ai/sdk');
+  
+  if (!process.env.ANTHROPIC_API_KEY) {
+    // Return basic explanations without API
+    return recommendations.map((rec, index) => ({
+      index: index,
+      explanation: `Great match based on similar ${rec.game.volatility} volatility and engaging gameplay.`,
+      success: false
+    }));
+  }
+
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
+  try {
+    // Get current time context
+    const now = new Date();
+    const hour = now.getHours();
+    const dayOfWeek = now.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    
+    let timeContext = '';
+    if (hour >= 12 && hour <= 14 && !isWeekend) {
+      timeContext = 'lunch break - looking for quick, engaging gameplay';
+    } else if (hour >= 17 && hour <= 23) {
+      timeContext = 'evening relaxation - perfect time for immersive gaming sessions';
+    } else if (hour >= 9 && hour <= 17 && !isWeekend) {
+      timeContext = 'work hours - seeking brief, exciting gaming moments';
+    } else if (isWeekend) {
+      timeContext = 'weekend leisure - ideal for extended gaming sessions';
+    } else {
+      timeContext = 'late night gaming - looking for engaging entertainment';
+    }
+
+    // Build recommendations list for the prompt
+    const gamesList = recommendations.map((rec, i) => 
+      `${i + 1}. "${rec.game.title}" - ${rec.game.theme.join('/')} themes, ${rec.game.volatility} volatility, ${rec.game.pace} pace, RTP ${rec.game.rtp}%, max win ${rec.game.maxWin}x`
+    ).join('\n');
+
+    const prompt = `Generate concise recommendation explanations for slot games. Return ONLY a JSON array of explanations.
+
+PLAYER CONTEXT:
+- Selected game: "${selectedGame.title}" (${selectedGame.theme.join('/')}, ${selectedGame.volatility} volatility)
+- Current time: ${timeContext}
+- Player weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%
+- Device: ${playerContext?.deviceType || 'unknown'}
+${playerContext?.temporal?.sportsSeason?.length ? `- Sports active: ${playerContext.temporal.sportsSeason.map(s => s.sport).join(', ')}` : ''}
+
+RECOMMENDED GAMES:
+${gamesList}
+
+Return JSON array with explanations (1-2 sentences each, natural language, no percentages):
+["explanation for game 1", "explanation for game 2", ...]
+
+Focus on: time-appropriate gameplay, shared themes, volatility matching, bonus features, visual appeal.`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 400,
+      temperature: 0.3,
+      messages: [{
+        role: 'user',
+        content: prompt
+      }]
+    });
+
+    // Track token usage
+    if (response.usage) {
+      tokenUsage.totalTokens += response.usage.input_tokens + response.usage.output_tokens;
+      tokenUsage.operationsCount += 1;
+      tokenUsage.lastUpdated = Date.now();
+    }
+
+    const responseText = response.content[0]?.text?.trim();
+    let explanationsArray;
+    
+    try {
+      explanationsArray = JSON.parse(responseText);
+    } catch (parseError) {
+      // Fallback if JSON parsing fails
+      console.error('Failed to parse LLM response as JSON:', parseError);
+      return recommendations.map((rec, index) => ({
+        index: index,
+        explanation: `Great match for your ${selectedGame.theme.join(' and ')} preferences with similar ${rec.game.volatility} volatility gameplay.`,
+        success: false
+      }));
+    }
+
+    // Return formatted explanations
+    return explanationsArray.map((explanation, index) => ({
+      index: index,
+      explanation: explanation || `Great match for your gaming preferences.`,
+      success: true
+    }));
+
+  } catch (error) {
+    console.error('Error generating explanations:', error);
+    // Return basic explanations on error
+    return recommendations.map((rec, index) => ({
+      index: index,
+      explanation: `Great match for your ${selectedGame.theme.join(' and ')} preferences with similar ${rec.game.volatility} volatility gameplay.`,
+      success: false
+    }));
+  }
+}
 const contextTracker = require("./services/contextTracker");
 const { convertGamesToCSV } = require("./services/csvConverter");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Token tracking system
+let tokenUsage = {
+  totalTokens: 0,
+  operationsCount: 0,
+  lastUpdated: Date.now()
+};
 
 // Express configuration
 app.set("view engine", "ejs");
@@ -66,7 +182,7 @@ function renderError(res, error) {
 // Home page (with message handling)
 app.get("/", (req, res) => {
   try {
-    const games = loadGames();
+    const games = loadGames(req.sessionId);
     const settings = loadSettings();
 
     let message = null;
@@ -88,7 +204,8 @@ app.get("/", (req, res) => {
       message,
       playerContext: req.playerContext,
       crossSell,
-      sessionId: req.sessionId
+      sessionId: req.sessionId,
+      tokenUsage
     });
   } catch (error) {
     renderError(res, error);
@@ -99,10 +216,14 @@ app.get("/", (req, res) => {
 app.post("/generate", async (req, res) => {
   try {
     const customPrompt = req.body.customPrompt;
-    await generateGames(customPrompt);
+    const games = await generateGames(customPrompt);
+    
+    // Save generated games to session (temporary)
+    saveSessionGames(req.sessionId, games);
+    
     res.redirect("/?success=Games generated successfully");
   } catch (error) {
-    const games = loadGames();
+    const games = loadGames(req.sessionId);
     const settings = loadSettings();
 
     res.render("index", {
@@ -112,19 +233,14 @@ app.post("/generate", async (req, res) => {
         type: "error",
         text: error.message || "Failed to generate games",
       },
+      playerContext: req.playerContext,
+      crossSell: null,
+      sessionId: req.sessionId,
+      tokenUsage
     });
   }
 });
 
-// Generate mock games for testing
-app.post("/generate-mock", (req, res) => {
-  try {
-    generateMockGames();
-    res.redirect("/?success=Mock games added for testing");
-  } catch (error) {
-    renderError(res, error);
-  }
-});
 
 // Get recommendations
 app.post("/recommend", async (req, res) => {
@@ -155,40 +271,29 @@ app.post("/recommend", async (req, res) => {
     // Save user preferences
     saveSettings(weights);
 
-    // Get recommendations
-    const recommendations = getRecommendations(gameId, weights, 5);
+    // Get recommendations using session-specific games
+    const recommendations = getRecommendations(gameId, weights, 5, games);
 
     // Find selected game for display
-    const games = loadGames();
+    const games = loadGames(req.sessionId);
     const selectedGame = games.find((g) => g.id === gameId);
 
-    // Generate explanations with timeout and fallback
-    const recommendationsWithExplanations = await Promise.all(
-      recommendations.map(async (rec) => {
-        try {
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Explanation timeout')), 2000)
-          );
-          
-          const explanation = await Promise.race([
-            generateMatchExplanation(selectedGame, rec.game, weights, rec.confidence),
-            timeoutPromise
-          ]);
-          
-          return { ...rec, explanation };
-        } catch (error) {
-          console.error('Error generating explanation for game:', rec.game.title, error.message);
-          return { ...rec, explanation: `Strong ${Math.round(rec.confidence * 100)}% match with similar gameplay features.` };
-        }
-      })
-    );
+    // Start with loading state - all explanations will be generated by LLM
+    const recommendationsWithExplanations = recommendations.map((rec) => {
+      return {
+        ...rec, 
+        explanation: 'Generating personalized match analysis...',
+        loading: true // Flag for frontend to know LLM enhancement is pending
+      };
+    });
 
     res.render("recommendations", {
       recommendations: recommendationsWithExplanations,
       selectedGame,
       weights,
       playerContext: req.playerContext,
-      sessionId: req.sessionId
+      sessionId: req.sessionId,
+      tokenUsage
     });
   } catch (error) {
     renderError(res, error);
@@ -198,7 +303,7 @@ app.post("/recommend", async (req, res) => {
 // Export routes
 app.get("/export/json", (req, res) => {
   try {
-    const games = loadGames();
+    const games = loadGames(req.sessionId);
 
     if (games.length === 0) {
       return res.redirect("/?error=No games available for export");
@@ -214,7 +319,7 @@ app.get("/export/json", (req, res) => {
 
 app.get("/export/csv", (req, res) => {
   try {
-    const games = loadGames();
+    const games = loadGames(req.sessionId);
 
     if (games.length === 0) {
       return res.redirect("/?error=No games available for export");
@@ -228,6 +333,11 @@ app.get("/export/csv", (req, res) => {
   } catch (error) {
     renderError(res, error);
   }
+});
+
+// API endpoint to get token usage
+app.get("/api/token-usage", (req, res) => {
+  res.json(tokenUsage);
 });
 
 // API endpoint to update client context
@@ -249,6 +359,39 @@ app.post("/api/update-context", (req, res) => {
   } catch (error) {
     console.error('Error updating context:', error);
     res.json({ success: false });
+  }
+});
+
+// API endpoint to generate all recommendation explanations with unified LLM call
+app.post("/api/enhance-explanations", async (req, res) => {
+  try {
+    const { selectedGameId, recommendations, weights, playerContext } = req.body;
+    
+    // Load all games for context (using session if available)
+    const allGames = loadGames(req.sessionId);
+    const selectedGame = allGames.find(g => g.id === selectedGameId);
+    
+    if (!selectedGame || !recommendations || !Array.isArray(recommendations)) {
+      return res.json({ success: false, error: 'Invalid request data' });
+    }
+
+    // Generate all explanations in a single LLM call
+    const explanations = await generateAllRecommendationExplanations(
+      selectedGame, 
+      recommendations, 
+      weights, 
+      playerContext,
+      allGames
+    );
+
+    res.json({ 
+      success: true, 
+      explanations: explanations 
+    });
+
+  } catch (error) {
+    console.error('Error generating explanations:', error);
+    res.json({ success: false, error: 'Server error' });
   }
 });
 
