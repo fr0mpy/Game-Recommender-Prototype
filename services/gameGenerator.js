@@ -130,7 +130,7 @@ Each game object must have these fields in this structure:
 **CRITICAL FOR SIMILARITY ENGINE:**
 - \`theme\`: MUST be array of 1-3 theme strings from: ["Fantasy", "Dragons", "Western", "Gold Mining", "Ancient", "Egypt", "Pirates", "Treasure", "Space", "Aliens", "Underwater", "Ocean", "Jungle", "Adventure", "Norse", "Vikings", "Magic", "Wizards", "Gems", "Jewels", "Fruits", "Classic", "Animals", "Safari", "Mystery", "Detective", "Horror", "Gothic", "Romance", "Love", "Music", "Rock", "Food", "Cooking", "Travel", "Exploration", "Medieval", "Knights", "Futuristic", "Cyberpunk"]
 - \`volatility\`: MUST be one of: "low", "medium", "high", "ultra" (randomized distribution: 25% low, 40% medium, 25% high, 10% ultra)
-- \`studio\`: MUST be a unique studio name string (create diverse fictional studios)
+- \`studio\`: MUST be a studio name string (studios can make multiple games, use realistic fictional studio names like "Mythic Gaming", "Dark Moon Games", "Adventure Studios", etc.)
 - \`mechanics\`: MUST be array of 2-6 mechanic strings from: ["Wild", "Scatter", "Free Spins", "Multiplier", "Expanding Reels", "Cascade", "Pick Bonus", "Respins", "Stacked Wilds", "Mystery Symbol", "Megaways", "Hold & Win"]
 
 ### JSON Syntax Rules
