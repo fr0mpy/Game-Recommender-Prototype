@@ -296,7 +296,9 @@
     <h2 class="text-xl font-semibold text-casino-dark mb-4">
       🎯 Get Recommendations
     </h2>
-    <form method="POST" action="/recommend" class="space-y-6">
+    <form method="POST" action="/recommend" class="space-y-6" onsubmit="return handleRecommendSubmit(event)">
+      <!-- Hidden session ID field to ensure consistency -->
+      <input type="hidden" name="sessionId" id="sessionIdField" value="<%= sessionId %>" />
       <!-- Game Selection -->
       <div>
         <label
@@ -494,6 +496,9 @@
   function saveCustomGames(games) {
     localStorage.setItem('slotForge_customGames', JSON.stringify(games));
     localStorage.setItem('slotForge_hasCustomGames', 'true');
+    
+    // Sync to server session immediately
+    syncCustomGamesToServer(games);
   }
   
   function loadCustomGames() {
@@ -508,6 +513,43 @@
   function clearCustomGames() {
     localStorage.removeItem('slotForge_customGames');
     localStorage.removeItem('slotForge_hasCustomGames');
+  }
+  
+  // Sync custom games from localStorage to server session
+  async function syncCustomGamesToServer(games = null) {
+    if (!games) {
+      games = loadCustomGames();
+    }
+    
+    if (!games || games.length === 0) {
+      console.log('No custom games to sync');
+      return;
+    }
+    
+    console.log(`Syncing ${games.length} custom games to server...`);
+    
+    try {
+      const response = await fetch('/api/sync-custom-games', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': sessionId
+        },
+        body: JSON.stringify({ games: games })
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to sync custom games to server:', response.statusText);
+        return false;
+      }
+      
+      const result = await response.json();
+      console.log('Sync result:', result);
+      return true;
+    } catch (error) {
+      console.error('Error syncing custom games:', error);
+      return false;
+    }
   }
 
   // Detect and send timezone and system theme
@@ -819,9 +861,58 @@
       }, 5000);
     }
   }
+  
+  // Handle recommendation form submission
+  async function handleRecommendSubmit(event) {
+    event.preventDefault();
+    
+    console.log('🚿 Starting recommendation submission...');
+    console.log('Session ID:', sessionId);
+    
+    // Show loading state
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = '🔄 Syncing games...';
+    
+    // Get the selected game ID to debug
+    const gameSelect = document.getElementById('gameId');
+    const selectedGameId = gameSelect ? gameSelect.value : 'none';
+    console.log('Selected game ID:', selectedGameId);
+    
+    try {
+      // Sync custom games before submitting
+      console.log('🔄 Syncing custom games to server...');
+      const syncResult = await syncCustomGamesToServer();
+      console.log('Sync result:', syncResult);
+      
+      // Small delay to ensure sync completes
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Reset button
+      submitButton.disabled = false;
+      submitButton.textContent = originalText;
+      
+      console.log('✅ Submitting form now...');
+      // Now submit the form
+      event.target.submit();
+    } catch (error) {
+      console.error('❌ Failed to sync games:', error);
+      
+      // Reset button
+      submitButton.disabled = false;
+      submitButton.textContent = originalText;
+      
+      console.log('⚠️ Submitting anyway with default behavior...');
+      // Submit anyway - might work with default games
+      event.target.submit();
+    }
+    
+    return false; // Prevent default form submission
+  }
 
 
-  // Update game dropdown with custom games if available
+  // Update game dropdown with unified game list (custom games replace defaults completely)
   function updateGameDropdown() {
     const gameSelect = document.getElementById('gameId');
     if (!gameSelect) return;
@@ -834,7 +925,7 @@
     }
     
     if (customGames && customGames.length > 0) {
-      // Custom games take priority - add them first
+      // Use ONLY custom games - no separation, no default games
       customGames.forEach(game => {
         const option = document.createElement('option');
         option.value = game.id;
@@ -842,33 +933,20 @@
         gameSelect.appendChild(option);
       });
       
-      // Add separator between custom and default games
-      const separator = document.createElement('option');
-      separator.disabled = true;
-      separator.textContent = '--- Default Games ---';
-      gameSelect.appendChild(separator);
-      
-      // Add default games after custom ones
-      <% games.forEach(function(game, index) { %>
-        const defaultOption<%= index %> = document.createElement('option');
-        defaultOption<%= index %>.value = '<%= game.id %>';
-        defaultOption<%= index %>.textContent = '<%= game.title %> - <%= game.studio %> (<%= game.volatility %> volatility, <%= game.rtp %>% RTP)';
-        gameSelect.appendChild(defaultOption<%= index %>);
-      <% }); %>
-      
       // Update dataset count display to show custom games count
       const countDisplay = document.querySelector('span.font-bold.text-casino');
       if (countDisplay) {
         countDisplay.textContent = customGames.length;
       }
     } else {
-      // No custom games - just show default games
-      <% games.forEach(function(game, index) { %>
-        const defaultGameOption<%= index %> = document.createElement('option');
-        defaultGameOption<%= index %>.value = '<%= game.id %>';
-        defaultGameOption<%= index %>.textContent = '<%= game.title %> - <%= game.studio %> (<%= game.volatility %> volatility, <%= game.rtp %>% RTP)';
-        gameSelect.appendChild(defaultGameOption<%= index %>);
-      <% }); %>
+      // No custom games - show default games
+      const defaultGames = <%- JSON.stringify(games) %>;
+      defaultGames.forEach((game) => {
+        const option = document.createElement('option');
+        option.value = game.id;
+        option.textContent = `${game.title} - ${game.studio} (${game.volatility} volatility, ${game.rtp}% RTP)`;
+        gameSelect.appendChild(option);
+      });
     }
   }
 
@@ -888,6 +966,9 @@
     
     // Load custom games and update dropdown (custom games take priority)
     updateGameDropdown();
+    
+    // Sync any existing custom games to server on page load
+    syncCustomGamesToServer();
     
     // Load saved custom prompt
     const customPromptField = document.getElementById('customPrompt');
