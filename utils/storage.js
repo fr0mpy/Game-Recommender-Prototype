@@ -5,14 +5,18 @@ const GAMES_FILE = path.join(__dirname, '..', 'data', 'games.json');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'user-settings.json');
 
 // Vercel KV for serverless-compatible session storage
-let kv = null;
+let redis = null;
 try {
-  // Only import KV in serverless environments
-  if (process.env.VERCEL || process.env.KV_REST_API_URL) {
-    kv = require('@vercel/kv').kv;
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    const { Redis } = require('@upstash/redis');
+    redis = new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
+    });
+    console.log('✅ Upstash Redis connected');
   }
 } catch (error) {
-  console.log('⚠️ Vercel KV not available, using memory fallback');
+  console.log('⚠️ Upstash Redis not available:', error.message);
 }
 
 // Note: Session-based storage removed in favor of Redis global storage
@@ -62,17 +66,17 @@ function saveGames(games) {
 async function loadGames(sessionId = null) {
   try {
     // 1. Try Redis first for custom games (global storage)
-    if (kv) {
+    if (redis) {
       try {
-        const customGames = await kv.get('custom:games');
+        const customGames = await redis.get('custom:games');
         if (customGames && Array.isArray(customGames)) {
           console.log(`✅ Loaded ${customGames.length} custom games from Redis`);
           console.log(`🔍 Redis loaded - first game ID: ${customGames[0]?.id}, has ID: ${!!customGames[0]?.id}`);
           console.log(`🔍 Redis loaded - first game title: ${customGames[0]?.title}`);
           return customGames;
         }
-      } catch (kvError) {
-        console.log(`⚠️ Redis error: ${kvError.message}, falling back to defaults`);
+      } catch (redisError) {
+        console.log(`⚠️ Redis error: ${redisError.message}, falling back to defaults`);
       }
     }
 
@@ -193,21 +197,21 @@ async function saveCustomGames(games) {
   console.log(`🔍 All games have IDs: ${games.every(g => !!g.id)}`);
   
   // Store in Redis with no expiration (persistent custom games)
-  if (kv) {
+  if (redis) {
     try {
-      await kv.set('custom:games', games);
+      await redis.set('custom:games', games);
       console.log(`✅ Saved ${games.length} custom games to Redis`);
       
       // Immediately verify the save worked
-      const verifyGames = await kv.get('custom:games');
+      const verifyGames = await redis.get('custom:games');
       if (verifyGames && Array.isArray(verifyGames)) {
         console.log(`✅ Redis save verification successful: ${verifyGames.length} games retrieved`);
         console.log(`🔍 Redis retrieved - first game ID: ${verifyGames[0]?.id}, has ID: ${!!verifyGames[0]?.id}`);
       } else {
         console.log(`⚠️ Redis save verification failed: ${verifyGames ? typeof verifyGames : 'null'}`);
       }
-    } catch (kvError) {
-      console.log(`⚠️ Redis storage save error: ${kvError.message}`);
+    } catch (redisError) {
+      console.log(`⚠️ Redis storage save error: ${redisError.message}`);
       throw new Error('Failed to save custom games');
     }
   } else {
@@ -220,12 +224,12 @@ async function saveCustomGames(games) {
 
 async function clearCustomGames() {
   // Clear custom games from Redis
-  if (kv) {
+  if (redis) {
     try {
-      await kv.del('custom:games');
+      await redis.del('custom:games');
       console.log(`✅ Cleared custom games from Redis`);
-    } catch (kvError) {
-      console.log(`⚠️ Redis clear error: ${kvError.message}`);
+    } catch (redisError) {
+      console.log(`⚠️ Redis clear error: ${redisError.message}`);
       throw new Error('Failed to clear custom games');
     }
   } else {
@@ -236,14 +240,14 @@ async function clearCustomGames() {
 
 async function hasCustomGames() {
   // Check if custom games exist in Redis
-  if (kv) {
+  if (redis) {
     try {
-      const customGames = await kv.get('custom:games');
+      const customGames = await redis.get('custom:games');
       const hasGames = customGames && Array.isArray(customGames) && customGames.length > 0;
       console.log(`🔍 Redis custom games check: ${hasGames}, count: ${customGames?.length || 0}`);
       return hasGames;
-    } catch (kvError) {
-      console.log(`⚠️ Redis check error: ${kvError.message}`);
+    } catch (redisError) {
+      console.log(`⚠️ Redis check error: ${redisError.message}`);
       return false;
     }
   } else {
@@ -261,5 +265,5 @@ module.exports = {
   clearCustomGames,
   hasCustomGames,
   DEFAULT_WEIGHTS,
-  kv  // Export KV client for debugging
+  redis  // Export Redis client for debugging
 };

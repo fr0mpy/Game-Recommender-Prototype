@@ -3,7 +3,7 @@ const express = require("express");
 const path = require("path");
 
 // Import services
-const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCustomGames, kv } = require("./utils/storage");
+const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCustomGames, redis } = require("./utils/storage");
 const {
   generateGames,
   generateMockGames,
@@ -365,45 +365,45 @@ app.post("/generate", async (req, res) => {
 });
 
 
-// KV connection test endpoint
-app.get("/api/debug-kv", async (req, res) => {
+// Redis connection test endpoint
+app.get("/api/debug-redis", async (req, res) => {
   const debug = {
-    kvExists: !!kv,
+    redisExists: !!redis,
     envVars: {
-      vercel: !!process.env.VERCEL,
       kvRestUrl: !!process.env.KV_REST_API_URL,
-      kvRestToken: !!process.env.KV_REST_API_TOKEN
+      kvRestToken: !!process.env.KV_REST_API_TOKEN,
+      redisUrl: !!process.env.REDIS_URL
     },
     timestamp: new Date().toISOString()
   };
   
-  if (kv) {
+  if (redis) {
     try {
-      await kv.set('test:ping', 'pong');
-      const result = await kv.get('test:ping');
-      debug.kvTest = result === 'pong' ? 'SUCCESS' : `FAILED: got ${result}`;
-      await kv.del('test:ping');
+      await redis.set('test:ping', 'pong');
+      const result = await redis.get('test:ping');
+      debug.redisTest = result === 'pong' ? 'SUCCESS' : `FAILED: got ${result}`;
+      await redis.del('test:ping');
     } catch (error) {
-      debug.kvTest = `ERROR: ${error.message}`;
+      debug.redisTest = `ERROR: ${error.message}`;
     }
   } else {
-    debug.kvTest = 'KV_CLIENT_NOT_AVAILABLE';
+    debug.redisTest = 'REDIS_CLIENT_NOT_AVAILABLE';
   }
   
   res.json(debug);
 });
 
-// View KV database contents (for debugging)
-app.get("/api/view-kv", async (req, res) => {
-  if (!kv) {
-    return res.json({ error: 'KV client not available' });
+// View Redis database contents (for debugging)
+app.get("/api/view-redis", async (req, res) => {
+  if (!redis) {
+    return res.json({ error: 'Redis client not available' });
   }
 
   try {
     const data = {};
     
     // Check for custom games
-    const customGames = await kv.get('custom:games');
+    const customGames = await redis.get('custom:games');
     data.customGames = {
       exists: !!customGames,
       count: customGames ? customGames.length : 0,
@@ -411,7 +411,7 @@ app.get("/api/view-kv", async (req, res) => {
     };
     
     // Check for any test keys
-    const testPing = await kv.get('test:ping');
+    const testPing = await redis.get('test:ping');
     data.testKeys = { 'test:ping': testPing };
     
     data.timestamp = new Date().toISOString();
