@@ -1057,13 +1057,37 @@
     console.log('Selected game ID:', selectedGameId);
     
     try {
-      // Sync custom games before submitting
-      console.log('🔄 Syncing custom games to server...');
-      const syncResult = await syncCustomGamesToServer();
-      console.log('Sync result:', syncResult);
-      
-      // Small delay to ensure sync completes
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Check if we have custom games to sync
+      const customGames = loadCustomGames();
+      if (customGames && customGames.length > 0) {
+        // Sync custom games before submitting
+        console.log('🔄 Syncing custom games to server...');
+        submitButton.textContent = 'Syncing games...';
+        
+        const syncResult = await syncCustomGamesToServer(customGames);
+        console.log('Sync result:', syncResult);
+        
+        if (!syncResult) {
+          // Sync failed - show error
+          alert('Failed to sync games to server. Please try again.');
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+          return false;
+        }
+        
+        // Validate the selected game exists in our custom games
+        const selectedGameExists = customGames.find(game => game.id === selectedGameId);
+        if (!selectedGameExists) {
+          alert('Selected game not found in custom games. Please select a valid game.');
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+          return false;
+        }
+        
+        submitButton.textContent = 'Processing...';
+        // Small delay to ensure sync completes on server
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
       
       // Reset button
       submitButton.disabled = false;

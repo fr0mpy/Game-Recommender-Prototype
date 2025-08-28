@@ -428,19 +428,43 @@ app.post("/recommend", async (req, res) => {
     console.log(`📚 Loaded ${games.length} games for session ${effectiveSessionId}`);
     
     if (games.length === 0) {
-      console.log('⚠️ No games found for session, cannot proceed with recommendations for custom games');
-      return res.render("index", {
-        games: loadGames(), // Load default games for display
-        settings: loadSettings(),
-        message: {
-          type: "error",
-          text: "Custom games not found. Please generate games first before getting recommendations.",
-        },
+      console.log('⚠️ No games found for session, falling back to default games');
+      const fallbackGames = loadGames(); // Load default games
+      const recommendations = getRecommendations(gameId, weights, 5, fallbackGames);
+      const selectedGame = fallbackGames.find((g) => g.id === gameId);
+      
+      if (!selectedGame) {
+        return res.render("index", {
+          games: fallbackGames,
+          settings: loadSettings(),
+          message: {
+            type: "error",
+            text: "Selected game not found. Please refresh and try again.",
+          },
+          playerContext: req.playerContext,
+          crossSell: null,
+          sessionId: req.sessionId,
+          tokenUsage,
+          customPrompt: 'Generate 100 slot games'
+        });
+      }
+      
+      // Render recommendations using fallback games
+      const fallbackRecommendationsWithExplanations = recommendations.map((rec) => {
+        return {
+          ...rec, 
+          explanation: 'Generating personalized match analysis...',
+          loading: true
+        };
+      });
+
+      return res.render("recommendations", {
+        recommendations: fallbackRecommendationsWithExplanations,
+        selectedGame,
+        weights,
         playerContext: req.playerContext,
-        crossSell: null,
         sessionId: req.sessionId,
-        tokenUsage,
-        customPrompt: 'Generate 100 slot games'
+        tokenUsage
       });
     }
 
