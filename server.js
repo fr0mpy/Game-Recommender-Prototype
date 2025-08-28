@@ -393,6 +393,35 @@ app.get("/api/debug-kv", async (req, res) => {
   res.json(debug);
 });
 
+// View KV database contents (for debugging)
+app.get("/api/view-kv", async (req, res) => {
+  if (!kv) {
+    return res.json({ error: 'KV client not available' });
+  }
+
+  try {
+    const data = {};
+    
+    // Check for custom games
+    const customGames = await kv.get('custom:games');
+    data.customGames = {
+      exists: !!customGames,
+      count: customGames ? customGames.length : 0,
+      sample: customGames ? customGames.slice(0, 2) : null
+    };
+    
+    // Check for any test keys
+    const testPing = await kv.get('test:ping');
+    data.testKeys = { 'test:ping': testPing };
+    
+    data.timestamp = new Date().toISOString();
+    
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Validate session games are available
 app.post("/api/validate-session-games", async (req, res) => {
   try {
