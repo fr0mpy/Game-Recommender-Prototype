@@ -260,5 +260,6 @@ module.exports = {
   saveCustomGames,
   clearCustomGames,
   hasCustomGames,
-  DEFAULT_WEIGHTS
+  DEFAULT_WEIGHTS,
+  kv  // Export KV client for debugging
 };

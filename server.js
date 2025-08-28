@@ -3,7 +3,7 @@ const express = require("express");
 const path = require("path");
 
 // Import services
-const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCustomGames } = require("./utils/storage");
+const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCustomGames, kv } = require("./utils/storage");
 const {
   generateGames,
   generateMockGames,
