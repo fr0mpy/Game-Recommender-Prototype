@@ -115,13 +115,30 @@ function getDefaultGames() {
 
 function saveSettings(settings) {
   try {
+    // Skip file writes in serverless/production environments
+    const isServerless = process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    
+    if (isServerless) {
+      console.log('⚠️ Serverless environment detected - skipping settings file write');
+      console.log('💾 User settings received but not persisted (serverless limitation):', settings);
+      return; // Gracefully skip file write in serverless
+    }
+    
     const dataDir = path.dirname(SETTINGS_FILE);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
     fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
+    console.log('✅ Settings saved successfully to disk');
   } catch (error) {
     console.error('Failed to save settings:', error);
+    
+    // For serverless read-only filesystem errors, fail gracefully
+    if (error.code === 'EROFS' || error.code === 'EACCES') {
+      console.log('⚠️ Read-only filesystem detected - settings not persisted but request continues');
+      return; // Don't throw error, just continue
+    }
+    
     throw new Error('Unable to save user settings');
   }
 }
