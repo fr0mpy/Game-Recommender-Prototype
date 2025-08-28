@@ -1270,6 +1270,8 @@
       });
       
       if (response.ok) {
+        // Clear localStorage to ensure client syncs with server state
+        clearCustomGames();
         location.reload();
       } else {
         alert('Failed to reset games. Please try again.');
