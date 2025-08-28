@@ -200,7 +200,7 @@ function renderError(res, error) {
   res.status(500).render("error", {
     error: error.message || "An unexpected error occurred",
     stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-    tokenUsage
+    tokenUsage: tokenUsage || { totalTokens: 0, operationsCount: 0 }
   });
 }
 
@@ -602,6 +602,7 @@ app.use((req, res) => {
   res.status(404).render("error", {
     error: `Page not found: ${req.originalUrl}`,
     stack: undefined,
+    tokenUsage: tokenUsage || { totalTokens: 0, operationsCount: 0 }
   });
 });
 
