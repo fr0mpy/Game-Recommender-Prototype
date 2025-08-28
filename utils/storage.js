@@ -207,6 +207,14 @@ async function saveSessionGames(sessionId, games) {
       // Set with 10 minute expiration (600 seconds)
       await kv.setex(`session:${sessionId}`, 600, games);
       console.log(`✅ Saved ${games.length} games to KV storage for session: ${sessionId}`);
+      
+      // Immediately verify the save worked
+      const verifyGames = await kv.get(`session:${sessionId}`);
+      if (verifyGames && Array.isArray(verifyGames)) {
+        console.log(`✅ KV save verification successful: ${verifyGames.length} games retrieved`);
+      } else {
+        console.log(`⚠️ KV save verification failed: ${verifyGames ? typeof verifyGames : 'null'}`);
+      }
     } catch (kvError) {
       console.log(`⚠️ KV storage save error: ${kvError.message}, using memory fallback`);
     }
@@ -245,25 +253,40 @@ async function clearSessionGames(sessionId) {
 }
 
 async function hasSessionGames(sessionId) {
+  console.log(`🔍 hasSessionGames check for session: ${sessionId}`);
+  
   // 1. Check memory first (fastest)
-  if (sessionGames.has(sessionId)) {
+  const memoryHasGames = sessionGames.has(sessionId);
+  const memoryGameCount = memoryHasGames ? sessionGames.get(sessionId).length : 0;
+  console.log(`🔍 Memory check: ${memoryHasGames}, count: ${memoryGameCount}`);
+  
+  if (memoryHasGames) {
     return true;
   }
   
   // 2. Check KV storage (serverless persistence)
   if (kv) {
     try {
+      console.log(`🔍 Checking KV storage for key: session:${sessionId}`);
       const kvGames = await kv.get(`session:${sessionId}`);
+      console.log(`🔍 KV result type: ${kvGames ? typeof kvGames : 'null'}, isArray: ${Array.isArray(kvGames)}`);
+      
       if (kvGames && Array.isArray(kvGames)) {
+        console.log(`🔍 KV games found: ${kvGames.length} games`);
         // Cache in memory for future access
         sessionGames.set(sessionId, kvGames);
         return true;
+      } else {
+        console.log(`⚠️ KV games not found or invalid format`);
       }
     } catch (kvError) {
       console.log(`⚠️ KV storage check error: ${kvError.message}`);
     }
+  } else {
+    console.log(`⚠️ KV client not available`);
   }
   
+  console.log(`❌ No session games found for: ${sessionId}`);
   return false;
 }
 
