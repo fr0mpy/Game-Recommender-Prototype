@@ -99,6 +99,40 @@ const JSON_FORMAT_RULES = `# JSON Output Format Requirements
 - Each game object must be complete with all required fields
 - Array must contain the exact number of objects requested
 
+### EXACT REQUIRED FIELD STRUCTURE
+Each game object must have these fields in this structure:
+
+\`\`\`json
+{
+  "id": "game-001",
+  "title": "Game Title",
+  "studio": "Studio Name", 
+  "theme": ["Theme1", "Theme2"],
+  "volatility": "low",
+  "rtp": 96.32,
+  "maxWin": 2200,
+  "reelLayout": "5x4", 
+  "paylines": 20,
+  "mechanics": ["Wild", "Scatter"],
+  "features": ["Bonus Round", "Progressive"],
+  "pace": "slow",
+  "hitFrequency": 31.55,
+  "bonusFrequency": 0.81,
+  "artStyle": "Detailed 3D",
+  "audioVibe": "Epic Fantasy", 
+  "visualDensity": "clean",
+  "mobileOptimized": true,
+  "releaseYear": 2023,
+  "description": "Game description."
+}
+\`\`\`
+
+**CRITICAL FOR SIMILARITY ENGINE:**
+- \`theme\`: MUST be array of 1-3 theme strings from: ["Fantasy", "Dragons", "Western", "Gold Mining", "Ancient", "Egypt", "Pirates", "Treasure", "Space", "Aliens", "Underwater", "Ocean", "Jungle", "Adventure", "Norse", "Vikings", "Magic", "Wizards", "Gems", "Jewels", "Fruits", "Classic", "Animals", "Safari", "Mystery", "Detective", "Horror", "Gothic", "Romance", "Love", "Music", "Rock", "Food", "Cooking", "Travel", "Exploration", "Medieval", "Knights", "Futuristic", "Cyberpunk"]
+- \`volatility\`: MUST be one of: "low", "medium", "high", "ultra" (randomized distribution: 25% low, 40% medium, 25% high, 10% ultra)
+- \`studio\`: MUST be a unique studio name string (create diverse fictional studios)
+- \`mechanics\`: MUST be array of 2-6 mechanic strings from: ["Wild", "Scatter", "Free Spins", "Multiplier", "Expanding Reels", "Cascade", "Pick Bonus", "Respins", "Stacked Wilds", "Mystery Symbol", "Megaways", "Hold & Win"]
+
 ### JSON Syntax Rules
 - Use double quotes \`"\` for all strings (never single quotes \`'\`)
 - No trailing commas anywhere: \`{"key": "value",}\` ❌ 
