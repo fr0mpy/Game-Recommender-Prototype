@@ -3,7 +3,7 @@ const express = require("express");
 const path = require("path");
 
 // Import services
-const { loadGames, loadSettings, saveSettings, saveGames, saveSessionGames, hasSessionGames } = require("./utils/storage");
+const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCustomGames } = require("./utils/storage");
 const {
   generateGames,
   generateMockGames,
@@ -209,7 +209,7 @@ function renderError(res, error) {
 // Home page (with message handling)
 app.get("/", async (req, res) => {
   try {
-    const games = await loadGames(req.sessionId); // Load session-specific games if available
+    const games = await loadGames(); // Load custom games from Redis or defaults
     const settings = loadSettings();
 
     let message = null;
@@ -288,8 +288,8 @@ app.post("/generate", async (req, res) => {
     console.log('✅ SERVER: generateGames completed successfully');
     console.log('🔍 SERVER: Generated games count:', games?.length);
     
-    // Save generated games to SESSION ONLY - NEVER overwrite main games.json file
-    await saveSessionGames(req.sessionId, games); // Keep session copy for this user
+    // Save generated games to Redis - replaces any existing custom games
+    await saveCustomGames(games);
     
     console.log(`✅ Generated ${games.length} fresh games for session ${req.sessionId}`);
     
@@ -365,34 +365,7 @@ app.post("/generate", async (req, res) => {
 });
 
 
-// Sync custom games from client to server session
-app.post("/api/sync-custom-games", async (req, res) => {
-  try {
-    const { games } = req.body;
-    const sessionId = req.sessionId;
-    
-    console.log(`🔄 Sync request: ${games?.length || 0} games for session ${sessionId}`);
-    
-    if (!games || !Array.isArray(games)) {
-      console.log('❌ Invalid games data in sync request');
-      return res.status(400).json({ error: 'Invalid games data' });
-    }
-    
-    if (games.length === 0) {
-      console.log('⚠️ Empty games array in sync request');
-      return res.json({ success: true, message: 'No games to sync' });
-    }
-    
-    // Save to session storage (KV + memory)
-    await saveSessionGames(sessionId, games);
-    
-    console.log(`✅ Successfully synced ${games.length} games for session ${sessionId}`);
-    res.json({ success: true, message: `Synced ${games.length} games` });
-  } catch (error) {
-    console.error('❌ Failed to sync custom games:', error);
-    res.status(500).json({ error: 'Failed to sync games' });
-  }
-});
+// Note: sync-custom-games endpoint removed - using Redis global storage instead
 
 // Validate session games are available
 app.post("/api/validate-session-games", async (req, res) => {
@@ -400,20 +373,20 @@ app.post("/api/validate-session-games", async (req, res) => {
     const { gameIds } = req.body;
     const sessionId = req.sessionId;
     
-    const sessionGames = await loadGames(sessionId);
-    const hasSession = await hasSessionGames(sessionId);
+    const customGames = await loadGames();
+    const hasCustom = await hasCustomGames();
     
     const validation = {
-      hasSessionGames: hasSession,
-      sessionGameCount: sessionGames.length,
+      hasCustomGames: hasCustom,
+      customGameCount: customGames.length,
       missingGameIds: []
     };
     
     if (gameIds && Array.isArray(gameIds)) {
-      validation.missingGameIds = gameIds.filter(id => !sessionGames.find(g => g.id === id));
+      validation.missingGameIds = gameIds.filter(id => !customGames.find(g => g.id === id));
     }
     
-    console.log(`🔍 Session validation for ${sessionId}: ${validation.sessionGameCount} games, missing: ${validation.missingGameIds.length}`);
+    console.log(`🔍 Custom games validation: ${validation.customGameCount} games, missing: ${validation.missingGameIds.length}`);
     
     res.json(validation);
   } catch (error) {
@@ -425,11 +398,7 @@ app.post("/api/validate-session-games", async (req, res) => {
 // Get recommendations
 app.post("/recommend", async (req, res) => {
   try {
-    const { gameId, theme, volatility, studio, mechanics, sessionId } = req.body;
-    
-    // Use the session ID from form data if provided (for consistency)
-    const effectiveSessionId = sessionId || req.sessionId;
-    console.log(`🎯 Recommendation request - Form session: ${sessionId}, Request session: ${req.sessionId}, Using: ${effectiveSessionId}`);
+    const { gameId, theme, volatility, studio, mechanics } = req.body;
 
     if (!gameId) {
       const games = await loadGames();
@@ -460,45 +429,18 @@ app.post("/recommend", async (req, res) => {
     // Save user preferences
     saveSettings(weights);
 
-    // Load games using the effective session ID
-    let games = await loadGames(effectiveSessionId);
-    console.log(`📚 Loaded ${games.length} games for session ${effectiveSessionId}`);
-    
-    // CRITICAL FIX: If no session games found, check if gameId looks like a custom game
-    // Custom games typically have UUIDs or non-default patterns
-    if (games.length === 0 || !games.find(g => g.id === gameId)) {
-      const isCustomGameId = gameId && !gameId.startsWith('default-');
-      
-      if (isCustomGameId) {
-        console.log(`❌ SERVERLESS ISSUE: Custom game ${gameId} not found in session ${effectiveSessionId}`);
-        return res.render("index", {
-          games: await loadGames(), // Load default games for display
-          settings: loadSettings(),
-          message: {
-            type: "error",
-            text: "Custom games lost (serverless limitation). Please generate games again or refresh the page.",
-          },
-          playerContext: req.playerContext,
-          crossSell: null,
-          sessionId: req.sessionId,
-          tokenUsage,
-          customPrompt: 'Generate 100 slot games'
-        });
-      } else {
-        // For default games, fall back to default dataset
-        console.log('⚠️ No session games found, using default dataset');
-        games = await loadGames(); // Load default games
-      }
-    }
+    // Load games from Redis or defaults
+    const games = await loadGames();
+    console.log(`📚 Loaded ${games.length} games`);
 
-    // Get recommendations using session-specific games
+    // Get recommendations
     const recommendations = getRecommendations(gameId, weights, 5, games);
 
     // Find selected game for display
     const selectedGame = games.find((g) => g.id === gameId);
     
     if (!selectedGame) {
-      console.log(`❌ Game ${gameId} not found in ${games.length} games for session ${effectiveSessionId}`);
+      console.log(`❌ Game ${gameId} not found in ${games.length} games`);
       console.log('Available game IDs:', games.map(g => g.id).slice(0, 10));
       return res.render("index", {
         games,

@@ -15,12 +15,7 @@ try {
   console.log('⚠️ Vercel KV not available, using memory fallback');
 }
 
-// Fallback in-memory storage for local development
-const sessionGames = new Map();
-
-// Temporary file storage with cleanup mechanism
-const sessionCleanupTimers = new Map();
-const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+// Note: Session-based storage removed in favor of Redis global storage
 
 // Note: Custom games directory approach removed due to Vercel "no fs" constraint
 // Keeping function for backwards compatibility but returns false
@@ -66,41 +61,31 @@ function saveGames(games) {
 
 async function loadGames(sessionId = null) {
   try {
-    // If sessionId provided, try multiple sources in priority order
-    if (sessionId) {
-      // 1. Try KV storage first (serverless persistence)
-      if (kv) {
-        try {
-          const kvGames = await kv.get(`session:${sessionId}`);
-          if (kvGames && Array.isArray(kvGames)) {
-            // Also cache in memory for faster subsequent access
-            sessionGames.set(sessionId, kvGames);
-            console.log(`✅ Loaded ${kvGames.length} games from KV storage for session: ${sessionId}`);
-            console.log(`🔍 KV loaded - first game ID: ${kvGames[0]?.id}, has ID: ${!!kvGames[0]?.id}`);
-            console.log(`🔍 KV loaded - first game title: ${kvGames[0]?.title}`);
-            return kvGames;
-          }
-        } catch (kvError) {
-          console.log(`⚠️ KV storage error: ${kvError.message}, trying memory fallback`);
+    // 1. Try Redis first for custom games (global storage)
+    if (kv) {
+      try {
+        const customGames = await kv.get('custom:games');
+        if (customGames && Array.isArray(customGames)) {
+          console.log(`✅ Loaded ${customGames.length} custom games from Redis`);
+          console.log(`🔍 Redis loaded - first game ID: ${customGames[0]?.id}, has ID: ${!!customGames[0]?.id}`);
+          console.log(`🔍 Redis loaded - first game title: ${customGames[0]?.title}`);
+          return customGames;
         }
+      } catch (kvError) {
+        console.log(`⚠️ Redis error: ${kvError.message}, falling back to defaults`);
       }
-      
-      // 2. Check in-memory fallback (local development or KV failure)
-      if (sessionGames.has(sessionId)) {
-        console.log(`✅ Loaded ${sessionGames.get(sessionId).length} games from memory for session: ${sessionId}`);
-        return sessionGames.get(sessionId);
-      }
-      
-      console.log(`⚠️ No session games found for: ${sessionId}, falling back to defaults`);
     }
 
-    // Load from default games.json
+    // 2. Fall back to default games.json
     if (fs.existsSync(GAMES_FILE)) {
       const data = fs.readFileSync(GAMES_FILE, 'utf8');
-      return JSON.parse(data);
+      const games = JSON.parse(data);
+      console.log(`✅ Loaded ${games.length} default games from games.json`);
+      return games;
     }
 
-    // Return generic default games if no file exists
+    // 3. Return generic default games if no file exists
+    console.log(`⚠️ Using built-in default games`);
     return getDefaultGames();
   } catch (error) {
     console.error('Failed to load games:', error);
@@ -201,116 +186,70 @@ function loadSettings() {
   }
 }
 
-// Session-based game storage functions (KV + memory hybrid)
-async function saveSessionGames(sessionId, games) {
+// Simple Redis storage for custom games
+async function saveCustomGames(games) {
   // Debug: Check if games have IDs before saving
-  console.log(`🔍 Saving games - first game ID: ${games[0]?.id}, has ID: ${!!games[0]?.id}`);
+  console.log(`🔍 Saving ${games.length} custom games - first game ID: ${games[0]?.id}, has ID: ${!!games[0]?.id}`);
   console.log(`🔍 All games have IDs: ${games.every(g => !!g.id)}`);
   
-  // 1. Store in KV storage with TTL (serverless persistence)
+  // Store in Redis with no expiration (persistent custom games)
   if (kv) {
     try {
-      // Set with 10 minute expiration (600 seconds)
-      await kv.setex(`session:${sessionId}`, 600, games);
-      console.log(`✅ Saved ${games.length} games to KV storage for session: ${sessionId}`);
+      await kv.set('custom:games', games);
+      console.log(`✅ Saved ${games.length} custom games to Redis`);
       
       // Immediately verify the save worked
-      const verifyGames = await kv.get(`session:${sessionId}`);
+      const verifyGames = await kv.get('custom:games');
       if (verifyGames && Array.isArray(verifyGames)) {
-        console.log(`✅ KV save verification successful: ${verifyGames.length} games retrieved`);
-        console.log(`🔍 KV retrieved - first game ID: ${verifyGames[0]?.id}, has ID: ${!!verifyGames[0]?.id}`);
+        console.log(`✅ Redis save verification successful: ${verifyGames.length} games retrieved`);
+        console.log(`🔍 Redis retrieved - first game ID: ${verifyGames[0]?.id}, has ID: ${!!verifyGames[0]?.id}`);
       } else {
-        console.log(`⚠️ KV save verification failed: ${verifyGames ? typeof verifyGames : 'null'}`);
+        console.log(`⚠️ Redis save verification failed: ${verifyGames ? typeof verifyGames : 'null'}`);
       }
     } catch (kvError) {
-      console.log(`⚠️ KV storage save error: ${kvError.message}, using memory fallback`);
-    }
-  }
-  
-  // 2. Also store in memory for fast local access
-  sessionGames.set(sessionId, games);
-  
-  // 3. Set cleanup timer for memory (10 minutes)
-  resetSessionTimeout(sessionId);
-  
-  console.log(`✅ Saved ${games.length} games for session: ${sessionId} (KV + memory)`);
-}
-
-async function clearSessionGames(sessionId) {
-  // 1. Clear from KV storage
-  if (kv) {
-    try {
-      await kv.del(`session:${sessionId}`);
-      console.log(`✅ Cleared KV storage for session: ${sessionId}`);
-    } catch (kvError) {
-      console.log(`⚠️ KV storage clear error: ${kvError.message}`);
-    }
-  }
-  
-  // 2. Clear from memory
-  sessionGames.delete(sessionId);
-  
-  // 3. Clear cleanup timer
-  if (sessionCleanupTimers.has(sessionId)) {
-    clearTimeout(sessionCleanupTimers.get(sessionId));
-    sessionCleanupTimers.delete(sessionId);
-  }
-  
-  console.log(`✅ Cleared session games for: ${sessionId} (KV + memory)`);
-}
-
-async function hasSessionGames(sessionId) {
-  console.log(`🔍 hasSessionGames check for session: ${sessionId}`);
-  
-  // 1. Check memory first (fastest)
-  const memoryHasGames = sessionGames.has(sessionId);
-  const memoryGameCount = memoryHasGames ? sessionGames.get(sessionId).length : 0;
-  console.log(`🔍 Memory check: ${memoryHasGames}, count: ${memoryGameCount}`);
-  
-  if (memoryHasGames) {
-    return true;
-  }
-  
-  // 2. Check KV storage (serverless persistence)
-  if (kv) {
-    try {
-      console.log(`🔍 Checking KV storage for key: session:${sessionId}`);
-      const kvGames = await kv.get(`session:${sessionId}`);
-      console.log(`🔍 KV result type: ${kvGames ? typeof kvGames : 'null'}, isArray: ${Array.isArray(kvGames)}`);
-      
-      if (kvGames && Array.isArray(kvGames)) {
-        console.log(`🔍 KV games found: ${kvGames.length} games`);
-        // Cache in memory for future access
-        sessionGames.set(sessionId, kvGames);
-        return true;
-      } else {
-        console.log(`⚠️ KV games not found or invalid format`);
-      }
-    } catch (kvError) {
-      console.log(`⚠️ KV storage check error: ${kvError.message}`);
+      console.log(`⚠️ Redis storage save error: ${kvError.message}`);
+      throw new Error('Failed to save custom games');
     }
   } else {
-    console.log(`⚠️ KV client not available`);
+    console.log(`⚠️ Redis not available - cannot save custom games`);
+    throw new Error('Redis storage not available');
   }
   
-  console.log(`❌ No session games found for: ${sessionId}`);
-  return false;
+  console.log(`✅ Custom games saved successfully to Redis`);
 }
 
-// Reset session timeout (10 minutes from now)
-function resetSessionTimeout(sessionId) {
-  // Clear existing timer
-  if (sessionCleanupTimers.has(sessionId)) {
-    clearTimeout(sessionCleanupTimers.get(sessionId));
+async function clearCustomGames() {
+  // Clear custom games from Redis
+  if (kv) {
+    try {
+      await kv.del('custom:games');
+      console.log(`✅ Cleared custom games from Redis`);
+    } catch (kvError) {
+      console.log(`⚠️ Redis clear error: ${kvError.message}`);
+      throw new Error('Failed to clear custom games');
+    }
+  } else {
+    console.log(`⚠️ Redis not available - cannot clear custom games`);
+    throw new Error('Redis storage not available');
   }
-  
-  // Set new cleanup timer
-  const timer = setTimeout(async () => {
-    console.log(`🕒 Session timeout: cleaning up ${sessionId}`);
-    await clearSessionGames(sessionId);
-  }, SESSION_TIMEOUT);
-  
-  sessionCleanupTimers.set(sessionId, timer);
+}
+
+async function hasCustomGames() {
+  // Check if custom games exist in Redis
+  if (kv) {
+    try {
+      const customGames = await kv.get('custom:games');
+      const hasGames = customGames && Array.isArray(customGames) && customGames.length > 0;
+      console.log(`🔍 Redis custom games check: ${hasGames}, count: ${customGames?.length || 0}`);
+      return hasGames;
+    } catch (kvError) {
+      console.log(`⚠️ Redis check error: ${kvError.message}`);
+      return false;
+    }
+  } else {
+    console.log(`⚠️ Redis not available`);
+    return false;
+  }
 }
 
 module.exports = {
@@ -318,8 +257,8 @@ module.exports = {
   loadGames,
   saveSettings,
   loadSettings,
-  saveSessionGames,
-  clearSessionGames,
-  hasSessionGames,
+  saveCustomGames,
+  clearCustomGames,
+  hasCustomGames,
   DEFAULT_WEIGHTS
 };
