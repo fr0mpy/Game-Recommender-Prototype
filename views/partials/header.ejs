@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title || 'Slot Forge' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              casino: "#B8860B",
+              "casino-dark": "#8B6914",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <header class="bg-casino text-white shadow-lg">
+      <div class="container mx-auto px-4 py-4">
+        <h1 class="text-2xl font-bold">🎰 Slot Forge</h1>
+        <p class="text-casino-100 text-sm">
+          Bally's R&D - LLM-Powered Slot Game Recommendations
+        </p>
+      </div>
+    </header>
+    <main class="container mx-auto px-4 py-6"></main>
+  </body>
+</html>

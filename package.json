@@ -1,0 +1,30 @@
+{
+  "name": "Slot Forge",
+  "version": "1.0.0",
+  "description": "Bally's R&D LLM Slot Forge",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "slot-games",
+    "llm",
+    "recommendation-engine",
+    "poc"
+  ],
+  "author": "Jay Compson",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "openai": "^5.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

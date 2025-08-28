@@ -164,6 +164,7 @@ This enhanced prompt includes:
 For POC speed and simplicity, we trust the LLM output and handle errors gracefully:
 
 **Approach:**
+
 - **Trust LLM**: The comprehensive SlotForge prompt produces reliable JSON
 - **Simple parsing**: Use native JSON.parse() with try/catch
 - **Graceful degradation**: Show user-friendly errors if parsing fails
@@ -175,12 +176,12 @@ For POC speed and simplicity, we trust the LLM output and handle errors graceful
 try {
   const games = JSON.parse(llmResponse);
   if (!Array.isArray(games) || games.length === 0) {
-    throw new Error('Invalid games array');
+    throw new Error("Invalid games array");
   }
   return games;
 } catch (error) {
-  console.error('LLM response parsing failed:', error);
-  throw new Error('Unable to generate valid games. Please try again.');
+  console.error("LLM response parsing failed:", error);
+  throw new Error("Unable to generate valid games. Please try again.");
 }
 ```
 
@@ -286,7 +287,7 @@ interface Recommendation {
 
 **Header**
 
-- Title: "Game Recommender POC"
+- Title: "Slot Forge"
 - Dataset info: "100 games loaded"
 
 ### Main Interface

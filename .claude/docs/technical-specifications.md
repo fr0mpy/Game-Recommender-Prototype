@@ -519,12 +519,12 @@ app.post("/recommend", (req, res) => {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Game Recommender POC</title>
+    <title>Slot Forge</title>
     <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
   </head>
   <body class="bg-gray-100">
     <div class="container mx-auto p-4">
-      <h1 class="text-3xl font-bold">Game Recommender POC</h1>
+      <h1 class="text-3xl font-bold">Slot Forge</h1>
 
       <!-- Generate Games Section -->
       <div class="bg-white p-4 rounded shadow mb-4">

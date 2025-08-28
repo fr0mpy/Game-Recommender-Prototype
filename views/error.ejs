@@ -1,0 +1,130 @@
+<%- include('partials/header', { title: 'Error - Slot Forge' }) %>
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-md p-8 text-center">
+    <!-- Error Icon -->
+    <div class="text-6xl mb-6">⚠️</div>
+
+    <!-- Error Message -->
+    <h1 class="text-3xl font-bold text-red-600 mb-4">Something Went Wrong</h1>
+
+    <% if (error) { %>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <p class="text-red-800 text-lg font-medium"><%= error %></p>
+    </div>
+    <% } else { %>
+    <p class="text-gray-600 text-lg mb-6">
+      An unexpected error occurred. Please try again.
+    </p>
+    <% } %>
+
+    <!-- Error Type Specific Messages -->
+    <div class="text-left bg-gray-50 rounded-lg p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">
+        Common Issues & Solutions:
+      </h2>
+      <div class="space-y-4 text-sm text-gray-700">
+        <div class="flex items-start">
+          <span class="text-red-500 mr-3">🔑</span>
+          <div>
+            <strong>OpenAI API Key Issues:</strong>
+            <p>
+              Make sure your <code>.env</code> file contains a valid
+              <code>OPENAI_API_KEY</code>. Copy from
+              <code>.env.example</code> and add your key.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start">
+          <span class="text-yellow-500 mr-3">📊</span>
+          <div>
+            <strong>Game Generation Failed:</strong>
+            <p>
+              Try using the "Add Mock Games" button first to test the system, or
+              check your internet connection and API key.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start">
+          <span class="text-blue-500 mr-3">🎯</span>
+          <div>
+            <strong>No Recommendations Found:</strong>
+            <p>
+              Make sure you have games in your dataset and have selected a game
+              before requesting recommendations.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start">
+          <span class="text-purple-500 mr-3">💾</span>
+          <div>
+            <strong>File System Errors:</strong>
+            <p>
+              The application needs write access to create the
+              <code>data/</code> directory for storing games and settings.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a
+        href="/"
+        class="bg-casino hover:bg-casino-dark text-white font-bold py-3 px-6 rounded-lg transition duration-200"
+      >
+        🏠 Return Home
+      </a>
+
+      <button
+        onclick="history.back()"
+        class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
+      >
+        ⬅️ Go Back
+      </button>
+
+      <button
+        onclick="window.location.reload()"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200"
+      >
+        🔄 Try Again
+      </button>
+    </div>
+
+    <!-- Developer Info -->
+    <% if (process.env.NODE_ENV === 'development') { %>
+    <div
+      class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-left"
+    >
+      <h3 class="text-sm font-semibold text-yellow-800 mb-2">
+        Development Mode - Debug Info:
+      </h3>
+      <div class="text-xs text-yellow-700 space-y-1">
+        <div>
+          <strong>Environment:</strong> <%= process.env.NODE_ENV || 'undefined'
+          %>
+        </div>
+        <div>
+          <strong>API Key Set:</strong> <%= process.env.OPENAI_API_KEY ? 'Yes
+          (✓)' : 'No (✗)' %>
+        </div>
+        <div><strong>Timestamp:</strong> <%= new Date().toISOString() %></div>
+        <% if (typeof stack !== 'undefined') { %>
+        <div class="mt-2">
+          <strong>Stack Trace:</strong>
+          <pre class="text-xs bg-yellow-100 p-2 rounded mt-1 overflow-x-auto">
+<%= stack %></pre
+          >
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
