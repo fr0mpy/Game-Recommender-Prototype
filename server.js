@@ -432,7 +432,7 @@ app.post("/recommend", async (req, res) => {
     console.log(`🎯 Recommendation request - Form session: ${sessionId}, Request session: ${req.sessionId}, Using: ${effectiveSessionId}`);
 
     if (!gameId) {
-      const games = loadGames();
+      const games = await loadGames();
       const settings = loadSettings();
       return res.render("index", {
         games,
@@ -472,7 +472,7 @@ app.post("/recommend", async (req, res) => {
       if (isCustomGameId) {
         console.log(`❌ SERVERLESS ISSUE: Custom game ${gameId} not found in session ${effectiveSessionId}`);
         return res.render("index", {
-          games: loadGames(), // Load default games for display
+          games: await loadGames(), // Load default games for display
           settings: loadSettings(),
           message: {
             type: "error",
@@ -487,7 +487,7 @@ app.post("/recommend", async (req, res) => {
       } else {
         // For default games, fall back to default dataset
         console.log('⚠️ No session games found, using default dataset');
-        games = loadGames(); // Load default games
+        games = await loadGames(); // Load default games
       }
     }
 
