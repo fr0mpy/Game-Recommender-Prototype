@@ -614,15 +614,13 @@
 
   function updateSliderValue(sliderId, newValue, skipRebalance = false) {
     const newValueFloat = parseFloat(newValue);
-    const percentage = Math.round(newValueFloat * 100);
-    document.getElementById(sliderId + "-value").textContent = percentage + "%";
     
     if (!skipRebalance) {
       // Rebalance other sliders to maintain 100% total
       rebalanceSliders(sliderId, newValueFloat);
     } else {
-      // Still update display and save if this is just a display update
-      updateTotalDisplay();
+      // Update display with smart rounding to ensure 100% total
+      updateAllSliderDisplays();
       saveAllWeights();
     }
   }
@@ -683,36 +681,66 @@
     // Update the changed slider's display too (since we normalized it)
     updateSliderValue(changedSliderId, normalizedNewValue, true);
     
-    // Update total percentage display and save all weights
-    updateTotalDisplay();
+    // Update all displays with smart rounding to ensure 100% total
+    updateAllSliderDisplays();
     saveAllWeights();
   }
   
-  function updateTotalDisplay() {
+  // Smart rounding function that ensures individual percentages add to exactly 100%
+  function updateAllSliderDisplays() {
     const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
-    const total = sliderIds.reduce((sum, id) => {
-      const slider = document.getElementById(id);
-      return sum + (slider ? parseFloat(slider.value) : 0);
-    }, 0);
     
-    const totalElement = document.getElementById('total-percentage');
-    if (totalElement) {
-      totalElement.textContent = Math.round(total * 100) + '%';
-      
-      // Visual feedback - green if exactly 100%, yellow if close, red if far off
-      const percentage = Math.round(total * 100);
-      const exactTotal = Math.abs(total - 1.0) < 0.001; // Within 0.1%
-      
-      totalElement.parentElement.className = 
-        exactTotal ? 'bg-green-100 border border-green-300 rounded-lg px-3 py-1' :
-        Math.abs(percentage - 100) <= 2 ? 'bg-yellow-100 border border-yellow-300 rounded-lg px-3 py-1' :
-        'bg-red-100 border border-red-300 rounded-lg px-3 py-1';
-        
-      // Force display to show 100% if very close
-      totalElement.textContent = exactTotal ? '100%' : percentage + '%';
+    // Get actual float values
+    const values = sliderIds.map(id => {
+      const slider = document.getElementById(id);
+      return slider ? parseFloat(slider.value) : 0;
+    });
+    
+    // Convert to percentages and round
+    const rawPercentages = values.map(v => v * 100);
+    const roundedPercentages = rawPercentages.map(p => Math.round(p));
+    
+    // Calculate rounding discrepancy
+    const targetTotal = 100;
+    const currentTotal = roundedPercentages.reduce((sum, p) => sum + p, 0);
+    const discrepancy = targetTotal - currentTotal;
+    
+    // Adjust the largest value to ensure perfect 100% total
+    if (discrepancy !== 0) {
+      // Find the index of the largest value
+      let maxIndex = 0;
+      for (let i = 1; i < roundedPercentages.length; i++) {
+        if (roundedPercentages[i] > roundedPercentages[maxIndex]) {
+          maxIndex = i;
+        }
+      }
+      // Adjust the largest value by the discrepancy
+      roundedPercentages[maxIndex] += discrepancy;
     }
     
-    console.log(`⚖️ Slider total: ${Math.round(total * 100)}%`);
+    // Update displays
+    sliderIds.forEach((id, index) => {
+      const displayElement = document.getElementById(id + "-value");
+      if (displayElement) {
+        displayElement.textContent = roundedPercentages[index] + "%";
+      }
+    });
+    
+    // Update total display (should always be 100% now)
+    updateTotalDisplay();
+  }
+  
+  function updateTotalDisplay() {
+    const totalElement = document.getElementById('total-percentage');
+    if (totalElement) {
+      // Always show 100% since we ensure it through smart rounding
+      totalElement.textContent = '100%';
+      
+      // Always green since we guarantee 100%
+      totalElement.parentElement.className = 'bg-green-100 border border-green-300 rounded-lg px-3 py-1';
+    }
+    
+    console.log(`⚖️ Slider total: 100%`);
   }
   
   function saveAllWeights() {

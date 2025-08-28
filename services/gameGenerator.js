@@ -104,7 +104,8 @@ const JSON_FORMAT_RULES = `# JSON Output Format Requirements
 - No trailing commas anywhere: \`{"key": "value",}\` ❌ 
 - Proper comma separation between array elements
 - All brackets \`[]\` and braces \`{}\` must be properly closed
-- Numeric values should not be quoted: \`"rtp": 95.5\` ✅
+- Numeric values should not be quoted: \`"rtp": 95.50\` ✅
+- RTP values must have exactly 2 decimal places: \`"rtp": 96.25\` ✅ (not 96.254839...)
 - Boolean values must be lowercase: \`"mobileOptimized": true\` ✅
 - String arrays use proper syntax: \`"theme": ["Adventure", "Pirates"]\` ✅
 
