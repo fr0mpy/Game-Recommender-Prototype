@@ -1,6 +1,174 @@
 <%- include('partials/header', { title: 'Slot Forge - Home' }) %>
 
 <div class="max-w-6xl mx-auto">
+  <!-- Player Context Confidence Panel -->
+  <% if (playerContext && playerContext.confidence) { %>
+  <div
+    class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6"
+  >
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-sm font-semibold text-blue-800 mb-1">
+          🎯 Player Context Analysis
+        </h3>
+        <p class="text-xs text-blue-700">
+          <span class="font-medium"
+            >Confidence: <%= playerContext.confidence.score ?
+            Math.round(playerContext.confidence.score * 100) : 0 %>%</span
+          >
+          <span class="mx-2">•</span>
+          <span class="capitalize"><%= playerContext.confidence.level %></span>
+          data quality
+        </p>
+      </div>
+      <div class="text-right">
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm <%= playerContext.confidence.level === 'high' ? 'bg-green-500' : playerContext.confidence.level === 'medium' ? 'bg-yellow-500' : 'bg-gray-500' %>"
+        >
+          <%= Math.round(playerContext.confidence.score * 100) %>%
+        </div>
+      </div>
+    </div>
+
+    <!-- Context Information Row -->
+    <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+      <!-- Device & System Info -->
+      <div class="bg-white rounded-lg p-3 border border-blue-100">
+        <h4 class="font-medium text-blue-800 mb-2">📱 Device & System</h4>
+        <div class="space-y-1">
+          <div class="flex justify-between">
+            <span class="text-casino-dark text-opacity-70">Device:</span>
+            <span class="font-medium capitalize"
+              ><%= playerContext.deviceType || 'Unknown' %></span
+            >
+          </div>
+          <div class="flex justify-between">
+            <span class="text-casino-dark text-opacity-70">System Theme:</span>
+            <span
+              class="font-medium capitalize <%= playerContext.systemTheme === 'dark' ? 'text-casino-dark' : playerContext.systemTheme === 'light' ? 'text-yellow-600' : 'text-gray-500' %>"
+            >
+              <%= playerContext.systemTheme === 'dark' ? '🌙 Dark Mode' : playerContext.systemTheme === 'light' ? '☀️ Light Mode' : '❓ Unknown' %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Referrer & Source -->
+      <div class="bg-white rounded-lg p-3 border border-blue-100">
+        <h4 class="font-medium text-blue-800 mb-2">🔗 Traffic Source</h4>
+        <div class="space-y-1">
+          <% if (playerContext.referrer &&
+          playerContext.referrer.includes('ballysports')) { %>
+          <div
+            class="bg-green-50 border border-green-200 rounded px-2 py-1 mb-1"
+          >
+            <span class="text-green-700 font-medium"
+              >🏈 Bally Sports Referrer</span
+            >
+          </div>
+          <% } else if (playerContext.referrer &&
+          (playerContext.referrer.includes('google') ||
+          playerContext.referrer.includes('search'))) { %>
+          <div class="bg-blue-50 border border-blue-200 rounded px-2 py-1 mb-1">
+            <span class="text-blue-700 font-medium">🔍 Search Engine</span>
+          </div>
+          <% } else if (playerContext.referrer) { %>
+          <div class="bg-gray-50 border border-gray-200 rounded px-2 py-1 mb-1">
+            <span class="text-casino-dark text-opacity-80 font-medium">🌐 External Site</span>
+          </div>
+          <% } else { %>
+          <div
+            class="bg-purple-50 border border-purple-200 rounded px-2 py-1 mb-1"
+          >
+            <span class="text-purple-700 font-medium">📱 Direct Visit</span>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Time & Location -->
+      <div class="bg-white rounded-lg p-3 border border-blue-100">
+        <h4 class="font-medium text-blue-800 mb-2">🌍 Time & Location</h4>
+        <div class="space-y-1">
+          <% if (playerContext.temporal && playerContext.temporal.currentTime &&
+          playerContext.temporal.currentTime.localeInfo) { %>
+          <div class="flex justify-between">
+            <span class="text-casino-dark text-opacity-70">Local Time:</span>
+            <span class="font-medium"
+              ><%= playerContext.temporal.currentTime.localeInfo.timeString
+              %></span
+            >
+          </div>
+          <div class="flex justify-between">
+            <span class="text-casino-dark text-opacity-70">Day:</span>
+            <span class="font-medium"
+              ><%= playerContext.temporal.currentTime.localeInfo.dayName
+              %></span
+            >
+          </div>
+          <% } %>
+          <div class="flex justify-between">
+            <span class="text-casino-dark text-opacity-70">Timezone:</span>
+            <span class="font-medium"
+              ><%= playerContext.timezone || 'Unknown' %></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if (playerContext.confidence.factors &&
+    playerContext.confidence.factors.length > 0) { %>
+    <div class="mt-3 flex flex-wrap gap-2">
+      <% playerContext.confidence.factors.forEach(factor => { %>
+      <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs"
+        >✓ <%= factor %></span
+      >
+      <% }) %>
+    </div>
+    <% } %> <% if (playerContext.temporal &&
+    playerContext.temporal.activeHolidays &&
+    playerContext.temporal.activeHolidays.length > 0) { %>
+    <div class="mt-3 border-t border-blue-200 pt-3">
+      <p class="text-xs text-blue-700 font-medium mb-2">🎉 Active Events:</p>
+      <div class="flex flex-wrap gap-2">
+        <% playerContext.temporal.activeHolidays.forEach(holiday => { %>
+        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+          🎊 <%= holiday.name.replace('-', ' ') %>
+        </span>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- LLM Context Summary -->
+    <% if (playerContext.contextSummary) { %>
+    <div class="mt-3 border-t border-blue-200 pt-3">
+      <p class="text-xs text-blue-700 font-medium mb-2">
+        🤖 AI Context Analysis:
+      </p>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <p class="text-xs text-blue-800 leading-relaxed italic">
+          "<%= playerContext.contextSummary %>"
+        </p>
+      </div>
+    </div>
+    <% } %> <% if (crossSell && crossSell.eligible) { %>
+    <div class="mt-3 border-t border-blue-200 pt-3">
+      <p class="text-xs text-green-700 font-medium mb-2">
+        🏈 Sports Cross-sell Opportunity:
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <% crossSell.factors.forEach(factor => { %>
+        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs"
+          >⚡ <%= factor %></span
+        >
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
   <!-- Success/Error Messages -->
   <% if (message) { %>
   <div
@@ -12,38 +180,124 @@
 
   <!-- Generate Games Section -->
   <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+    <h2 class="text-xl font-semibold text-casino-dark mb-4">
       📊 Game Dataset Generation
     </h2>
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-gray-600 mb-2">
-          Current dataset:
-          <span class="font-bold text-casino"><%= games.length %></span> games
-        </p>
-        <p class="text-sm text-gray-500">
-          Generate 100 fictional slot games using AI
-        </p>
-      </div>
-      <div class="flex gap-3">
-        <form method="POST" action="/generate" class="inline">
-          <button
-            type="submit"
-            class="bg-casino hover:bg-casino-dark text-white font-bold py-2 px-4 rounded transition duration-200"
+
+    <form method="POST" action="/generate" class="space-y-4">
+      <div class="flex items-start justify-between gap-6">
+        <div class="flex-1">
+          <p class="text-casino-dark text-opacity-70 mb-2">
+            Current dataset:
+            <span class="font-bold text-casino"><%= games.length %></span> games
+          </p>
+
+          <label
+            for="customPrompt"
+            class="block text-sm font-medium text-casino-dark text-opacity-80 mb-2"
           >
-            🤖 Generate Games
-          </button>
-        </form>
-        <% if (games.length > 0) { %>
-        <form method="POST" action="/generate-mock" class="inline">
+            Custom Generation Prompt:
+          </label>
+          <textarea
+            id="customPrompt"
+            name="customPrompt"
+            rows="3"
+            class="w-full p-3 border border-gray-300 rounded-md focus:ring-casino focus:border-casino"
+            placeholder="Enter your custom prompt for generating slot games..."
+          >
+Generate 100 fictional slot games using AI</textarea
+          >
+          <p class="text-xs text-casino-dark text-opacity-60 mt-1">
+            Customize how the AI generates your games.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
           <button
             type="submit"
-            class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-200"
+            id="generateButton"
+            onclick="handleGenerateSubmit(event)"
+            class="bg-casino hover:bg-casino-dark text-white font-bold py-2 px-4 rounded transition duration-200 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span id="generateButtonText">🤖 Generate Games</span>
+            <span id="generateButtonSpinner" class="hidden">
+              <svg
+                class="animate-spin -ml-1 mr-3 h-4 w-4 text-white inline"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Generating...
+            </span>
+          </button>
+          <% if (games.length > 0) { %>
+          <button
+            type="button"
+            onclick="generateMockGames()"
+            class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-200 whitespace-nowrap"
           >
             🧪 Add Mock Games
           </button>
-        </form>
-        <% } %>
+          <% } %>
+        </div>
+      </div>
+    </form>
+
+    <!-- Generation Progress Area (hidden by default) -->
+    <div
+      id="generationProgress"
+      class="hidden mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg"
+    >
+      <div class="flex items-center mb-2">
+        <svg
+          class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <h3 class="text-lg font-semibold text-blue-800">Generating Games</h3>
+      </div>
+      <div class="text-sm text-blue-700 mb-3">
+        <p id="progressMessage">Preparing AI generation...</p>
+        <p class="text-xs mt-1">
+          Large datasets are generated in chunks to ensure quality. This may
+          take 1-2 minutes.
+        </p>
+      </div>
+      <div class="w-full bg-blue-200 rounded-full h-2">
+        <div
+          id="progressBar"
+          class="bg-blue-600 h-2 rounded-full transition-all duration-500"
+          style="width: 0%"
+        ></div>
       </div>
     </div>
   </div>
@@ -51,7 +305,7 @@
   <% if (games.length > 0) { %>
   <!-- Game Selection & Recommendation Section -->
   <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+    <h2 class="text-xl font-semibold text-casino-dark mb-4">
       🎯 Get Recommendations
     </h2>
     <form method="POST" action="/recommend" class="space-y-6">
@@ -59,7 +313,7 @@
       <div>
         <label
           for="gameId"
-          class="block text-sm font-medium text-gray-700 mb-2"
+          class="block text-sm font-medium text-casino-dark text-opacity-80 mb-2"
         >
           Select a game to find similar games:
         </label>
@@ -81,14 +335,14 @@
 
       <!-- Weight Configuration -->
       <div>
-        <h3 class="text-md font-medium text-gray-700 mb-4">
+        <h3 class="text-md font-medium text-casino-dark text-opacity-80 mb-4">
           🎚️ Recommendation Weights
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <label
               for="theme"
-              class="block text-sm font-medium text-gray-600 mb-1"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
             >
               Theme Similarity
             </label>
@@ -103,7 +357,7 @@
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('theme', this.value)"
             />
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
               <span>0%</span>
               <span id="theme-value" class="font-semibold text-casino"
                 ><%= Math.round(settings.theme * 100) %>%</span
@@ -115,7 +369,7 @@
           <div>
             <label
               for="volatility"
-              class="block text-sm font-medium text-gray-600 mb-1"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
             >
               Volatility Matching
             </label>
@@ -130,7 +384,7 @@
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('volatility', this.value)"
             />
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
               <span>0%</span>
               <span id="volatility-value" class="font-semibold text-casino"
                 ><%= Math.round(settings.volatility * 100) %>%</span
@@ -142,7 +396,7 @@
           <div>
             <label
               for="studio"
-              class="block text-sm font-medium text-gray-600 mb-1"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
             >
               Studio Preference
             </label>
@@ -157,7 +411,7 @@
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('studio', this.value)"
             />
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
               <span>0%</span>
               <span id="studio-value" class="font-semibold text-casino"
                 ><%= Math.round(settings.studio * 100) %>%</span
@@ -169,7 +423,7 @@
           <div>
             <label
               for="mechanics"
-              class="block text-sm font-medium text-gray-600 mb-1"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
             >
               Game Mechanics
             </label>
@@ -184,7 +438,7 @@
               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               oninput="updateSliderValue('mechanics', this.value)"
             />
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
               <span>0%</span>
               <span id="mechanics-value" class="font-semibold text-casino"
                 ><%= Math.round(settings.mechanics * 100) %>%</span
@@ -208,11 +462,11 @@
 
   <!-- Export Section -->
   <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+    <h2 class="text-xl font-semibold text-casino-dark mb-4">
       📁 Export Game Data
     </h2>
     <div class="flex items-center justify-between">
-      <p class="text-gray-600">
+      <p class="text-casino-dark text-opacity-70">
         Download the current dataset for analysis or external use
       </p>
       <div class="flex gap-3">
@@ -235,8 +489,8 @@
   <!-- Empty State -->
   <div class="bg-white rounded-lg shadow-md p-12 text-center">
     <div class="text-6xl mb-4">🎰</div>
-    <h2 class="text-2xl font-semibold text-gray-800 mb-2">No Games Yet</h2>
-    <p class="text-gray-600 mb-6">
+    <h2 class="text-2xl font-semibold text-casino-dark mb-2">No Games Yet</h2>
+    <p class="text-casino-dark text-opacity-70 mb-6">
       Generate your first dataset of 100 fictional slot games to get started
       with recommendations.
     </p>
@@ -253,10 +507,195 @@
 </div>
 
 <script>
+  // Session and context tracking
+  const sessionId = "<%= sessionId %>";
+
+  // Detect and send timezone and system theme
+  function detectAndSendClientContext() {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const systemTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    
+    // Send context via fetch to update server-side context
+    fetch('/api/update-context', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Session-ID': sessionId,
+        'X-Timezone': timezone,
+        'X-System-Theme': systemTheme
+      },
+      body: JSON.stringify({
+        timezone: timezone,
+        systemTheme: systemTheme,
+        userAgent: navigator.userAgent,
+        language: navigator.language
+      })
+    }).catch(error => console.log('Context update failed:', error));
+  }
+
+  // Store session ID for future requests
+  if (sessionId) {
+    localStorage.setItem("slotForge_sessionId", sessionId);
+
+    // Store player preferences for context tracking
+    const playerPrefs = {
+      visitCount:
+        (parseInt(localStorage.getItem("slotForge_visitCount")) || 0) + 1,
+      lastVisit: new Date().toISOString(),
+      preferredThemes: [], // Could be populated from user selections
+      ballysContext: checkBallysSportsContext(),
+    };
+    localStorage.setItem("slotForge_playerPrefs", JSON.stringify(playerPrefs));
+    localStorage.setItem("slotForge_visitCount", playerPrefs.visitCount);
+  }
+
+  function checkBallysSportsContext() {
+    // Check for Bally's Sports indicators
+    const referrer = document.referrer;
+    const hasBallysCookies =
+      document.cookie.includes("ballysports") ||
+      document.cookie.includes("bally");
+
+    return {
+      referredFromBallys:
+        referrer.includes("ballysports") || referrer.includes("bally"),
+      hasBallyCookies: hasBallysCookies,
+      detectedAt: new Date().toISOString(),
+    };
+  }
+
   function updateSliderValue(sliderId, value) {
     const percentage = Math.round(value * 100);
     document.getElementById(sliderId + "-value").textContent = percentage + "%";
+
+    // Store preference
+    const prefs = JSON.parse(
+      localStorage.getItem("slotForge_weightPrefs") || "{}"
+    );
+    prefs[sliderId] = value;
+    localStorage.setItem("slotForge_weightPrefs", JSON.stringify(prefs));
   }
+
+  function handleGenerateSubmit(event) {
+    event.preventDefault();
+
+    const button = document.getElementById("generateButton");
+    const buttonText = document.getElementById("generateButtonText");
+    const buttonSpinner = document.getElementById("generateButtonSpinner");
+    const progressArea = document.getElementById("generationProgress");
+    const progressMessage = document.getElementById("progressMessage");
+    const progressBar = document.getElementById("progressBar");
+
+    // Show loading state
+    button.disabled = true;
+    buttonText.classList.add("hidden");
+    buttonSpinner.classList.remove("hidden");
+
+    // Show progress area
+    progressArea.classList.remove("hidden");
+
+    // Simulate progress for large generation
+    const customPrompt = document.getElementById("customPrompt").value;
+    const isLargeGeneration = customPrompt.includes("100");
+
+    if (isLargeGeneration) {
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) {
+          progress = 90;
+          clearInterval(progressInterval);
+          progressMessage.textContent = "Finalizing generation...";
+        }
+        progressBar.style.width = progress + "%";
+
+        if (progress <= 20) {
+          progressMessage.textContent = "Starting chunked generation...";
+        } else if (progress <= 40) {
+          progressMessage.textContent = "Generating chunk 1 of 5...";
+        } else if (progress <= 60) {
+          progressMessage.textContent = "Generating chunk 3 of 5...";
+        } else if (progress <= 80) {
+          progressMessage.textContent = "Generating final chunks...";
+        }
+      }, 800);
+
+      // Store interval for cleanup
+      window.generationInterval = progressInterval;
+    } else {
+      // Small generation
+      progressMessage.textContent = "Generating games...";
+      progressBar.style.width = "30%";
+    }
+
+    // Submit the form
+    const form = event.target.closest("form");
+    form.submit();
+  }
+
+  function showProgressNotification(message, type = "info") {
+    // Create notification element
+    const notification = document.createElement("div");
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-opacity duration-300 ${
+      type === "success"
+        ? "bg-green-500 text-white"
+        : type === "error"
+        ? "bg-red-500 text-white"
+        : "bg-blue-500 text-white"
+    }`;
+    notification.innerHTML = `
+      <div class="flex items-center">
+        ${
+          type === "info"
+            ? `
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        `
+            : ""
+        }
+        <span>${message}</span>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds (unless it's an error)
+    if (type !== "error") {
+      setTimeout(() => {
+        notification.style.opacity = "0";
+        setTimeout(() => notification.remove(), 300);
+      }, 5000);
+    }
+  }
+
+  function generateMockGames() {
+    // Create a form and submit it to generate mock games
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/generate-mock";
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  // Load saved preferences on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    const savedPrefs = JSON.parse(
+      localStorage.getItem("slotForge_weightPrefs") || "{}"
+    );
+
+    Object.keys(savedPrefs).forEach((sliderId) => {
+      const slider = document.getElementById(sliderId);
+      if (slider) {
+        slider.value = savedPrefs[sliderId];
+        updateSliderValue(sliderId, savedPrefs[sliderId]);
+      }
+    });
+
+    // Detect and send client context
+    detectAndSendClientContext();
+  });
 </script>
 
 <%- include('partials/footer') %>

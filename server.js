@@ -8,7 +8,8 @@ const {
   generateGames,
   generateMockGames,
 } = require("./services/gameGenerator");
-const { getRecommendations } = require("./services/similarityEngine");
+const { getRecommendations, generateMatchExplanation } = require("./services/similarityEngine");
+const contextTracker = require("./services/contextTracker");
 const { convertGamesToCSV } = require("./services/csvConverter");
 
 const app = express();
@@ -19,6 +20,37 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Context tracking middleware
+app.use((req, res, next) => {
+  // Generate session ID if not present
+  if (!req.headers['x-session-id']) {
+    req.sessionId = 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  } else {
+    req.sessionId = req.headers['x-session-id'];
+  }
+
+  // Track player context
+  const contextData = {
+    referrer: req.get('Referer'),
+    userAgent: req.get('User-Agent'),
+    sessionCount: 1, // Would be tracked in real implementation
+    timezone: req.get('X-Timezone') || req.get('Timezone') || 'unknown',
+    ballysSports: req.cookies?.ballysSports ? JSON.parse(req.cookies.ballysSports) : null,
+    hasStoredPreferences: !!(req.cookies?.gamePreferences),
+    deviceType: req.get('User-Agent')?.includes('Mobile') ? 'mobile' : 'desktop',
+    systemTheme: req.get('X-System-Theme') || req.get('Sec-CH-Prefers-Color-Scheme') || 'unknown',
+    acceptLanguage: req.get('Accept-Language') || 'en-US'
+  };
+
+  req.playerContext = contextTracker.trackPlayerContext(req.sessionId, contextData);
+  
+  // Add session ID to response for client-side tracking
+  res.setHeader('X-Session-ID', req.sessionId);
+  
+  next();
+});
 
 // Helper function to render error page
 function renderError(res, error) {
@@ -44,10 +76,19 @@ app.get("/", (req, res) => {
       message = { type: "error", text: req.query.error };
     }
 
+    // Use basic context summary (no LLM call needed on page load)
+    req.playerContext.contextSummary = contextTracker.generateBasicContextSummary(req.playerContext);
+
+    // Detect Bally's Sports cross-sell opportunities
+    const crossSell = contextTracker.detectBallysSportsCrossSell(req.playerContext);
+
     res.render("index", {
       games,
       settings,
       message,
+      playerContext: req.playerContext,
+      crossSell,
+      sessionId: req.sessionId
     });
   } catch (error) {
     renderError(res, error);
@@ -57,7 +98,8 @@ app.get("/", (req, res) => {
 // Generate games via LLM
 app.post("/generate", async (req, res) => {
   try {
-    await generateGames();
+    const customPrompt = req.body.customPrompt;
+    await generateGames(customPrompt);
     res.redirect("/?success=Games generated successfully");
   } catch (error) {
     const games = loadGames();
@@ -85,7 +127,7 @@ app.post("/generate-mock", (req, res) => {
 });
 
 // Get recommendations
-app.post("/recommend", (req, res) => {
+app.post("/recommend", async (req, res) => {
   try {
     const { gameId, theme, volatility, studio, mechanics } = req.body;
 
@@ -120,10 +162,33 @@ app.post("/recommend", (req, res) => {
     const games = loadGames();
     const selectedGame = games.find((g) => g.id === gameId);
 
+    // Generate explanations with timeout and fallback
+    const recommendationsWithExplanations = await Promise.all(
+      recommendations.map(async (rec) => {
+        try {
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Explanation timeout')), 2000)
+          );
+          
+          const explanation = await Promise.race([
+            generateMatchExplanation(selectedGame, rec.game, weights, rec.confidence),
+            timeoutPromise
+          ]);
+          
+          return { ...rec, explanation };
+        } catch (error) {
+          console.error('Error generating explanation for game:', rec.game.title, error.message);
+          return { ...rec, explanation: `Strong ${Math.round(rec.confidence * 100)}% match with similar gameplay features.` };
+        }
+      })
+    );
+
     res.render("recommendations", {
-      recommendations,
+      recommendations: recommendationsWithExplanations,
       selectedGame,
       weights,
+      playerContext: req.playerContext,
+      sessionId: req.sessionId
     });
   } catch (error) {
     renderError(res, error);
@@ -165,6 +230,28 @@ app.get("/export/csv", (req, res) => {
   }
 });
 
+// API endpoint to update client context
+app.post("/api/update-context", (req, res) => {
+  try {
+    const { timezone, systemTheme, userAgent, language } = req.body;
+    const sessionId = req.sessionId;
+    
+    if (sessionId && contextTracker.contexts[sessionId]) {
+      // Update existing context
+      contextTracker.contexts[sessionId].timezone = timezone || 'unknown';
+      contextTracker.contexts[sessionId].systemTheme = systemTheme || 'unknown';
+      contextTracker.contexts[sessionId].userAgent = userAgent;
+      contextTracker.contexts[sessionId].acceptLanguage = language;
+      contextTracker.saveContexts();
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating context:', error);
+    res.json({ success: false });
+  }
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).render("error", {
@@ -182,8 +269,8 @@ app.listen(PORT, () => {
   console.log(`🎰 Slot Forge running on port ${PORT}`);
   console.log(`📁 Visit http://localhost:${PORT} to start`);
   console.log(
-    `🔑 OpenAI API Key: ${
-      process.env.OPENAI_API_KEY ? "Configured ✓" : "Missing ✗"
+    `🤖 Anthropic API Key: ${
+      process.env.ANTHROPIC_API_KEY ? "Configured ✓" : "Missing ✗"
     }`
   );
 });

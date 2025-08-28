@@ -1,6 +1,6 @@
 # Product Requirements Document
 
-**Project:** Bally's R&D — LLM Game Recommender Prototype  
+**Project:** Bally's R&D — LLM Slot Forge
 **Date:** 27.8.25  
 **Owner:** Jay Compson
 

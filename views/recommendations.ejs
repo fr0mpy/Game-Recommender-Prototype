@@ -28,7 +28,7 @@
   <!-- Selected Game Info -->
   <% if (selectedGame) { %>
   <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">🎯 Selected Game</h2>
+    <h2 class="text-xl font-semibold text-casino-dark mb-4">🎯 Selected Game</h2>
     <div
       class="bg-gradient-to-r from-casino to-casino-dark text-white rounded-lg p-4"
     >
@@ -59,17 +59,54 @@
   </div>
   <% } %>
 
+  <!-- Player Context Summary -->
+  <% if (playerContext && playerContext.confidence) { %>
+  <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-semibold text-green-800">🎯 Recommendation Context</h3>
+      <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm
+                  <%= playerContext.confidence.level === 'high' ? 'bg-green-500' : 
+                      playerContext.confidence.level === 'medium' ? 'bg-yellow-500' : 'bg-gray-500' %>">
+        <%= Math.round(playerContext.confidence.score * 100) %>%
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-green-700">
+      <div>
+        <span class="font-medium">Time:</span> 
+        <%= playerContext.temporal ? playerContext.temporal.playTimeContext.description : 'Unknown' %>
+      </div>
+      <div>
+        <span class="font-medium">Device:</span> 
+        <%= playerContext.deviceType || 'Unknown' %>
+      </div>
+      <% if (playerContext.temporal && playerContext.temporal.sportsSeason && playerContext.temporal.sportsSeason.length > 0) { %>
+      <div>
+        <span class="font-medium">Sports Season:</span>
+        <%= playerContext.temporal.sportsSeason.map(s => s.sport.toUpperCase()).join(', ') %>
+      </div>
+      <% } %>
+      <% if (playerContext.temporal && playerContext.temporal.currentTime) { %>
+      <div>
+        <span class="font-medium">Context:</span>
+        <%= playerContext.temporal.currentTime.isWeekend ? 'Weekend' : 'Weekday' %>
+        <%= playerContext.temporal.currentTime.isEvening ? 'Evening' : '' %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+
   <!-- Recommendations Results -->
   <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-6">🔍 Similar Games</h2>
+    <h2 class="text-2xl font-semibold text-casino-dark mb-6">🔍 Similar Games</h2>
 
     <% if (recommendations.length === 0) { %>
     <div class="text-center py-12">
       <div class="text-6xl mb-4">🤷</div>
-      <h3 class="text-xl font-semibold text-gray-600 mb-2">
+      <h3 class="text-xl font-semibold text-casino-dark text-opacity-70 mb-2">
         No Similar Games Found
       </h3>
-      <p class="text-gray-500 mb-6">
+      <p class="text-casino-dark text-opacity-60 mb-6">
         Try adjusting the recommendation weights or generate more games for
         better matches.
       </p>
@@ -88,7 +125,7 @@
       >
         <!-- Confidence Badge -->
         <div class="flex justify-between items-start mb-3">
-          <span class="text-sm font-semibold text-gray-500"
+          <span class="text-sm font-semibold text-casino-dark text-opacity-60"
             >#<%= index + 1 %> Match</span
           >
           <div class="flex items-center">
@@ -102,12 +139,12 @@
 
         <!-- Game Info -->
         <div class="mb-4">
-          <h3 class="text-lg font-semibold text-gray-800 mb-1 line-clamp-2">
+          <h3 class="text-lg font-semibold text-casino-dark mb-1 line-clamp-2">
             <%= rec.game.title %>
           </h3>
-          <p class="text-sm text-gray-600 mb-2">by <%= rec.game.studio %></p>
+          <p class="text-sm text-casino-dark text-opacity-70 mb-2">by <%= rec.game.studio %></p>
           <% if (rec.game.description) { %>
-          <p class="text-sm text-gray-700 line-clamp-3">
+          <p class="text-sm text-casino-dark text-opacity-80 line-clamp-3">
             <%= rec.game.description %>
           </p>
           <% } %>
@@ -152,11 +189,11 @@
           <% if (rec.game.mechanics && rec.game.mechanics.length > 0) { %>
           <div class="flex flex-wrap gap-1">
             <% rec.game.mechanics.slice(0, 3).forEach(mechanic => { %>
-            <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+            <span class="bg-gray-100 text-casino-dark text-opacity-80 px-2 py-1 rounded text-xs"
               ><%= mechanic %></span
             >
             <% }) %> <% if (rec.game.mechanics.length > 3) { %>
-            <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+            <span class="bg-gray-100 text-casino-dark text-opacity-80 px-2 py-1 rounded text-xs"
               >+<%= rec.game.mechanics.length - 3 %> more</span
             >
             <% } %>
@@ -166,26 +203,32 @@
 
         <!-- Match Explanation -->
         <div class="border-t pt-3">
-          <p class="text-xs text-gray-600 mb-2">
+          <p class="text-xs text-casino-dark text-opacity-70 mb-2">
             <strong>Why this match:</strong>
           </p>
-          <div class="text-xs text-gray-700 space-y-1">
-            <% if (selectedGame && rec.game.theme && selectedGame.theme) { %> <%
-            const sharedThemes = selectedGame.theme.filter(t =>
-            rec.game.theme.includes(t)); %> <% if (sharedThemes.length > 0) { %>
-            <div>🎨 Shared themes: <%= sharedThemes.join(', ') %></div>
-            <% } %> <% } %> <% if (selectedGame && selectedGame.volatility ===
-            rec.game.volatility) { %>
-            <div>⚡ Same volatility level (<%= rec.game.volatility %>)</div>
-            <% } %> <% if (selectedGame && selectedGame.studio ===
-            rec.game.studio) { %>
-            <div>🏢 Same studio (<%= rec.game.studio %>)</div>
-            <% } %> <% if (selectedGame && rec.game.mechanics &&
-            selectedGame.mechanics) { %> <% const sharedMechanics =
-            selectedGame.mechanics.filter(m => rec.game.mechanics.includes(m));
-            %> <% if (sharedMechanics.length > 0) { %>
-            <div>🔧 Shared mechanics: <%= sharedMechanics.join(', ') %></div>
-            <% } %> <% } %>
+          <div class="text-sm text-casino-dark text-opacity-80">
+            <% if (rec.explanation) { %>
+              <p><%= rec.explanation %></p>
+            <% } else { %>
+              <div class="text-xs space-y-1">
+                <% if (selectedGame && rec.game.theme && selectedGame.theme) { %> <%
+                const sharedThemes = selectedGame.theme.filter(t =>
+                rec.game.theme.includes(t)); %> <% if (sharedThemes.length > 0) { %>
+                <div>🎨 Shared themes: <%= sharedThemes.join(', ') %></div>
+                <% } %> <% } %> <% if (selectedGame && selectedGame.volatility ===
+                rec.game.volatility) { %>
+                <div>⚡ Same volatility level (<%= rec.game.volatility %>)</div>
+                <% } %> <% if (selectedGame && selectedGame.studio ===
+                rec.game.studio) { %>
+                <div>🏢 Same studio (<%= rec.game.studio %>)</div>
+                <% } %> <% if (selectedGame && rec.game.mechanics &&
+                selectedGame.mechanics) { %> <% const sharedMechanics =
+                selectedGame.mechanics.filter(m => rec.game.mechanics.includes(m));
+                %> <% if (sharedMechanics.length > 0) { %>
+                <div>🔧 Shared mechanics: <%= sharedMechanics.join(', ') %></div>
+                <% } %> <% } %>
+              </div>
+            <% } %>
           </div>
         </div>
       </div>

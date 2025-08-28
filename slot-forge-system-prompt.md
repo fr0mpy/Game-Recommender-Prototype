@@ -268,9 +268,116 @@ Before output:
 - Validate theme distribution
 - Ensure studio consistency
 
-## Example Output Patterns
+## JSON Schema Definition
 
-To ensure quality, each game should follow patterns like:
+**CRITICAL**: All generated games MUST conform to this exact JSON schema:
+
+```json
+{
+  "type": "object",
+  "required": ["id", "title", "studio", "theme", "volatility", "rtp", "maxWin", "reelLayout", "paylines", "mechanics", "features", "pace", "hitFrequency", "bonusFrequency", "artStyle", "audioVibe", "visualDensity", "mobileOptimized", "releaseYear", "description"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^game-[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "studio": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 30
+    },
+    "theme": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "maxItems": 4
+    },
+    "volatility": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "ultra"]
+    },
+    "rtp": {
+      "type": "number",
+      "minimum": 90.0,
+      "maximum": 99.0
+    },
+    "maxWin": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 100000
+    },
+    "reelLayout": {
+      "type": "string",
+      "pattern": "^[0-9]+x[0-9]+$"
+    },
+    "paylines": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1024
+    },
+    "mechanics": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "maxItems": 6
+    },
+    "features": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 0,
+      "maxItems": 4
+    },
+    "pace": {
+      "type": "string",
+      "enum": ["slow", "medium", "fast"]
+    },
+    "hitFrequency": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 0.60
+    },
+    "bonusFrequency": {
+      "type": "number",
+      "minimum": 0.001,
+      "maximum": 0.050
+    },
+    "artStyle": {
+      "type": "string",
+      "enum": ["3D realistic", "Cartoon/animated", "Illustrated/artistic", "Photorealistic", "Minimalist/clean", "Retro/pixel", "Dark/gothic"]
+    },
+    "audioVibe": {
+      "type": "string",
+      "enum": ["Upbeat/energetic", "Atmospheric/immersive", "Epic/orchestral", "Relaxing/ambient", "Retro/chiptune", "Rock/metal", "Electronic/EDM", "Cultural/ethnic"]
+    },
+    "visualDensity": {
+      "type": "string",
+      "enum": ["minimal", "standard", "high", "busy"]
+    },
+    "mobileOptimized": {
+      "type": "boolean"
+    },
+    "releaseYear": {
+      "type": "integer",
+      "minimum": 2020,
+      "maximum": 2025
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 200
+    }
+  }
+}
+```
+
+## Example Output Pattern
+
+Each game must follow this exact structure:
 
 ```json
 {
@@ -307,4 +414,20 @@ To ensure quality, each game should follow patterns like:
 
 ---
 
-You are now configured as the SlotForge Content Generator. Generate exactly 100 fictional slot games following these comprehensive guidelines.
+## SlotForge Generator Implementation
+
+The detailed SlotForge Content Generator prompt has been extracted to a separate file for modularity and reusability:
+
+**Location**: `slot-forge-generator-prompt.md`
+
+This separation allows for:
+- Easy customization of generation prompts by users
+- Version control of prompt iterations  
+- Reuse across different contexts
+- Cleaner system architecture
+
+### Usage
+When the system needs to generate games, it will load and use the prompt from `slot-forge-generator-prompt.md`, optionally combined with any user-provided custom instructions.
+
+### Custom Prompt Integration
+Users can provide custom generation instructions through the web interface, which will be appended to the base SlotForge prompt to modify generation behavior while maintaining the core structural requirements.

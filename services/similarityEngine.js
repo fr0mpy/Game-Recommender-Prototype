@@ -1,4 +1,17 @@
 const { loadGames, DEFAULT_WEIGHTS } = require('../utils/storage');
+const Anthropic = require('@anthropic-ai/sdk');
+const fs = require('fs');
+const path = require('path');
+
+// Initialize Anthropic API
+let anthropic = null;
+if (process.env.ANTHROPIC_API_KEY) {
+  anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+}
+
+const EXPLANATION_PROMPT_FILE = path.join(__dirname, '..', 'match-explanation-prompt.md');
 
 // Cache for similarity calculations
 const gameCache = new Map();
@@ -89,6 +102,84 @@ function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5) {
   return recommendations;
 }
 
+async function generateMatchExplanation(selectedGame, recommendedGame, weights, confidence) {
+  if (!anthropic) {
+    // Fallback to basic explanation if no API key
+    return generateBasicExplanation(selectedGame, recommendedGame, confidence);
+  }
+
+  try {
+    // Load the explanation prompt
+    const systemPrompt = fs.readFileSync(EXPLANATION_PROMPT_FILE, 'utf8');
+    
+    const userPrompt = `Selected Game: ${selectedGame.title} by ${selectedGame.studio}
+- Theme: ${selectedGame.theme?.join(', ') || 'N/A'}
+- Volatility: ${selectedGame.volatility}
+- RTP: ${selectedGame.rtp}%
+- Mechanics: ${selectedGame.mechanics?.join(', ') || 'N/A'}
+
+Recommended Game: ${recommendedGame.title} by ${recommendedGame.studio}
+- Theme: ${recommendedGame.theme?.join(', ') || 'N/A'}  
+- Volatility: ${recommendedGame.volatility}
+- RTP: ${recommendedGame.rtp}%
+- Mechanics: ${recommendedGame.mechanics?.join(', ') || 'N/A'}
+
+Explain why "${recommendedGame.title}" is a good match for someone who likes "${selectedGame.title}".`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 100,
+      temperature: 0.3,
+      system: systemPrompt,
+      messages: [{
+        role: 'user',
+        content: userPrompt
+      }]
+    });
+
+    return response.content[0]?.text?.trim() || generateBasicExplanation(selectedGame, recommendedGame, confidence);
+  } catch (error) {
+    console.error('Error generating match explanation:', error);
+    return generateBasicExplanation(selectedGame, recommendedGame, confidence);
+  }
+}
+
+function generateBasicExplanation(selectedGame, recommendedGame, confidence) {
+  const similarities = [];
+  
+  // Check theme overlap
+  if (selectedGame.theme && recommendedGame.theme) {
+    const sharedThemes = selectedGame.theme.filter(t => recommendedGame.theme.includes(t));
+    if (sharedThemes.length > 0) {
+      similarities.push(`shared ${sharedThemes.join(', ')} themes`);
+    }
+  }
+  
+  // Check volatility match
+  if (selectedGame.volatility === recommendedGame.volatility) {
+    similarities.push(`same ${recommendedGame.volatility} volatility`);
+  }
+  
+  // Check studio match
+  if (selectedGame.studio === recommendedGame.studio) {
+    similarities.push(`same studio (${recommendedGame.studio})`);
+  }
+  
+  // Check mechanics overlap
+  if (selectedGame.mechanics && recommendedGame.mechanics) {
+    const sharedMechanics = selectedGame.mechanics.filter(m => recommendedGame.mechanics.includes(m));
+    if (sharedMechanics.length > 0) {
+      similarities.push(`similar mechanics (${sharedMechanics.slice(0, 2).join(', ')})`);
+    }
+  }
+  
+  if (similarities.length === 0) {
+    return `This ${confidence}% match offers a similar gaming experience with comparable features.`;
+  }
+  
+  return `Strong ${confidence}% match due to ${similarities.slice(0, 2).join(' and ')}.`;
+}
+
 function clearCache() {
   gameCache.clear();
 }
@@ -96,6 +187,7 @@ function clearCache() {
 module.exports = {
   calculateSimilarity,
   getRecommendations,
+  generateMatchExplanation,
   volatilityLevel,
   clearCache
 };
