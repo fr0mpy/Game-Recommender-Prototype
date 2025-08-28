@@ -181,15 +181,16 @@
   <!-- Generate Games Section -->
   <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-xl font-semibold text-casino-dark mb-4">
-      📊 Game Dataset Generation
+      📊 Custom Game Dataset Generation
     </h2>
 
     <form method="POST" action="/generate" class="space-y-4" id="generateForm">
       <div class="flex items-start justify-between gap-6">
         <div class="flex-1">
           <p class="text-casino-dark text-opacity-70 mb-2">
-            Current dataset:
+            Current custom dataset:
             <span class="font-bold text-casino"><%= games.length %></span> games
+            <span class="text-xs text-green-600">(Stored in Redis)</span>
           </p>
 
           <label
@@ -294,11 +295,9 @@
   <!-- Game Selection & Recommendation Section -->
   <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-xl font-semibold text-casino-dark mb-4">
-      🎯 Get Recommendations
+      🎯 Get Game Recommendations
     </h2>
     <form method="POST" action="/recommend" class="space-y-6" onsubmit="return handleRecommendSubmit(event)">
-      <!-- Hidden session ID field to ensure consistency -->
-      <input type="hidden" name="sessionId" id="sessionIdField" value="<%= sessionId %>" />
       <!-- Game Selection -->
       <div>
         <label
