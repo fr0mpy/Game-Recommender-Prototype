@@ -18,23 +18,28 @@ const JSON_FORMAT_FILE = path.join(__dirname, '..', 'prompts', 'json-output-form
 
 // Chunked generation for large game requests
 async function generateGamesInChunks(systemPrompt, generationInstructions, jsonFormatRules, customPrompt, totalCount) {
-  const chunkSize = 20; // Back to 20 games per chunk - Sonnet can handle this easily
+  const chunkSize = 20; // 20 games per chunk - Claude 4 with 15K tokens can handle this
   const chunks = Math.ceil(totalCount / chunkSize);
   const allGames = [];
   let gameIdCounter = 1;
 
   console.log(`Generating ${totalCount} games in ${chunks} chunks of ${chunkSize} games each`);
+  console.log('🚀 Using PARALLEL processing for maximum speed!');
 
+  // Create all chunk promises to run in parallel
+  const chunkPromises = [];
+  
   for (let i = 0; i < chunks; i++) {
     const isLastChunk = i === chunks - 1;
     const gamesInThisChunk = isLastChunk ? totalCount - (i * chunkSize) : chunkSize;
+    const startingGameId = (i * chunkSize) + 1;
     
-    console.log(`Generating chunk ${i + 1}/${chunks}: ${gamesInThisChunk} games (starting from game-${gameIdCounter.toString().padStart(3, '0')})`);
+    console.log(`Preparing chunk ${i + 1}/${chunks}: ${gamesInThisChunk} games (starting from game-${startingGameId.toString().padStart(3, '0')})`);
     
     const chunkPrompt = `CRITICAL: You must output ONLY a valid JSON array. No explanations, no markdown, no text before or after.
 
 Generate exactly ${gamesInThisChunk} games for chunk ${i + 1} of ${chunks}:
-- Start game IDs from "game-${gameIdCounter.toString().padStart(3, '0')}"
+- Start game IDs from "game-${startingGameId.toString().padStart(3, '0')}"
 - Ensure variety in themes, volatility, and studios
 - ${customPrompt || 'Create diverse fictional slot games'}
 
@@ -42,160 +47,160 @@ ${jsonFormatRules}
 
 OUTPUT ONLY THE JSON ARRAY - NO OTHER TEXT:`;
 
-    try {
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`Chunk ${i + 1} timed out after 60 seconds`)), 60000)
-      );
-
-      const response = await Promise.race([
-        anthropic.messages.create({
-          model: 'claude-3-5-sonnet-20241022', // Latest Sonnet for reliable JSON generation
-          max_tokens: 8192, // Sonnet can handle much larger outputs
-          temperature: 0.7 + (i * 0.05), // Slightly vary temperature for diversity
-          system: systemPrompt,
-          messages: [{
-            role: 'user',
-            content: chunkPrompt
-          }]
-        }),
-        timeoutPromise
-      ]);
-
-      const content = response.content[0]?.text;
-      if (!content) {
-        throw new Error(`No response content for chunk ${i + 1}`);
-      }
-
-      // Extract JSON more aggressively
-      let jsonContent = content;
-      
-      // Find first [ and last ] for better extraction
-      const startIndex = content.indexOf('[');
-      const endIndex = content.lastIndexOf(']');
-      
-      if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-        jsonContent = content.substring(startIndex, endIndex + 1);
-      } else {
-        // If no brackets found, try to find JSON object pattern
-        const objectMatch = content.match(/\{[\s\S]*\}/);
-        if (objectMatch) {
-          jsonContent = '[' + objectMatch[0] + ']'; // Wrap single object in array
-        }
-      }
-
-      // Enhanced JSON cleanup
-      jsonContent = jsonContent.trim()
-        .replace(/,\s*}/g, '}')  // Remove trailing commas before }
-        .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
-        .replace(/\n/g, ' ')     // Remove newlines
-        .replace(/\r/g, '')      // Remove carriage returns
-        .replace(/\t/g, ' ')     // Replace tabs with spaces
-        .replace(/\s+/g, ' ')    // Normalize multiple spaces
-        .replace(/"\s*:\s*"/g, '":"')  // Clean up spacing around colons
-        .replace(/,\s*,/g, ',')  // Remove duplicate commas
-        .replace(/}\s*{/g, '},{') // Fix missing commas between objects
-
-      let chunkGames;
+    // Create promise for this chunk
+    const chunkPromise = (async (chunkIndex) => {
       try {
-        chunkGames = JSON.parse(jsonContent);
-      } catch (parseError) {
-        console.error(`JSON Parse Error for chunk ${i + 1}:`, parseError.message);
-        console.error('Raw content length:', content.length);
-        console.error('JSON content preview:', jsonContent.substring(0, 500) + '...');
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`Chunk ${chunkIndex + 1} timed out after 90 seconds`)), 90000)
+        );
+
+        console.log(`🔄 Starting chunk ${chunkIndex + 1}/${chunks} in parallel...`);
         
-        // Aggressive JSON repair attempts
-        let fixedJson = jsonContent
-          .replace(/([^"\\])'([^']*?)'/g, '$1"$2"')  // Fix single quotes
-          .replace(/([{,]\s*)(\w+):/g, '$1"$2":')    // Quote unquoted keys
-          .replace(/:\s*([^",\]\}]+)([,\]\}])/g, ': "$1"$2') // Quote unquoted values
-          .replace(/,(\s*[\]}])/g, '$1')  // Remove trailing commas
-          .replace(/\}(\s*)\{/g, '},$1{')  // Add missing commas between objects
-          .replace(/\](\s*)\[/g, '],$1['); // Add missing commas between arrays
-        
-        // If still truncated, try to close the JSON properly
-        const openBraces = (fixedJson.match(/\{/g) || []).length;
-        const closeBraces = (fixedJson.match(/\}/g) || []).length;
-        const openBrackets = (fixedJson.match(/\[/g) || []).length;
-        const closeBrackets = (fixedJson.match(/\]/g) || []).length;
-        
-        // Close unclosed braces
-        for (let i = 0; i < openBraces - closeBraces; i++) {
-          fixedJson += '}';
+        const response = await Promise.race([
+          anthropic.messages.create({
+            model: 'claude-sonnet-4-20250514', // Claude 4 Sonnet for superior JSON generation
+            max_tokens: 15000, // Claude 4 Sonnet supports 15K output tokens
+            temperature: 0.7 + (chunkIndex * 0.05), // Slightly vary temperature for diversity
+            system: systemPrompt,
+            messages: [{
+              role: 'user',
+              content: chunkPrompt
+            }]
+          }),
+          timeoutPromise
+        ]);
+
+        const content = response.content[0]?.text;
+        if (!content) {
+          throw new Error(`No response content for chunk ${chunkIndex + 1}`);
         }
-        // Close unclosed brackets
-        for (let i = 0; i < openBrackets - closeBrackets; i++) {
-          fixedJson += ']';
-        }
+
+        // Extract and parse JSON
+        let jsonContent = content;
+        const startIndex = content.indexOf('[');
+        const endIndex = content.lastIndexOf(']');
         
+        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+          jsonContent = content.substring(startIndex, endIndex + 1);
+        }
+
+        // Clean JSON
+        jsonContent = jsonContent.trim()
+          .replace(/,\s*}/g, '}')
+          .replace(/,\s*]/g, ']')
+          .replace(/\n/g, ' ')
+          .replace(/\s+/g, ' ');
+
+        let chunkGames;
         try {
-          chunkGames = JSON.parse(fixedJson);
-          console.log(`✓ Fixed JSON parsing for chunk ${i + 1}`);
-        } catch (secondError) {
-          throw new Error(`Failed to parse JSON for chunk ${i + 1}: ${parseError.message}`);
+          chunkGames = JSON.parse(jsonContent);
+        } catch (parseError) {
+          console.error(`JSON Parse Error for chunk ${chunkIndex + 1}:`, parseError.message);
+          throw new Error(`Failed to parse JSON for chunk ${chunkIndex + 1}: ${parseError.message}`);
         }
-      }
-      
-      if (!Array.isArray(chunkGames)) {
-        throw new Error(`Chunk ${i + 1} response is not an array`);
-      }
+        
+        if (!Array.isArray(chunkGames)) {
+          throw new Error(`Chunk ${chunkIndex + 1} response is not an array`);
+        }
 
-      console.log(`✓ Chunk ${i + 1} generated ${chunkGames.length} games successfully`);
-      allGames.push(...chunkGames);
-      gameIdCounter += gamesInThisChunk;
-
-      // Small delay between chunks to avoid rate limits
-      if (i < chunks - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(`✅ Chunk ${chunkIndex + 1} completed: ${chunkGames.length} games`);
+        return { chunkIndex, games: chunkGames, gamesInThisChunk };
+        
+      } catch (error) {
+        console.error(`❌ Error in chunk ${chunkIndex + 1}:`, error.message);
+        
+        // Generate fallback games
+        const fallbackGames = [];
+        const startingId = (chunkIndex * chunkSize) + 1;
+        for (let j = 0; j < gamesInThisChunk; j++) {
+          fallbackGames.push({
+            id: `game-${(startingId + j).toString().padStart(3, '0')}`,
+            title: `Generated Game ${startingId + j}`,
+            studio: 'Fallback Studios',
+            theme: ['Generic'],
+            volatility: 'medium',
+            rtp: 95.0,
+            maxWin: 1000,
+            reelLayout: '5x3',
+            paylines: 25,
+            mechanics: ['Wild', 'Scatter'],
+            features: ['Free Spins'],
+            pace: 'medium',
+            hitFrequency: 0.3,
+            bonusFrequency: 0.01,
+            artStyle: 'Cartoon/animated',
+            audioVibe: 'Upbeat/energetic',
+            visualDensity: 'standard',
+            mobileOptimized: true,
+            releaseYear: 2024,
+            description: `Fallback generated game ${startingId + j} due to generation error`
+          });
+        }
+        
+        console.log(`⚠️ Using fallback games for chunk ${chunkIndex + 1}`);
+        return { chunkIndex, games: fallbackGames, gamesInThisChunk };
       }
-
-    } catch (error) {
-      console.error(`Error in chunk ${i + 1}:`, error.message);
-      
-      // If a chunk fails, generate mock games for this chunk
-      const mockGames = [];
-      for (let j = 0; j < gamesInThisChunk; j++) {
-        mockGames.push({
-          id: `game-${(gameIdCounter + j).toString().padStart(3, '0')}`,
-          title: `Generated Game ${gameIdCounter + j}`,
-          studio: 'Fallback Studios',
-          theme: ['Generic'],
-          volatility: 'medium',
-          rtp: 95.0,
-          maxWin: 1000,
-          reelLayout: '5x3',
-          paylines: 25,
-          mechanics: ['Wild', 'Scatter'],
-          features: ['Free Spins'],
-          pace: 'medium',
-          hitFrequency: 0.3,
-          bonusFrequency: 0.01,
-          artStyle: 'Cartoon/animated',
-          audioVibe: 'Upbeat/energetic',
-          visualDensity: 'standard',
-          mobileOptimized: true,
-          releaseYear: 2024,
-          description: `Fallback generated game ${gameIdCounter + j} due to generation error`
-        });
-      }
-      
-      console.log(`⚠️ Using fallback games for chunk ${i + 1}`);
-      allGames.push(...mockGames);
-      gameIdCounter += gamesInThisChunk;
-    }
+    })(i);
+    
+    chunkPromises.push(chunkPromise);
   }
+  
+  console.log(`🚀 Starting ${chunks} chunks in PARALLEL...`);
+  
+  // Wait for all chunks to complete in parallel
+  const chunkResults = await Promise.all(chunkPromises);
+  
+  // Sort results by chunk index to maintain order
+  chunkResults.sort((a, b) => a.chunkIndex - b.chunkIndex);
+  
+  // Combine all games in order
+  chunkResults.forEach(result => {
+    allGames.push(...result.games);
+  });
 
-  console.log(`✓ Completed chunked generation: ${allGames.length} total games`);
+  console.log(`✅ Parallel generation completed: ${allGames.length} total games`);
   
   // Save all games at once
   saveGames(allGames);
   return allGames;
 }
 
-// Sanitize custom prompt to prevent injection attacks
-function sanitizeCustomPrompt(prompt) {
-  if (!prompt || typeof prompt !== 'string') return null;
+// Validate prompt is for game generation only
+function validateGameGenerationPrompt(prompt) {
+  if (!prompt || typeof prompt !== 'string') return { valid: true, sanitized: null };
   
-  // Remove potential injection patterns
+  const lowercased = prompt.toLowerCase();
+  
+  // Check for non-game generation requests
+  const nonGamePatterns = [
+    /write.*(?:code|function|script|program)/,
+    /create.*(?:website|app|application|database)/,
+    /build.*(?:system|platform|tool)/,
+    /explain.*(?:how to|concept|algorithm)/,
+    /help.*(?:with|me)/,
+    /what.*(?:is|are|does)/,
+    /tell.*(?:me|about)/,
+    /calculate|compute|solve/,
+    /translate|convert/,
+    /summarize|analyze/,
+    /research|find.*information/,
+    /send.*email|make.*call/,
+    /access.*file|read.*document/,
+    /install|download|update/
+  ];
+  
+  // Check if request is clearly not about game generation
+  const containsNonGameRequest = nonGamePatterns.some(pattern => pattern.test(lowercased));
+  const containsGameKeywords = /(?:game|slot|casino|reel|spin|bet|win|bonus|jackpot|theme|volatility)/i.test(prompt);
+  
+  if (containsNonGameRequest && !containsGameKeywords) {
+    return { 
+      valid: false, 
+      error: 'This tool can only generate slot games. Please enter a prompt requesting fictional slot game generation (e.g., "Generate 50 sports-themed slot games" or "Create ocean and pirate themed casino games").' 
+    };
+  }
+  
+  // Remove potential injection patterns but keep game generation content
   const cleaned = prompt
     .replace(/(?:ignore|disregard|forget)\s+(?:previous|above|system)/gi, '') // Remove ignore instructions
     .replace(/(?:you\s+are\s+now|act\s+as|pretend\s+to\s+be)/gi, '') // Remove role changes
@@ -206,10 +211,10 @@ function sanitizeCustomPrompt(prompt) {
   
   // Only allow game generation focused content
   if (cleaned.length > 500) {
-    return cleaned.substring(0, 500) + '...'; // Limit length
+    return { valid: true, sanitized: cleaned.substring(0, 500) + '...' };
   }
   
-  return cleaned;
+  return { valid: true, sanitized: cleaned };
 }
 
 async function generateGames(customPrompt = null) {
@@ -219,8 +224,12 @@ async function generateGames(customPrompt = null) {
     const generationInstructions = fs.readFileSync(GENERATION_INSTRUCTIONS_FILE, 'utf8');
     const jsonFormatRules = fs.readFileSync(JSON_FORMAT_FILE, 'utf8');
     
-    // Sanitize custom prompt to prevent injection
-    const sanitizedPrompt = sanitizeCustomPrompt(customPrompt);
+    // Validate and sanitize custom prompt
+    const validation = validateGameGenerationPrompt(customPrompt);
+    if (!validation.valid) {
+      throw new Error(validation.error);
+    }
+    const sanitizedPrompt = validation.sanitized;
     
     let requestedCount = 100; // Default from generator prompt
     if (sanitizedPrompt && sanitizedPrompt.trim()) {
@@ -236,7 +245,7 @@ async function generateGames(customPrompt = null) {
       throw new Error('Anthropic API key not configured. Please set ANTHROPIC_API_KEY environment variable.');
     }
 
-    console.log('Generating games via Anthropic Claude 3.5 Sonnet...');
+    console.log('Generating games via Anthropic Claude 4 Sonnet...');
     
     // For large generations (>25 games), use chunked approach
     if (requestedCount > 25) {
@@ -250,8 +259,8 @@ async function generateGames(customPrompt = null) {
       : `${generationInstructions}\n\n${jsonFormatRules}`;
 
     const response = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022', // Latest Sonnet for reliable JSON generation
-      max_tokens: 8192,
+      model: 'claude-sonnet-4-20250514', // Claude 4 Sonnet for superior JSON generation
+      max_tokens: 15000, // Claude 4 Sonnet supports 15K output tokens
       temperature: 0.7,
       system: systemPrompt,
       messages: [{
@@ -267,7 +276,7 @@ async function generateGames(customPrompt = null) {
       throw new Error('No response content from Anthropic');
     }
 
-    console.log('Successfully used Anthropic Claude 3.5 Sonnet');
+    console.log('Successfully used Anthropic Claude 4 Sonnet');
 
     if (!content) {
       throw new Error('No content received from API');

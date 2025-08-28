@@ -22,7 +22,12 @@ function saveGames(games) {
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
+    
+    // Save to both files so fresh games appear in dropdown
     fs.writeFileSync(GAMES_FILE, JSON.stringify(games, null, 2));
+    fs.writeFileSync(DEFAULT_GAMES_FILE, JSON.stringify(games, null, 2));
+    
+    console.log(`✅ Saved ${games.length} games to both games.json and default-games.json`);
   } catch (error) {
     console.error('Failed to save games:', error);
     throw new Error('Unable to save games data');

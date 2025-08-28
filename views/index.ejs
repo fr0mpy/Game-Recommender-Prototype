@@ -559,8 +559,89 @@ Generate 100 fictional slot games using AI</textarea
     localStorage.setItem("slotForge_weightPrefs", JSON.stringify(prefs));
   }
 
+  function isGameGenerationPrompt(prompt) {
+    if (!prompt) return true; // Empty prompt is fine
+    
+    const lowercased = prompt.toLowerCase();
+    
+    // Check for non-game generation patterns
+    const nonGamePatterns = [
+      /write.*(?:code|function|script|program)/,
+      /create.*(?:website|app|application|database)/,
+      /build.*(?:system|platform|tool)/,
+      /explain.*(?:how to|concept|algorithm)/,
+      /help.*(?:with|me)/,
+      /what.*(?:is|are|does)/,
+      /tell.*(?:me|about)/,
+      /calculate|compute|solve/,
+      /translate|convert/,
+      /summarize|analyze/,
+      /research|find.*information/,
+      /send.*email|make.*call/,
+      /access.*file|read.*document/,
+      /install|download|update/
+    ];
+    
+    // Check if request is clearly not about game generation
+    const containsNonGameRequest = nonGamePatterns.some(pattern => pattern.test(lowercased));
+    const containsGameKeywords = /(?:game|slot|casino|reel|spin|bet|win|bonus|jackpot|theme|volatility)/i.test(prompt);
+    
+    // Invalid if it contains non-game patterns and no game keywords
+    return !(containsNonGameRequest && !containsGameKeywords);
+  }
+
+  function showPromptError(message) {
+    // Remove existing error if any
+    clearPromptError();
+    
+    // Create error message element
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'prompt-error';
+    errorDiv.className = 'mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm';
+    errorDiv.innerHTML = `
+      <div class="flex items-start">
+        <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+        <span>${message}</span>
+      </div>
+    `;
+    
+    // Insert after the textarea
+    const textarea = document.getElementById('customPrompt');
+    textarea.parentNode.insertBefore(errorDiv, textarea.nextSibling);
+    
+    // Add red border to textarea
+    textarea.classList.add('border-red-400', 'focus:border-red-500', 'focus:ring-red-500');
+    textarea.classList.remove('border-gray-300', 'focus:border-casino', 'focus:ring-casino');
+  }
+
+  function clearPromptError() {
+    const existingError = document.getElementById('prompt-error');
+    if (existingError) {
+      existingError.remove();
+    }
+    
+    // Reset textarea styling
+    const textarea = document.getElementById('customPrompt');
+    textarea.classList.remove('border-red-400', 'focus:border-red-500', 'focus:ring-red-500');
+    textarea.classList.add('border-gray-300', 'focus:border-casino', 'focus:ring-casino');
+  }
+
   function handleGenerateSubmit(event) {
     event.preventDefault();
+
+    const customPromptField = document.getElementById("customPrompt");
+    const customPrompt = customPromptField.value.trim();
+    
+    // Validate prompt is for game generation only
+    if (customPrompt && !isGameGenerationPrompt(customPrompt)) {
+      showPromptError('This tool can only generate slot games. Please enter a prompt requesting fictional slot game generation (e.g., "Generate 50 sports-themed slot games" or "Create ocean and pirate themed casino games").');
+      return;
+    }
+    
+    // Clear any previous error
+    clearPromptError();
 
     const button = document.getElementById("generateButton");
     const buttonText = document.getElementById("generateButtonText");
@@ -670,6 +751,17 @@ Generate 100 fictional slot games using AI</textarea
 
     // Detect and send client context
     detectAndSendClientContext();
+    
+    // Add event listener to clear error when user starts typing
+    const customPromptField = document.getElementById('customPrompt');
+    if (customPromptField) {
+      customPromptField.addEventListener('input', function() {
+        const existingError = document.getElementById('prompt-error');
+        if (existingError) {
+          clearPromptError();
+        }
+      });
+    }
   });
 </script>
 
