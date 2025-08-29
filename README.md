@@ -13,7 +13,7 @@
 
 ### **🧠 AI Intelligence**
 - [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
-- [Financial Intelligence](#-financial-cycle-intelligence) - Payday awareness
+- [Financial Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
 - [Example Prompts](#-example-prompts) - Generation examples
 
 ### **⚙️ Technical Reference**
