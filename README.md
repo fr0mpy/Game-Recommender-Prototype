@@ -423,9 +423,9 @@ User Interface (EJS + Tailwind)
 - **Bandwidth**: Minimal (JSON responses only)
 
 **Cost at Scale** (1000 daily users):
-- **LLM Costs**: ~$470/day
-- **Infrastructure**: ~$5/day
-- **Total**: ~$475/day (~$0.48 per user)
+- **LLM Costs**: $470/day
+- **Infrastructure**: $5/day
+- **Total**: $475/day ($0.48 per user)
 
 ## 🌍 EU-Focused Design
 
