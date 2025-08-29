@@ -4,6 +4,25 @@
 
 🌐 **Live Demo**: [https://slot-forge.vercel.app](https://slot-forge.vercel.app)
 
+## 📖 Contents
+
+- [Product Overview](#-product-overview) - AI architecture and innovation
+- [Key Features](#-key-features) - Core capabilities
+- [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
+- [Context Analysis](#-deep-context-analysis) - How AI adapts to users
+- [Financial Intelligence](#-financial-cycle-intelligence) - Payday awareness
+- [Example Prompts](#-example-prompts) - Generation examples
+- [API Reference](#-api-reference) - Endpoints and performance
+- [Game Data Model](#-game-data-model) - Schema details
+- [System Architecture](#️-system-architecture) - Technical design
+- [Performance Metrics](#-performance-metrics) - Real-world benchmarks
+- [Quality Assurance](#-quality-assurance) - Testing coverage
+- [Business Impact](#-business-impact) - ROI and costs
+- [EU Design](#-eu-focused-design) - European features
+- [Deployment](#-deployment) - Production setup
+- [Developer Resources](#-developer-resources) - Documentation
+- [Troubleshooting](#-troubleshooting) - Common issues
+
 ## 🧠 Product Overview
 
 **Slot Forge** represents a paradigm shift in casino game recommendation technology, combining advanced LLM-powered content generation with sophisticated behavioral psychology modeling. Built as an R&D prototype for Bally's, this system demonstrates how modern AI can revolutionize player experience personalization.
