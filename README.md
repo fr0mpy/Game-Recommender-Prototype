@@ -8,7 +8,7 @@
 
 ### 🎯 Core Innovation: Multi-Modal AI Architecture
 
-Our system employs **three specialized AI models** working in concert:
+Our system employs **two specialized AI models** working in concert:
 
 #### 1. **Content Generation Engine** (Anthropic Claude Sonnet 4)
 - **Purpose**: Creates realistic, mathematically-balanced slot games on demand
