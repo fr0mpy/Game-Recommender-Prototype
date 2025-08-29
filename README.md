@@ -9,7 +9,7 @@
 - [Product Overview](#-product-overview) - AI architecture and innovation
 - [Key Features](#-key-features) - Core capabilities
 - [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
-- [Context Analysis](#-deep-context-analysis) - How AI adapts to users
+- [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
 - [Financial Intelligence](#-financial-cycle-intelligence) - Payday awareness
 - [Example Prompts](#-example-prompts) - Generation examples
 - [API Reference](#-api-reference) - Endpoints and performance
