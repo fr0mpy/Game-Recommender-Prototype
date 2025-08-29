@@ -14,7 +14,7 @@
 ### **🧠 AI Intelligence**
 - [AI Game Generation](#-ai-game-generation) - Create 100 custom slot games with prompts
 - [AI Recommendation Engine](#️-dynamic-similarity-scoring) - Weighted similarity matching with explanations
-- [Bally Sports X-Sell](#-industry-innovations) - Auto-detect sports betting opportunities
+- [Bally Sports X-Sell](#-bally-sports-x-sell-intelligence) - Auto-detect sports betting opportunities
 - [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
 - [Financial Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
 - [Example Prompts](#-example-prompts) - Generation examples
