@@ -6,19 +6,28 @@
 
 ## 📖 Contents
 
+### **🎯 Getting Started**
 - [Product Overview](#-product-overview) - AI architecture and innovation
-- [Key Features](#-key-features) - Core capabilities
+- [Key Features](#-key-features) - Core capabilities  
 - [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
+
+### **🧠 AI Intelligence**
 - [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
 - [Financial Intelligence](#-financial-cycle-intelligence) - Payday awareness
 - [Example Prompts](#-example-prompts) - Generation examples
+
+### **⚙️ Technical Reference**
 - [API Reference](#-api-reference) - Endpoints and performance
 - [Game Data Model](#-game-data-model) - Schema details
 - [System Architecture](#️-system-architecture) - Technical design
 - [Performance Metrics](#-performance-metrics) - Real-world benchmarks
-- [Quality Assurance](#-quality-assurance) - Testing coverage
+
+### **💼 Business & Operations**
 - [Business Impact](#-business-impact) - ROI and costs
-- [EU Design](#-eu-focused-design) - European features
+- [Quality Assurance](#-quality-assurance) - Testing coverage
+- [EU Design](#-eu-focused-design) - European market features
+
+### **🛠️ Development**
 - [Deployment](#-deployment) - Production setup
 - [Developer Resources](#-developer-resources) - Documentation
 - [Troubleshooting](#-troubleshooting) - Common issues
@@ -295,6 +304,7 @@ Each generated game includes:
 
 ## 🏗️ System Architecture
 
+### Architecture Flow
 ```
 User Interface (EJS + Tailwind)
          ↓
@@ -317,20 +327,19 @@ User Interface (EJS + Tailwind)
    Recommendations
 ```
 
-## 🔧 Technical Architecture
+### Technology Stack
+**Core Stack**: Node.js + Express + EJS + Tailwind CSS + Anthropic Claude API + Upstash Redis
 
-**Stack**: Node.js + Express + EJS + Tailwind CSS + Anthropic Claude API + Upstash Redis
-
-**Storage**: 
+**Storage Architecture**: 
 - Redis (Upstash) for persistent custom games in serverless environments
 - Session-based context tracking for recommendations
 
-**Similarity Algorithm**:
+**Recommendation Algorithm**:
 - Weighted scoring: Theme (40%) + Volatility (30%) + Studio (20%) + Mechanics (10%)
 - Produces unique match percentages (e.g., 48%, 36%, 33%, 31%)
 - Dynamic weight adjustment affects ranking order
 
-**Context Analysis**:
+**Context Intelligence**:
 - Real-time temporal pattern detection (work vs. leisure)
 - Financial cycle awareness (payday vs. end-of-month)
 - Attention span and focus level assessment
