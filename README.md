@@ -12,6 +12,7 @@
 - [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
 
 ### **🧠 AI Intelligence**
+- [AI Game Generation](#-key-features) - Create 100 custom slot games with prompts
 - [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
 - [Financial Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
 - [Example Prompts](#-example-prompts) - Generation examples
