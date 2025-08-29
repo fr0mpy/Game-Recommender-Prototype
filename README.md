@@ -13,6 +13,7 @@
 
 ### **🧠 AI Intelligence**
 - [AI Game Generation](#-key-features) - Create 100 custom slot games with prompts
+- [AI Recommendation Engine](#-key-features) - Weighted similarity matching with explanations
 - [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
 - [Financial Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
 - [Example Prompts](#-example-prompts) - Generation examples
