@@ -39,7 +39,7 @@
 
 **Slot Forge** represents a paradigm shift in casino game recommendation technology, combining advanced LLM-powered content generation with sophisticated behavioral psychology modeling. Built as an R&D prototype for Bally's, this system demonstrates how modern AI can revolutionize player experience personalization.
 
-### 🎯 Core Innovation: Multi-Modal AI Architecture
+### 🎯 Core Innovation: Multi-Model AI Architecture
 
 Our system employs **two specialized AI models** working in concert:
 
@@ -325,7 +325,7 @@ User Interface (EJS + Tailwind)
    [Context Tracker]
          ↓
 ┌──────────────────────────────┐
-│   Multi-Modal AI Orchestra   │
+│   Multi-Model AI Orchestra   │
 ├──────────────────────────────┤
 │ Claude Sonnet 4 (Generation) │
 │ Claude Haiku 3 (Context)     │
