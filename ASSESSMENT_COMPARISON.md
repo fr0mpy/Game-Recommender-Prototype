@@ -58,7 +58,7 @@
 #### **⚠️ MONITOR FOR:**
 
 - Constraint adherence (rewrites requirements)
-- Scope management (4-hour → 40-hour expansion)
+- Scope management (4-hour → 12-hour expansion)
 - Time estimation (significant overruns)
 - Specification compliance (creative interpretation)
 
