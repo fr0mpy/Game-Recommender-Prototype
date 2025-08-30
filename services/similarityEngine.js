@@ -128,7 +128,7 @@ PLAYER CONTEXT: ${JSON.stringify({
       
       batchPrompt += `
 
-USER WEIGHT PREFERENCES (Override default framework weights):
+USER WEIGHT PREFERENCES (COMPLETELY OVERRIDE all framework defaults):
 - Theme Similarity: ${weightPercentages.theme}%
 - Volatility/Risk Level: ${weightPercentages.volatility}%
 - Studio/Brand: ${weightPercentages.studio}%
@@ -139,9 +139,21 @@ USER WEIGHT PREFERENCES (Override default framework weights):
 - Game Pace: ${weightPercentages.pace}%
 - Bonus Frequency: ${weightPercentages.bonusFrequency}%
 
-IMPORTANT: Use these exact user weight percentages in your analysis instead of the default framework weights. Analyze the target game against ALL candidate games and return a JSON array with similarity analysis for each candidate game.`;
+CRITICAL INSTRUCTIONS:
+1. IGNORE ALL DEFAULT FRAMEWORK WEIGHTS - use ONLY the user percentages above
+2. Any factor with 0% weight must be COMPLETELY IGNORED in scoring
+3. Any factor with 100% weight becomes the SOLE scoring criteria
+4. Focus EXCLUSIVELY on the properties with non-zero weights
+5. When Bonus Frequency = 100%, score games purely on bonusFrequency similarity (numerical closeness)
+6. DO NOT fall back to thematic analysis when user has set Theme = 0%
+
+Analyze the target game against ALL candidate games and return a JSON array with similarity analysis for each candidate game.`;
       
-      console.log(`🎚️ Using dynamic weights for ${batchGames.length} games: Theme=${weightPercentages.theme}%, Volatility=${weightPercentages.volatility}%, Studio=${weightPercentages.studio}%`);
+      console.log(`🎚️ Using dynamic weights for ${batchGames.length} games: Theme=${weightPercentages.theme}%, Volatility=${weightPercentages.volatility}%, Studio=${weightPercentages.studio}%, BonusFreq=${weightPercentages.bonusFrequency}%`);
+      
+      if (weightPercentages.bonusFrequency === 100) {
+        console.log(`🎯 BONUS FREQUENCY FOCUS MODE: Analyzing games purely on bonus frequency similarity`);
+      }
     }
 
     const response = await anthropic.messages.create({
