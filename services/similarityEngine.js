@@ -272,8 +272,8 @@ Execute using the user weights object above.`;
     }
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 15000, // Increased for batch response
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 4000, // Haiku's optimal token limit
       system: systemPrompt,
       messages: [{ role: 'user', content: batchPrompt }]
     });
