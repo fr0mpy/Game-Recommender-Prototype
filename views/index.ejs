@@ -227,10 +227,6 @@
           <h3 class="text-md font-medium text-casino-dark text-opacity-80">
             🎚️ Recommendation Weights
           </h3>
-          <div class="bg-green-100 border border-green-300 rounded-lg px-3 py-1">
-            <span class="text-sm font-semibold text-green-800">Total: </span>
-            <span id="total-percentage" class="text-sm font-bold text-green-800">100%</span>
-          </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
@@ -339,6 +335,162 @@
               >
               <span>100%</span>
             </div>
+          </div>
+
+          <div>
+            <label
+              for="rtp"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
+            >
+              RTP (Return Rate)
+            </label>
+            <input
+              type="range"
+              id="rtp"
+              name="rtp"
+              min="0"
+              max="1"
+              step="0.01"
+              value="<%= settings.rtp || 0.04 %>"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              oninput="updateSliderValue('rtp', this.value)"
+            />
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
+              <span>0%</span>
+              <span id="rtp-value" class="font-semibold text-casino"
+                ><%= Math.round((settings.rtp || 0.04) * 100) %>%</span
+              >
+              <span>100%</span>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="maxWin"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
+            >
+              Max Win Potential
+            </label>
+            <input
+              type="range"
+              id="maxWin"
+              name="maxWin"
+              min="0"
+              max="1"
+              step="0.01"
+              value="<%= settings.maxWin || 0.04 %>"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              oninput="updateSliderValue('maxWin', this.value)"
+            />
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
+              <span>0%</span>
+              <span id="maxWin-value" class="font-semibold text-casino"
+                ><%= Math.round((settings.maxWin || 0.04) * 100) %>%</span
+              >
+              <span>100%</span>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="features"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
+            >
+              Feature Types
+            </label>
+            <input
+              type="range"
+              id="features"
+              name="features"
+              min="0"
+              max="1"
+              step="0.01"
+              value="<%= settings.features || 0.04 %>"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              oninput="updateSliderValue('features', this.value)"
+            />
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
+              <span>0%</span>
+              <span id="features-value" class="font-semibold text-casino"
+                ><%= Math.round((settings.features || 0.04) * 100) %>%</span
+              >
+              <span>100%</span>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="pace"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
+            >
+              Game Pace
+            </label>
+            <input
+              type="range"
+              id="pace"
+              name="pace"
+              min="0"
+              max="1"
+              step="0.01"
+              value="<%= settings.pace || 0.03 %>"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              oninput="updateSliderValue('pace', this.value)"
+            />
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
+              <span>0%</span>
+              <span id="pace-value" class="font-semibold text-casino"
+                ><%= Math.round((settings.pace || 0.03) * 100) %>%</span
+              >
+              <span>100%</span>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="bonusFrequency"
+              class="block text-sm font-medium text-casino-dark text-opacity-70 mb-1"
+            >
+              Bonus Frequency
+            </label>
+            <input
+              type="range"
+              id="bonusFrequency"
+              name="bonusFrequency"
+              min="0"
+              max="1"
+              step="0.01"
+              value="<%= settings.bonusFrequency || 0.02 %>"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              oninput="updateSliderValue('bonusFrequency', this.value)"
+            />
+            <div class="flex justify-between text-xs text-casino-dark text-opacity-60 mt-1">
+              <span>0%</span>
+              <span id="bonusFrequency-value" class="font-semibold text-casino"
+                ><%= Math.round((settings.bonusFrequency || 0.02) * 100) %>%</span
+              >
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+        
+
+        <!-- Similarity Engine Toggle -->
+        <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-sm font-medium text-blue-900">Similarity Engine:</span>
+              <div class="text-xs text-blue-700 mt-1">
+                <span id="similarity-mode-desc">Mathematical analysis (fast)</span>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="useLLM" name="useLLM" class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+          <div class="text-xs text-blue-600 mt-2">
+            <span class="font-medium">Off:</span> Fast algorithmic similarity (user weights apply)<br>
+            <span class="font-medium">On:</span> AI-powered semantic analysis (comprehensive evaluation)
           </div>
         </div>
       </div>
@@ -606,7 +758,7 @@
   }
   
   function rebalanceSliders(changedSliderId, newValue) {
-    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
+    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics', 'rtp', 'maxWin', 'features', 'pace', 'bonusFrequency'];
     const otherSliders = sliderIds.filter(id => id !== changedSliderId);
     
     // Calculate remaining weight to distribute
@@ -668,7 +820,7 @@
   
   // Smart rounding function that ensures individual percentages add to exactly 100%
   function updateAllSliderDisplays() {
-    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
+    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics', 'rtp', 'maxWin', 'features', 'pace', 'bonusFrequency'];
     
     // Get actual float values
     const values = sliderIds.map(id => {
@@ -706,25 +858,16 @@
       }
     });
     
-    // Update total display (should always be 100% now)
-    updateTotalDisplay();
+    // Weights automatically balance to 100%
   }
   
   function updateTotalDisplay() {
-    const totalElement = document.getElementById('total-percentage');
-    if (totalElement) {
-      // Always show 100% since we ensure it through smart rounding
-      totalElement.textContent = '100%';
-      
-      // Always green since we guarantee 100%
-      totalElement.parentElement.className = 'bg-green-100 border border-green-300 rounded-lg px-3 py-1';
-    }
-    
+    // Total weight displays removed - weights automatically balance to 100%
     console.log(`⚖️ Slider total: 100%`);
   }
   
   function saveAllWeights() {
-    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics'];
+    const sliderIds = ['theme', 'volatility', 'studio', 'mechanics', 'rtp', 'maxWin', 'features', 'pace', 'bonusFrequency'];
     const weights = {};
     
     sliderIds.forEach(id => {
@@ -736,6 +879,22 @@
     
     localStorage.setItem("slotForge_weightPrefs", JSON.stringify(weights));
     console.log('💾 Saved weights:', weights);
+  }
+
+  // Handle similarity engine toggle
+  function initializeSimilarityToggle() {
+    const toggle = document.getElementById('useLLM');
+    const description = document.getElementById('similarity-mode-desc');
+    
+    if (toggle && description) {
+      toggle.addEventListener('change', function() {
+        if (this.checked) {
+          description.textContent = 'AI semantic analysis (slower, more nuanced)';
+        } else {
+          description.textContent = 'Mathematical analysis (fast)';
+        }
+      });
+    }
   }
 
   function validateGameCount(prompt) {
@@ -1240,6 +1399,9 @@
         updateSliderValue(sliderId, weights[sliderId], true); // Skip rebalance during initialization
       }
     });
+
+    // Initialize similarity engine toggle
+    initializeSimilarityToggle();
 
     // Detect and send client context
     detectAndSendClientContext();

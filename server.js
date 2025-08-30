@@ -505,7 +505,7 @@ app.post("/api/validate-session-games", async (req, res) => {
 // Get recommendations
 app.post("/recommend", async (req, res) => {
   try {
-    const { gameId, theme, volatility, studio, mechanics } = req.body;
+    const { gameId, theme, volatility, studio, mechanics, rtp, maxWin, features, pace, bonusFrequency, useLLM } = req.body;
 
     if (!gameId) {
       const games = await loadGames();
@@ -525,12 +525,17 @@ app.post("/recommend", async (req, res) => {
       });
     }
 
-    // Parse weights from form
+    // Parse weights from form - using normalized defaults
     const weights = {
-      theme: parseFloat(theme) || 0.4,
-      volatility: parseFloat(volatility) || 0.3,
-      studio: parseFloat(studio) || 0.2,
-      mechanics: parseFloat(mechanics) || 0.1,
+      theme: parseFloat(theme) || 0.31,
+      volatility: parseFloat(volatility) || 0.23,
+      studio: parseFloat(studio) || 0.15,
+      mechanics: parseFloat(mechanics) || 0.08,
+      rtp: parseFloat(rtp) || 0.04,
+      maxWin: parseFloat(maxWin) || 0.04,
+      features: parseFloat(features) || 0.04,
+      pace: parseFloat(pace) || 0.03,
+      bonusFrequency: parseFloat(bonusFrequency) || 0.02,
     };
 
     // Save user preferences
@@ -540,8 +545,11 @@ app.post("/recommend", async (req, res) => {
     const games = await loadGames();
     console.log(`📚 Loaded ${games.length} games`);
 
-    // Get recommendations
-    const recommendations = getRecommendations(gameId, weights, 5, games);
+    // Get recommendations with player context and LLM mode
+    const useLLMBool = useLLM === 'on' || useLLM === true;
+    console.log(`🎯 Similarity mode: ${useLLMBool ? 'LLM-based' : 'Algorithmic'}`);
+    
+    const recommendations = await getRecommendations(gameId, weights, 5, games, req.playerContext, useLLMBool);
 
     // Find selected game for display
     const selectedGame = games.find((g) => g.id === gameId);

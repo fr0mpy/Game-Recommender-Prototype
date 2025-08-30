@@ -12,6 +12,7 @@ if (process.env.ANTHROPIC_API_KEY) {
 }
 
 const EXPLANATION_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'match-explanation-prompt.md');
+const SIMILARITY_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'game-similarity-prompt.md');
 
 // Cache for similarity calculations
 const gameCache = new Map();
@@ -21,56 +22,408 @@ function volatilityLevel(game) {
   return levels[game.volatility] || 2;
 }
 
-function calculateSimilarity(game1, game2, weights = DEFAULT_WEIGHTS) {
+// LLM-based similarity calculation
+async function calculateLLMSimilarity(game1, game2, playerContext = null, userWeights = null) {
+  if (!anthropic) {
+    console.log('⚠️ No LLM available, falling back to algorithmic similarity');
+    return calculateAlgorithmicSimilarity(game1, game2, DEFAULT_WEIGHTS);
+  }
+
+  try {
+    // Load base system prompt
+    const systemPrompt = fs.readFileSync(SIMILARITY_PROMPT_FILE, 'utf8');
+    
+    // Build comprehensive prompt with games and player context
+    let gameComparison = `
+GAME A: ${JSON.stringify({
+  title: game1.title,
+  studio: game1.studio,
+  theme: game1.theme,
+  volatility: game1.volatility,
+  rtp: game1.rtp,
+  maxWin: game1.maxWin,
+  reelLayout: game1.reelLayout,
+  paylines: game1.paylines,
+  mechanics: game1.mechanics,
+  features: game1.features,
+  pace: game1.pace,
+  hitFrequency: game1.hitFrequency,
+  bonusFrequency: game1.bonusFrequency,
+  artStyle: game1.artStyle,
+  audioVibe: game1.audioVibe,
+  visualDensity: game1.visualDensity,
+  mobileOptimized: game1.mobileOptimized,
+  releaseYear: game1.releaseYear,
+  description: game1.description
+}, null, 2)}
+
+GAME B: ${JSON.stringify({
+  title: game2.title,
+  studio: game2.studio,
+  theme: game2.theme,
+  volatility: game2.volatility,
+  rtp: game2.rtp,
+  maxWin: game2.maxWin,
+  reelLayout: game2.reelLayout,
+  paylines: game2.paylines,
+  mechanics: game2.mechanics,
+  features: game2.features,
+  pace: game2.pace,
+  hitFrequency: game2.hitFrequency,
+  bonusFrequency: game2.bonusFrequency,
+  artStyle: game2.artStyle,
+  audioVibe: game2.audioVibe,
+  visualDensity: game2.visualDensity,
+  mobileOptimized: game2.mobileOptimized,
+  releaseYear: game2.releaseYear,
+  description: game2.description
+}, null, 2)}`;
+
+    // Add player context if available
+    if (playerContext) {
+      gameComparison += `
+
+PLAYER CONTEXT: ${JSON.stringify({
+  timeOfDay: playerContext.timeOfDay,
+  focusLevel: playerContext.focusLevel,
+  deviceType: playerContext.deviceType,
+  sessionType: playerContext.sessionType,
+  atWork: playerContext.atWork,
+  isWeekend: playerContext.isWeekend,
+  isNearPayday: playerContext.isNearPayday,
+  dayOfMonth: playerContext.dayOfMonth,
+  preferredPace: playerContext.preferredPace,
+  activeSportsEvents: playerContext.activeSportsEvents,
+  attentionSpan: playerContext.attentionSpan,
+  financialCycle: playerContext.financialCycle
+}, null, 2)}`;
+    }
+
+    // Add user weights to override default framework weights
+    if (userWeights) {
+      const weightPercentages = {
+        theme: Math.round(userWeights.theme * 100),
+        volatility: Math.round(userWeights.volatility * 100),
+        studio: Math.round(userWeights.studio * 100),
+        mechanics: Math.round(userWeights.mechanics * 100),
+        rtp: Math.round(userWeights.rtp * 100),
+        maxWin: Math.round(userWeights.maxWin * 100),
+        features: Math.round(userWeights.features * 100),
+        pace: Math.round(userWeights.pace * 100),
+        bonusFrequency: Math.round(userWeights.bonusFrequency * 100)
+      };
+      
+      gameComparison += `
+
+USER WEIGHT PREFERENCES (Override default framework weights):
+- Theme Similarity: ${weightPercentages.theme}%
+- Volatility/Risk Level: ${weightPercentages.volatility}%
+- Studio/Brand: ${weightPercentages.studio}%
+- Game Mechanics: ${weightPercentages.mechanics}%
+- RTP/Return Rate: ${weightPercentages.rtp}%
+- Max Win Potential: ${weightPercentages.maxWin}%
+- Feature Types: ${weightPercentages.features}%
+- Game Pace: ${weightPercentages.pace}%
+- Bonus Frequency: ${weightPercentages.bonusFrequency}%
+
+IMPORTANT: Use these exact user weight percentages in your analysis instead of the default framework weights. The user has customized their preferences and expects the similarity scoring to reflect these specific weightings.`;
+      
+      console.log(`🎚️ Using dynamic weights: Theme=${weightPercentages.theme}%, Volatility=${weightPercentages.volatility}%, Studio=${weightPercentages.studio}%`);
+    }
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: gameComparison }]
+    });
+
+    const result = JSON.parse(response.content[0].text);
+    const similarity = result.similarity_score / 100; // Convert to 0-1 range
+    
+    console.log(`🤖 LLM Similarity: ${game1.title} vs ${game2.title} = ${Math.round(similarity * 100)}%`);
+    console.log(`🔍 Context fit: ${result.contextual_fit || 'N/A'}`);
+    console.log(`🔍 Context boost: ${result.context_boost || 0}%`);
+    
+    return similarity;
+    
+  } catch (error) {
+    console.error('❌ LLM similarity calculation failed:', error.message);
+    // Fallback to algorithmic method
+    return calculateAlgorithmicSimilarity(game1, game2, DEFAULT_WEIGHTS);
+  }
+}
+
+// Original algorithmic similarity (renamed)
+function calculateAlgorithmicSimilarity(game1, game2, weights = DEFAULT_WEIGHTS) {
   let score = 0;
   let debugInfo = [];
   
+  // Check if any weight is 100% (1.0) - if so, only use that factor
+  const is100PercentMode = Object.values(weights).some(w => Math.abs(w - 1.0) < 0.001);
+  
   // Theme matching (40% default weight)
+  let themeScore = 0;
   if (game1.theme && game2.theme && Array.isArray(game1.theme) && Array.isArray(game2.theme)) {
-    const themeOverlap = game1.theme.filter(t => game2.theme.includes(t)).length;
-    if (game1.theme.length > 0) {
-      const themeScore = (themeOverlap / game1.theme.length) * weights.theme;
-      score += themeScore;
-      debugInfo.push(`theme: ${themeScore.toFixed(3)} (${themeOverlap}/${game1.theme.length} overlap)`);
+    if (weights.theme >= 0.999) {
+      // 100% theme mode - use Jaccard similarity (intersection over union)
+      const set1 = new Set(game1.theme);
+      const set2 = new Set(game2.theme);
+      const intersection = [...set1].filter(x => set2.has(x));
+      const union = new Set([...set1, ...set2]);
+      themeScore = union.size > 0 ? (intersection.length / union.size) : 0;
+      debugInfo.push(`theme: ${themeScore.toFixed(3)} (100% mode - ${intersection.length}/${union.size} Jaccard)`);
+    } else {
+      // Regular weighted theme scoring
+      const themeOverlap = game1.theme.filter(t => game2.theme.includes(t)).length;
+      if (game1.theme.length > 0) {
+        themeScore = (themeOverlap / game1.theme.length) * weights.theme;
+        debugInfo.push(`theme: ${themeScore.toFixed(3)} (${themeOverlap}/${game1.theme.length} overlap)`);
+      }
     }
   } else {
     debugInfo.push(`theme: 0 (missing data - g1:${!!game1.theme}, g2:${!!game2.theme})`);
   }
+  score += themeScore;
   
   // Volatility matching (30% default weight)
-  const vol1 = volatilityLevel(game1);
-  const vol2 = volatilityLevel(game2);
-  if (vol1 === vol2) {
-    score += weights.volatility;
-    debugInfo.push(`volatility: ${weights.volatility.toFixed(3)} (exact match ${game1.volatility})`);
-  } else if (Math.abs(vol1 - vol2) === 1) {
-    const volScore = weights.volatility * 0.5;
-    score += volScore;
-    debugInfo.push(`volatility: ${volScore.toFixed(3)} (close match ${game1.volatility}/${game2.volatility})`);
+  let volatilityScore = 0;
+  if (weights.volatility >= 0.999) {
+    // 100% volatility mode - exact match gets 100%, adjacent gets 50%, others get 0%
+    const vol1 = volatilityLevel(game1);
+    const vol2 = volatilityLevel(game2);
+    if (vol1 === vol2) {
+      volatilityScore = 1.0;
+      debugInfo.push(`volatility: 1.000 (100% mode - exact match)`);
+    } else if (Math.abs(vol1 - vol2) === 1) {
+      volatilityScore = 0.5;
+      debugInfo.push(`volatility: 0.500 (100% mode - adjacent)`);
+    } else {
+      debugInfo.push(`volatility: 0 (100% mode - no match)`);
+    }
   } else {
-    debugInfo.push(`volatility: 0 (no match ${game1.volatility}/${game2.volatility})`);
+    // Regular weighted volatility scoring
+    const vol1 = volatilityLevel(game1);
+    const vol2 = volatilityLevel(game2);
+    if (vol1 === vol2) {
+      volatilityScore = weights.volatility;
+      debugInfo.push(`volatility: ${weights.volatility.toFixed(3)} (exact match ${game1.volatility})`);
+    } else if (Math.abs(vol1 - vol2) === 1) {
+      volatilityScore = weights.volatility * 0.5;
+      debugInfo.push(`volatility: ${volatilityScore.toFixed(3)} (close match ${game1.volatility}/${game2.volatility})`);
+    } else {
+      debugInfo.push(`volatility: 0 (no match ${game1.volatility}/${game2.volatility})`);
+    }
   }
+  score += volatilityScore;
   
   // Studio matching (20% default weight)
-  if (game1.studio && game2.studio && game1.studio === game2.studio) {
-    score += weights.studio;
-    debugInfo.push(`studio: ${weights.studio.toFixed(3)} (match: ${game1.studio})`);
+  let studioScore = 0;
+  if (weights.studio >= 0.999) {
+    // 100% studio mode - binary match
+    if (game1.studio && game2.studio && game1.studio === game2.studio) {
+      studioScore = 1.0;
+      debugInfo.push(`studio: 1.000 (100% mode - match)`);
+    } else {
+      debugInfo.push(`studio: 0 (100% mode - no match)`);
+    }
   } else {
-    debugInfo.push(`studio: 0 (${game1.studio || 'null'} vs ${game2.studio || 'null'})`);
+    // Regular weighted studio scoring
+    if (game1.studio && game2.studio && game1.studio === game2.studio) {
+      studioScore = weights.studio;
+      debugInfo.push(`studio: ${weights.studio.toFixed(3)} (match: ${game1.studio})`);
+    } else {
+      debugInfo.push(`studio: 0 (${game1.studio || 'null'} vs ${game2.studio || 'null'})`);
+    }
   }
+  score += studioScore;
   
   // Mechanics matching (10% default weight)
+  let mechanicsScore = 0;
   if (game1.mechanics && game2.mechanics && Array.isArray(game1.mechanics) && Array.isArray(game2.mechanics)) {
-    const mechanicsOverlap = game1.mechanics.filter(m => game2.mechanics.includes(m)).length;
-    if (game1.mechanics.length > 0) {
-      const mechScore = (mechanicsOverlap / game1.mechanics.length) * weights.mechanics;
-      score += mechScore;
-      debugInfo.push(`mechanics: ${mechScore.toFixed(3)} (${mechanicsOverlap}/${game1.mechanics.length} overlap)`);
+    if (weights.mechanics >= 0.999) {
+      // 100% mechanics mode - use Jaccard similarity
+      const set1 = new Set(game1.mechanics);
+      const set2 = new Set(game2.mechanics);
+      const intersection = [...set1].filter(x => set2.has(x));
+      const union = new Set([...set1, ...set2]);
+      mechanicsScore = union.size > 0 ? (intersection.length / union.size) : 0;
+      debugInfo.push(`mechanics: ${mechanicsScore.toFixed(3)} (100% mode - ${intersection.length}/${union.size} Jaccard)`);
+    } else {
+      // Regular weighted mechanics scoring
+      const mechanicsOverlap = game1.mechanics.filter(m => game2.mechanics.includes(m)).length;
+      if (game1.mechanics.length > 0) {
+        mechanicsScore = (mechanicsOverlap / game1.mechanics.length) * weights.mechanics;
+        debugInfo.push(`mechanics: ${mechanicsScore.toFixed(3)} (${mechanicsOverlap}/${game1.mechanics.length} overlap)`);
+      }
     }
   } else {
     debugInfo.push(`mechanics: 0 (missing data - g1:${!!game1.mechanics}, g2:${!!game2.mechanics})`);
   }
+  score += mechanicsScore;
   
+  // RTP matching - Players care about return rates
+  let rtpScore = 0;
+  const rtpWeight = weights.rtp || 0.05;
+  if (game1.rtp && game2.rtp && rtpWeight > 0) {
+    const rtpDiff = Math.abs(game1.rtp - game2.rtp);
+    if (rtpDiff < 0.5) {
+      rtpScore = rtpWeight; // Within 0.5% = full match
+      debugInfo.push(`rtp: ${rtpWeight.toFixed(3)} (exact match ${game1.rtp}%)`);
+    } else if (rtpDiff < 2) {
+      rtpScore = rtpWeight * 0.5; // Within 2% = half match
+      debugInfo.push(`rtp: ${(rtpWeight * 0.5).toFixed(3)} (close ${game1.rtp}% vs ${game2.rtp}%)`);
+    } else {
+      debugInfo.push(`rtp: 0 (${game1.rtp}% vs ${game2.rtp}%)`);
+    }
+  }
+  score += rtpScore;
+  
+  // Max Win matching - Big win potential matters
+  let maxWinScore = 0;
+  const maxWinWeight = weights.maxWin || 0.05;
+  if (game1.maxWin && game2.maxWin && maxWinWeight > 0) {
+    const ratio = Math.min(game1.maxWin, game2.maxWin) / Math.max(game1.maxWin, game2.maxWin);
+    if (ratio > 0.8) {
+      maxWinScore = maxWinWeight; // Within 20% = full match
+      debugInfo.push(`maxWin: ${maxWinWeight.toFixed(3)} (similar ${game1.maxWin}x vs ${game2.maxWin}x)`);
+    } else if (ratio > 0.5) {
+      maxWinScore = maxWinWeight * 0.5; // Within 50% = half match
+      debugInfo.push(`maxWin: ${(maxWinWeight * 0.5).toFixed(3)} (moderate ${game1.maxWin}x vs ${game2.maxWin}x)`);
+    } else {
+      debugInfo.push(`maxWin: 0 (${game1.maxWin}x vs ${game2.maxWin}x)`);
+    }
+  }
+  score += maxWinScore;
+  
+  // Features matching - Progressive vs standard is huge
+  let featuresScore = 0;
+  const featuresWeight = weights.features || 0.05;
+  if (game1.features && game2.features && Array.isArray(game1.features) && Array.isArray(game2.features) && featuresWeight > 0) {
+    // Check for critical features
+    const hasProgressive1 = game1.features.some(f => f.toLowerCase().includes('progressive'));
+    const hasProgressive2 = game2.features.some(f => f.toLowerCase().includes('progressive'));
+    
+    if (hasProgressive1 === hasProgressive2) {
+      // Same progressive status - now check feature overlap
+      const featureSet1 = new Set(game1.features);
+      const featureSet2 = new Set(game2.features);
+      const intersection = [...featureSet1].filter(x => featureSet2.has(x));
+      const union = new Set([...featureSet1, ...featureSet2]);
+      
+      if (union.size > 0) {
+        featuresScore = (intersection.length / union.size) * featuresWeight;
+        debugInfo.push(`features: ${featuresScore.toFixed(3)} (${intersection.length}/${union.size} overlap, prog:${hasProgressive1})`);
+      }
+    } else {
+      debugInfo.push(`features: 0 (progressive mismatch)`);
+    }
+  }
+  score += featuresScore;
+  
+  // Pace matching - Game speed preference (critical)
+  let paceScore = 0;
+  const paceWeight = weights.pace || 0.03;
+  if (game1.pace && game2.pace && paceWeight > 0) {
+    if (game1.pace === game2.pace) {
+      paceScore = paceWeight;
+      debugInfo.push(`pace: ${paceWeight.toFixed(3)} (exact match ${game1.pace})`);
+    } else if (
+      (game1.pace === 'fast' && game2.pace === 'medium') ||
+      (game1.pace === 'medium' && game2.pace === 'fast') ||
+      (game1.pace === 'medium' && game2.pace === 'slow') ||
+      (game1.pace === 'slow' && game2.pace === 'medium')
+    ) {
+      paceScore = paceWeight * 0.5;
+      debugInfo.push(`pace: ${(paceWeight * 0.5).toFixed(3)} (adjacent ${game1.pace}/${game2.pace})`);
+    } else {
+      debugInfo.push(`pace: 0 (${game1.pace} vs ${game2.pace})`);
+    }
+  }
+  score += paceScore;
+  
+  // Hit Frequency matching (3% weight) - How often wins occur
+  let hitFreqScore = 0;
+  if (game1.hitFrequency && game2.hitFrequency) {
+    const freqDiff = Math.abs(game1.hitFrequency - game2.hitFrequency);
+    if (freqDiff < 5) {
+      hitFreqScore = 0.03; // Within 5% = full match
+      debugInfo.push(`hitFreq: 0.030 (close ${game1.hitFrequency.toFixed(1)}%)`);
+    } else if (freqDiff < 15) {
+      hitFreqScore = 0.015; // Within 15% = half match
+      debugInfo.push(`hitFreq: 0.015 (moderate ${game1.hitFrequency.toFixed(1)}% vs ${game2.hitFrequency.toFixed(1)}%)`);
+    } else {
+      debugInfo.push(`hitFreq: 0 (${game1.hitFrequency.toFixed(1)}% vs ${game2.hitFrequency.toFixed(1)}%)`);
+    }
+  }
+  score += hitFreqScore;
+  
+  // Bonus Frequency matching - How often bonuses trigger
+  let bonusFreqScore = 0;
+  const bonusFreqWeight = weights.bonusFrequency || 0.02;
+  if (game1.bonusFrequency && game2.bonusFrequency && bonusFreqWeight > 0) {
+    const bonusDiff = Math.abs(game1.bonusFrequency - game2.bonusFrequency);
+    if (bonusDiff < 2) {
+      bonusFreqScore = bonusFreqWeight; // Within 2% = full match
+      debugInfo.push(`bonusFreq: ${bonusFreqWeight.toFixed(3)} (similar ${game1.bonusFrequency.toFixed(1)}%)`);
+    } else if (bonusDiff < 5) {
+      bonusFreqScore = bonusFreqWeight * 0.5; // Within 5% = half match
+      debugInfo.push(`bonusFreq: ${(bonusFreqWeight * 0.5).toFixed(3)} (moderate ${game1.bonusFrequency.toFixed(1)}% vs ${game2.bonusFrequency.toFixed(1)}%)`);
+    } else {
+      debugInfo.push(`bonusFreq: 0 (${game1.bonusFrequency.toFixed(1)}% vs ${game2.bonusFrequency.toFixed(1)}%)`);
+    }
+  }
+  score += bonusFreqScore;
+  
+  // Art Style matching (2% weight) - Visual aesthetics
+  let artStyleScore = 0;
+  if (game1.artStyle && game2.artStyle) {
+    if (game1.artStyle === game2.artStyle) {
+      artStyleScore = 0.02;
+      debugInfo.push(`artStyle: 0.020 (match ${game1.artStyle})`);
+    } else {
+      debugInfo.push(`artStyle: 0 (${game1.artStyle} vs ${game2.artStyle})`);
+    }
+  }
+  score += artStyleScore;
+  
+  // Audio Vibe matching (2% weight) - Sound design
+  let audioScore = 0;
+  if (game1.audioVibe && game2.audioVibe) {
+    if (game1.audioVibe === game2.audioVibe) {
+      audioScore = 0.02;
+      debugInfo.push(`audio: 0.020 (match ${game1.audioVibe})`);
+    } else {
+      debugInfo.push(`audio: 0 (${game1.audioVibe} vs ${game2.audioVibe})`);
+    }
+  }
+  score += audioScore;
+  
+  // Visual Density matching (1% weight) - UI complexity
+  let densityScore = 0;
+  if (game1.visualDensity && game2.visualDensity) {
+    if (game1.visualDensity === game2.visualDensity) {
+      densityScore = 0.01;
+      debugInfo.push(`density: 0.010 (match ${game1.visualDensity})`);
+    } else {
+      debugInfo.push(`density: 0 (${game1.visualDensity} vs ${game2.visualDensity})`);
+    }
+  }
+  score += densityScore;
+  
+  // Reel Layout matching (1% weight) - Grid configuration
+  let reelScore = 0;
+  if (game1.reelLayout && game2.reelLayout) {
+    if (game1.reelLayout === game2.reelLayout) {
+      reelScore = 0.01;
+      debugInfo.push(`reel: 0.010 (match ${game1.reelLayout})`);
+    } else {
+      debugInfo.push(`reel: 0 (${game1.reelLayout} vs ${game2.reelLayout})`);
+    }
+  }
+  score += reelScore;
+  
+  // Weights should always sum to 1.0 from UI auto-balancing
   const finalScore = Math.min(score, 1.0);
   
   // Log debug info for first few calculations
@@ -83,7 +436,7 @@ function calculateSimilarity(game1, game2, weights = DEFAULT_WEIGHTS) {
   return finalScore;
 }
 
-function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesArray = null) {
+async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesArray = null, playerContext = null, useLLM = false) {
   const games = gamesArray || loadGames();
   
   if (games.length === 0) {
@@ -95,29 +448,74 @@ function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesA
     throw new Error('Selected game not found');
   }
   
-  // Create cache key
-  const cacheKey = `${gameId}-${JSON.stringify(weights)}`;
+  // Adjust weights based on player context
+  let contextAdjustedWeights = {...weights};
+  if (playerContext) {
+    contextAdjustedWeights = applyContextToWeights(weights, playerContext);
+  }
+  
+  // Create cache key including context and LLM mode
+  const cacheKey = `${gameId}-${JSON.stringify(contextAdjustedWeights)}-${JSON.stringify(playerContext?.focusLevel || 'none')}-${useLLM ? 'llm' : 'algo'}`;
   
   // Check cache
   if (gameCache.has(cacheKey)) {
     return gameCache.get(cacheKey);
   }
   
-  const recommendations = games
-    .filter(g => g.id !== gameId)
-    .map(game => {
-      const similarity = calculateSimilarity(targetGame, game, weights);
-      return {
+  // Filter games based on context before scoring
+  let eligibleGames = games.filter(g => g.id !== gameId);
+  if (playerContext) {
+    eligibleGames = filterGamesByContext(eligibleGames, playerContext, targetGame);
+  }
+  
+  console.log(`🎯 Using ${useLLM ? 'LLM-based' : 'algorithmic'} similarity for ${eligibleGames.length} games`);
+  
+  // Calculate similarities (either LLM or algorithmic)
+  const recommendations = [];
+  
+  if (useLLM) {
+    // LLM-based similarity (slower but more nuanced)
+    for (const game of eligibleGames) {
+      const similarity = await calculateLLMSimilarity(targetGame, game, playerContext, contextAdjustedWeights);
+      
+      // Apply context-based score boosts/penalties
+      let contextBonus = 0;
+      if (playerContext) {
+        contextBonus = calculateContextBonus(game, playerContext);
+      }
+      
+      recommendations.push({
         game,
-        score: similarity,
-        confidence: Math.round(similarity * 100)
-      };
-    })
+        score: Math.min(similarity + contextBonus, 1.0),
+        confidence: Math.round(Math.min((similarity + contextBonus) * 100, 100))
+      });
+    }
+  } else {
+    // Algorithmic similarity (faster)
+    for (const game of eligibleGames) {
+      const similarity = calculateAlgorithmicSimilarity(targetGame, game, contextAdjustedWeights);
+      
+      // Apply context-based score boosts/penalties
+      let contextBonus = 0;
+      if (playerContext) {
+        contextBonus = calculateContextBonus(game, playerContext);
+      }
+      
+      recommendations.push({
+        game,
+        score: Math.min(similarity + contextBonus, 1.0),
+        confidence: Math.round(Math.min((similarity + contextBonus) * 100, 100))
+      });
+    }
+  }
+  
+  // Sort and limit results
+  const sortedRecommendations = recommendations
     .sort((a, b) => b.score - a.score)
     .slice(0, count);
   
   // Cache results
-  gameCache.set(cacheKey, recommendations);
+  gameCache.set(cacheKey, sortedRecommendations);
   
   // Clear cache if it grows too large (memory management)
   if (gameCache.size > 100) {
@@ -125,7 +523,127 @@ function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesA
     gameCache.delete(oldestKey);
   }
   
-  return recommendations;
+  return sortedRecommendations;
+}
+
+// Adjust weights based on player context
+function applyContextToWeights(baseWeights, context) {
+  const adjusted = {...baseWeights};
+  
+  // Work hours or split attention = reduce volatility importance
+  if (context.focusLevel === 'split-attention' || context.atWork) {
+    adjusted.volatility *= 0.6;  // Less focus on volatility
+    adjusted.theme *= 1.2;       // More focus on familiar themes
+    adjusted.mechanics *= 0.8;   // Simpler mechanics preferred
+  }
+  
+  // Tired/drowsy = simplify everything
+  if (context.focusLevel === 'drowsy' || context.timeOfDay === 'late-night') {
+    adjusted.mechanics *= 0.5;   // Much simpler games
+    adjusted.volatility *= 0.7;  // Lower risk preference
+  }
+  
+  // Near payday = higher risk tolerance
+  if (context.isNearPayday || context.dayOfMonth <= 5) {
+    adjusted.volatility *= 1.2;  // More open to volatility
+    // Note: maxWin boost would go here if we had dynamic weight for it
+  }
+  
+  // Weekend = exploration mode
+  if (context.isWeekend) {
+    adjusted.studio *= 0.8;      // Less brand loyalty
+    adjusted.theme *= 1.1;       // More thematic exploration
+  }
+  
+  // Normalize weights to sum to original total
+  const originalSum = Object.values(baseWeights).reduce((a, b) => a + b, 0);
+  const adjustedSum = Object.values(adjusted).reduce((a, b) => a + b, 0);
+  const normalizer = originalSum / adjustedSum;
+  
+  Object.keys(adjusted).forEach(key => {
+    adjusted[key] *= normalizer;
+  });
+  
+  return adjusted;
+}
+
+// Filter games based on context
+function filterGamesByContext(games, context, targetGame) {
+  return games.filter(game => {
+    // During work: skip ultra-high volatility
+    if ((context.atWork || context.focusLevel === 'split-attention') && 
+        game.volatility === 'ultra') {
+      return false;
+    }
+    
+    // When tired: skip complex games
+    if (context.focusLevel === 'drowsy' && 
+        game.features && game.features.length > 4) {
+      return false;
+    }
+    
+    // Mobile device: prefer mobile-optimized
+    if (context.deviceType === 'mobile' && 
+        game.mobileOptimized === false) {
+      // Don't completely exclude, just deprioritize
+      return Math.random() > 0.5;
+    }
+    
+    // Late night: avoid high-energy themes
+    if (context.timeOfDay === 'late-night' && 
+        game.theme && game.theme.some(t => 
+          ['Action', 'Combat', 'Racing', 'Sports'].includes(t))) {
+      return false;
+    }
+    
+    return true;
+  });
+}
+
+// Calculate context-based bonus scores
+function calculateContextBonus(game, context) {
+  let bonus = 0;
+  
+  // Pace matching
+  if (game.pace && context.preferredPace) {
+    if (game.pace === context.preferredPace) {
+      bonus += 0.05; // 5% bonus for pace match
+    } else if (
+      (game.pace === 'fast' && context.preferredPace === 'medium') ||
+      (game.pace === 'medium' && context.preferredPace === 'fast')
+    ) {
+      bonus += 0.02; // 2% for close pace match
+    }
+  }
+  
+  // Time-appropriate themes
+  if (context.timeOfDay === 'morning' && game.theme) {
+    if (game.theme.some(t => ['Coffee', 'Breakfast', 'Fresh', 'Energy'].includes(t))) {
+      bonus += 0.03;
+    }
+  }
+  
+  if (context.timeOfDay === 'late-night' && game.theme) {
+    if (game.theme.some(t => ['Dreams', 'Stars', 'Moon', 'Mystical', 'Zen'].includes(t))) {
+      bonus += 0.03;
+    }
+  }
+  
+  // Weekend bonus for adventure themes
+  if (context.isWeekend && game.theme) {
+    if (game.theme.some(t => ['Adventure', 'Quest', 'Exploration', 'Journey'].includes(t))) {
+      bonus += 0.02;
+    }
+  }
+  
+  // Sports event synergy
+  if (context.activeSportsEvents && game.theme) {
+    if (game.theme.some(t => ['Sports', 'Football', 'Champions', 'Tournament'].includes(t))) {
+      bonus += 0.04;
+    }
+  }
+  
+  return bonus;
 }
 
 async function generateMatchExplanation(selectedGame, recommendedGame, weights, confidence) {
@@ -211,7 +729,9 @@ function clearCache() {
 }
 
 module.exports = {
-  calculateSimilarity,
+  calculateSimilarity: calculateAlgorithmicSimilarity,
+  calculateLLMSimilarity,
+  calculateAlgorithmicSimilarity,
   getRecommendations,
   generateMatchExplanation,
   volatilityLevel,

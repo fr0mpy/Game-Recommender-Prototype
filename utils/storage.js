@@ -28,12 +28,23 @@ function ensureCustomGamesDir() {
   return false;
 }
 
-// Default weight configuration
+// Default weight configuration - normalized to 100%
 const DEFAULT_WEIGHTS = {
-  theme: 0.4,
-  volatility: 0.3,
-  studio: 0.2,
-  mechanics: 0.1
+  theme: 0.31,           // ~31%
+  volatility: 0.23,      // ~23%
+  studio: 0.15,          // ~15%
+  mechanics: 0.08,       // ~8%
+  rtp: 0.04,             // ~4%
+  maxWin: 0.04,          // ~4%
+  features: 0.04,        // ~4%
+  pace: 0.03,            // ~3%
+  bonusFrequency: 0.02,  // ~2%
+  hitFrequency: 0.02,    // ~2%
+  artStyle: 0.02,        // ~2%
+  audioVibe: 0.01,       // ~1%
+  visualDensity: 0.005,  // ~0.5%
+  reelLayout: 0.005      // ~0.5%
+  // Total: 100%
 };
 
 function saveGames(games) {
