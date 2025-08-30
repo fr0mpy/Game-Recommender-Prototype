@@ -595,7 +595,7 @@ function calculateAlgorithmicSimilarity(game1, game2, weights = DEFAULT_WEIGHTS)
   return finalScore;
 }
 
-async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesArray = null, playerContext = null, useLLM = false) {
+async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, gamesArray = null, playerContext = null, recommendationEngine = 'algo') {
   const games = gamesArray || loadGames();
   
   if (games.length === 0) {
@@ -613,8 +613,8 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
     contextAdjustedWeights = applyContextToWeights(weights, playerContext);
   }
   
-  // Create cache key including context and LLM mode
-  const cacheKey = `${gameId}-${JSON.stringify(contextAdjustedWeights)}-${JSON.stringify(playerContext?.focusLevel || 'none')}-${useLLM ? 'llm' : 'algo'}`;
+  // Create cache key including context and engine mode
+  const cacheKey = `${gameId}-${JSON.stringify(contextAdjustedWeights)}-${JSON.stringify(playerContext?.focusLevel || 'none')}-${recommendationEngine}`;
   
   // Check cache
   if (gameCache.has(cacheKey)) {
@@ -627,12 +627,12 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
     eligibleGames = filterGamesByContext(eligibleGames, playerContext, targetGame);
   }
   
-  console.log(`🎯 Using ${useLLM ? 'LLM-based' : 'algorithmic'} similarity for ${eligibleGames.length} games`);
+  console.log(`🎯 Using ${recommendationEngine} similarity for ${eligibleGames.length} games`);
   
   // Calculate similarities (either LLM or algorithmic)
   const recommendations = [];
   
-  if (useLLM) {
+  if (recommendationEngine === 'llm') {
     // LLM-based batch similarity (much faster and cheaper)
     console.log(`🚀 Starting batch LLM similarity analysis for ${eligibleGames.length} games`);
     const batchResults = await calculateBatchLLMSimilarity(targetGame, eligibleGames, playerContext, contextAdjustedWeights);
