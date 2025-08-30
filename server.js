@@ -8,6 +8,7 @@ const { loadGames, loadSettings, saveSettings, saveGames, saveCustomGames, hasCu
 const {
   generateGames,
   generateMockGames,
+  generateGamesHybrid,
 } = require("./services/gameGenerator");
 const { getRecommendations, generateMatchExplanation } = require("./services/similarityEngine");
 
@@ -142,6 +143,22 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
 
   } catch (error) {
     console.error('❌ LLM explanation generation failed:', error.message);
+    console.error('❌ Error type:', error.constructor.name);
+    console.error('❌ Stack trace:', error.stack);
+    
+    // Log specific failure scenarios for debugging
+    if (error.message.includes('ANTHROPIC_API_KEY')) {
+      console.error('🔑 API Key Issue: Check environment variables');
+    } else if (error.message.includes('recommendation-explanation-prompt')) {
+      console.error('📄 Prompt File Issue: Check prompts/ directory');
+    } else if (error.message.includes('JSON')) {
+      console.error('🔧 JSON Parse Issue: Claude returned malformed response');
+    } else if (error.message.includes('timeout') || error.message.includes('network')) {
+      console.error('🌐 Network Issue: Anthropic API unreachable');
+    } else {
+      console.error('🔍 Unknown LLM Error - investigate manually');
+    }
+    
     throw error;
   }
 }
@@ -450,9 +467,19 @@ app.post("/generate", async (req, res) => {
     
     const customPrompt = req.body.customPrompt;
     console.log('🔍 SERVER: Custom prompt:', customPrompt);
-    console.log('🔍 SERVER: Calling generateGames...');
     
-    const games = await generateGames(customPrompt, req.sessionId);
+    // Check if hybrid generation is enabled (default: true for better performance)
+    const useHybrid = process.env.USE_HYBRID_GENERATION !== 'false' && (req.body.useHybrid !== 'false' && req.body.useHybrid !== false);
+    console.log('🔍 SERVER: Hybrid generation enabled:', useHybrid);
+    
+    let games;
+    if (useHybrid) {
+      console.log('🚀 SERVER: Using hybrid generation (Claude 3 Haiku + batching)...');
+      games = await generateGamesHybrid(customPrompt, req.sessionId);
+    } else {
+      console.log('🔍 SERVER: Using traditional generation (Claude 4 Sonnet)...');
+      games = await generateGames(customPrompt, req.sessionId);
+    }
     console.log('✅ SERVER: generateGames completed successfully');
     console.log('🔍 SERVER: Generated games count:', games?.length);
     
@@ -883,13 +910,17 @@ app.post("/recommend", async (req, res) => {
       console.log(`✅ Generated ${recommendationsWithExplanations.length} algorithmic explanations`);
     }
 
+    // Check if custom games exist for template
+    const customGamesExist = await hasCustomGames();
+    
     res.render("recommendations", {
       recommendations: recommendationsWithExplanations,
       selectedGame,
       weights,
       playerContext: req.playerContext,
       sessionId: req.sessionId,
-      tokenUsage
+      tokenUsage,
+      customGamesExist
     });
   } catch (error) {
     renderError(res, error);

@@ -540,6 +540,26 @@
           <p class="text-xs text-casino-dark text-opacity-60 mt-1">
             Customize how the AI generates your games.
           </p>
+          
+          <!-- Hybrid Generation Toggle -->
+          <div class="mt-3 p-3 bg-gray-50 rounded-lg border">
+            <div class="flex items-center space-x-2">
+              <input 
+                type="checkbox" 
+                id="useHybrid" 
+                name="useHybrid" 
+                value="true"
+                checked
+                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              >
+              <label for="useHybrid" class="text-sm font-medium text-gray-700">
+                🚀 Fast Mode (Hybrid Generation)
+              </label>
+            </div>
+            <p class="text-xs text-gray-500 mt-1 ml-6">
+              Use Claude 3 Haiku with parallel batching (~8-12s vs ~90s)
+            </p>
+          </div>
         </div>
 
         <div class="flex flex-col gap-3">

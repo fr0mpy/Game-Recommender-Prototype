@@ -724,7 +724,306 @@ function generateMockGames() {
   return mockGames;
 }
 
+// ========================================================================================
+// HYBRID BATCHING SYSTEM - TOKEN-OPTIMIZED HAIKU GENERATION
+// ========================================================================================
+
+/**
+ * Hybrid game generation with intelligent batching for Claude 3 Haiku
+ * Optimizes for speed, token limits, and fault tolerance
+ */
+async function generateGamesHybrid(customPrompt, sessionId, options = {}) {
+  console.log('🚀 HYBRID: Starting hybrid game generation');
+  console.log('🚀 HYBRID: Custom prompt:', customPrompt);
+  console.log('🚀 HYBRID: Session ID:', sessionId);
+  console.log('🚀 HYBRID: Options:', options);
+  
+  const startTime = Date.now();
+  
+  try {
+    // Parse game count from prompt
+    const requestedCount = extractGameCount(customPrompt) || 100;
+    console.log('🎯 HYBRID: Requested games:', requestedCount);
+    
+    // Determine optimal batching strategy
+    const strategy = determineBatchingStrategy(requestedCount, customPrompt, options);
+    console.log('⚙️ HYBRID: Selected strategy:', strategy.name);
+    console.log('📊 HYBRID: Batch configuration:', strategy);
+    
+    let allGames = [];
+    
+    switch (strategy.type) {
+      case 'single':
+        allGames = await generateSingleBatchHaiku(customPrompt, requestedCount);
+        break;
+      case 'dual':
+        allGames = await generateDualBatchHaiku(customPrompt, requestedCount);
+        break;
+      case 'quad':
+        allGames = await generateQuadBatchHaiku(customPrompt, requestedCount);
+        break;
+      default:
+        throw new Error(`Unknown strategy type: ${strategy.type}`);
+    }
+    
+    // Add IDs and validate
+    const gamesWithIds = allGames.map((game, index) => ({
+      ...game,
+      id: `game-${(index + 1).toString().padStart(3, '0')}`
+    }));
+    
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
+    console.log(`✅ HYBRID: Generated ${gamesWithIds.length} games in ${duration}ms`);
+    console.log(`📈 HYBRID: Performance: ${(duration / gamesWithIds.length).toFixed(1)}ms per game`);
+    
+    return gamesWithIds;
+    
+  } catch (error) {
+    console.error('❌ HYBRID: Generation failed:', error.message);
+    console.log('🔄 HYBRID: Falling back to original method');
+    
+    // Fallback to original method
+    return await generateGames(customPrompt, sessionId);
+  }
+}
+
+/**
+ * Determines optimal batching strategy based on request parameters
+ */
+function determineBatchingStrategy(gameCount, prompt, options = {}) {
+  const TOKENS_PER_GAME = 40;
+  const MAX_SAFE_OUTPUT = 4000; // Safe margin under 4096 limit
+  const maxGamesPerBatch = Math.floor(MAX_SAFE_OUTPUT / TOKENS_PER_GAME);
+  
+  // Strategy selection logic
+  if (gameCount <= maxGamesPerBatch && !options.forceParallel) {
+    return {
+      type: 'single',
+      name: 'Single Compressed Batch',
+      batchCount: 1,
+      gamesPerBatch: gameCount,
+      expectedTime: '8-12 seconds',
+      tokensPerBatch: gameCount * TOKENS_PER_GAME
+    };
+  } else if (gameCount <= maxGamesPerBatch * 2) {
+    return {
+      type: 'dual', 
+      name: 'Parallel Dual Batch',
+      batchCount: 2,
+      gamesPerBatch: Math.ceil(gameCount / 2),
+      expectedTime: '6-8 seconds',
+      tokensPerBatch: Math.ceil(gameCount / 2) * TOKENS_PER_GAME
+    };
+  } else {
+    return {
+      type: 'quad',
+      name: 'Parallel Quad Batch', 
+      batchCount: 4,
+      gamesPerBatch: Math.ceil(gameCount / 4),
+      expectedTime: '4-6 seconds',
+      tokensPerBatch: Math.ceil(gameCount / 4) * TOKENS_PER_GAME
+    };
+  }
+}
+
+/**
+ * Extract game count from user prompt
+ */
+function extractGameCount(prompt) {
+  if (!prompt) return null;
+  
+  const matches = prompt.match(/(\d+)\s*(?:games?|slots?)/i);
+  if (matches) {
+    return parseInt(matches[1]);
+  }
+  
+  return null;
+}
+
+/**
+ * Single batch generation with compressed prompt
+ */
+async function generateSingleBatchHaiku(customPrompt, gameCount) {
+  console.log('⚡ SINGLE: Starting single batch generation');
+  console.log('⚡ SINGLE: Game count:', gameCount);
+  
+  if (!anthropic) {
+    throw new Error('Anthropic client not initialized');
+  }
+  
+  const compressedPrompt = buildCompressedPrompt(customPrompt, gameCount);
+  console.log('📝 SINGLE: Prompt length:', compressedPrompt.length, 'characters');
+  
+  const response = await anthropic.messages.create({
+    model: 'claude-3-haiku-20240307', // Fast Haiku model
+    max_tokens: 4096,
+    temperature: 0.7,
+    messages: [{
+      role: 'user',
+      content: compressedPrompt
+    }]
+  });
+  
+  const games = parseGamesFromResponse(response.content[0].text);
+  console.log('✅ SINGLE: Generated', games.length, 'games');
+  
+  return games;
+}
+
+/**
+ * Dual batch generation with parallel processing
+ */
+async function generateDualBatchHaiku(customPrompt, gameCount) {
+  console.log('🔀 DUAL: Starting dual batch generation');
+  console.log('🔀 DUAL: Total games:', gameCount);
+  
+  const batch1Count = Math.ceil(gameCount / 2);
+  const batch2Count = gameCount - batch1Count;
+  
+  console.log('🔀 DUAL: Batch 1:', batch1Count, 'games');
+  console.log('🔀 DUAL: Batch 2:', batch2Count, 'games');
+  
+  const [batch1Games, batch2Games] = await Promise.all([
+    generateSingleBatchHaiku(customPrompt, batch1Count),
+    generateSingleBatchHaiku(customPrompt, batch2Count)
+  ]);
+  
+  const allGames = [...batch1Games, ...batch2Games];
+  console.log('✅ DUAL: Combined', allGames.length, 'games');
+  
+  return allGames;
+}
+
+/**
+ * Quad batch generation with maximum parallelism
+ */
+async function generateQuadBatchHaiku(customPrompt, gameCount) {
+  console.log('🚀 QUAD: Starting quad batch generation');
+  console.log('🚀 QUAD: Total games:', gameCount);
+  
+  const baseCount = Math.floor(gameCount / 4);
+  const remainder = gameCount % 4;
+  
+  const batchCounts = [
+    baseCount + (remainder > 0 ? 1 : 0),
+    baseCount + (remainder > 1 ? 1 : 0), 
+    baseCount + (remainder > 2 ? 1 : 0),
+    baseCount
+  ];
+  
+  console.log('🚀 QUAD: Batch distribution:', batchCounts);
+  
+  const promises = batchCounts.map((count, index) => {
+    console.log(`🚀 QUAD: Starting batch ${index + 1} (${count} games)`);
+    return generateSingleBatchHaiku(customPrompt, count);
+  });
+  
+  const results = await Promise.all(promises);
+  const allGames = results.flat();
+  
+  console.log('✅ QUAD: Combined', allGames.length, 'games');
+  return allGames;
+}
+
+/**
+ * Build ultra-compressed prompt for token efficiency
+ */
+function buildCompressedPrompt(customPrompt, gameCount) {
+  const themes = extractThemes(customPrompt);
+  const themeInstruction = themes ? `Themes: ${themes}. ` : '';
+  
+  return `Generate ${gameCount} slot games as JSON array. ${themeInstruction}Return ONLY the JSON array.
+
+[{
+"title":"Game Name",
+"studio":"Studio Name", 
+"theme":["Theme1","Theme2"],
+"volatility":"low|medium|high",
+"rtp":94.5,
+"maxWin":5000,
+"reelLayout":"5x3",
+"paylines":25,
+"mechanics":["Wild","Scatter"],
+"features":["Bonus"],
+"pace":"fast",
+"hitFreq":25.0,
+"bonusFreq":1.2,
+"artStyle":"3D",
+"audioVibe":"Epic",
+"density":"clean",
+"mobile":true,
+"year":2024,
+"desc":"Short description"
+}]`;
+}
+
+/**
+ * Extract themes from user prompt
+ */
+function extractThemes(prompt) {
+  if (!prompt) return null;
+  
+  // Try to match "X theme" patterns
+  const themeMatch1 = prompt.match(/(\w+)\s+theme/i);
+  if (themeMatch1) {
+    return themeMatch1[1];
+  }
+  
+  // Try to match "theme: X" or "themes: X" patterns  
+  const themeMatch2 = prompt.match(/theme[s]?[:\-\s]+([\w\s,]+?)(?:\s|$)/i);
+  if (themeMatch2) {
+    return themeMatch2[1].trim();
+  }
+  
+  // Look for common theme keywords
+  const commonThemes = ['pirate', 'space', 'fantasy', 'western', 'egypt', 'dragon', 'magic'];
+  const foundThemes = commonThemes.filter(theme => 
+    prompt.toLowerCase().includes(theme)
+  );
+  
+  return foundThemes.length > 0 ? foundThemes.join(', ') : null;
+}
+
+/**
+ * Parse games from Claude response with error handling
+ */
+function parseGamesFromResponse(responseText) {
+  try {
+    // Try direct JSON parse first
+    const games = JSON.parse(responseText);
+    if (Array.isArray(games)) {
+      return games;
+    }
+  } catch (error) {
+    console.log('📝 Trying to extract JSON array from response...');
+  }
+  
+  // Try to extract JSON array from text
+  const jsonMatch = responseText.match(/\[([\s\S]*?)\]/);
+  if (jsonMatch) {
+    try {
+      const games = JSON.parse(jsonMatch[0]);
+      if (Array.isArray(games)) {
+        return games;
+      }
+    } catch (error) {
+      console.error('❌ Failed to parse extracted JSON:', error.message);
+    }
+  }
+  
+  throw new Error('Could not parse games from response');
+}
+
 module.exports = {
   generateGames,
-  generateMockGames
+  generateMockGames,
+  generateGamesHybrid,
+  // Export helper functions for testing
+  determineBatchingStrategy,
+  extractGameCount,
+  extractThemes,
+  buildCompressedPrompt,
+  parseGamesFromResponse
 };
