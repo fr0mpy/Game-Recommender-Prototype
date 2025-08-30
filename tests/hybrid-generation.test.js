@@ -110,7 +110,11 @@ describe('Hybrid Generation System', () => {
       expect(extractGameCount('Generate 10 games')).toBe(10);
       expect(extractGameCount('Create 50 slot games')).toBe(50);
       expect(extractGameCount('Make 100 slots with pirate theme')).toBe(100);
+      expect(extractGameCount('10 pirate games')).toBe(10);
+      expect(extractGameCount('15 fantasy adventure games')).toBe(15);
+      expect(extractGameCount('generate 25')).toBe(25);
       expect(extractGameCount('Generate some games')).toBeNull();
+      expect(extractGameCount('pirate games')).toBeNull();
     });
   });
 

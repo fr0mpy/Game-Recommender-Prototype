@@ -741,8 +741,8 @@ async function generateGamesHybrid(customPrompt, sessionId, options = {}) {
   const startTime = Date.now();
   
   try {
-    // Parse game count from prompt
-    const requestedCount = extractGameCount(customPrompt) || 100;
+    // Parse game count from prompt (default to 10 if not specified)
+    const requestedCount = extractGameCount(customPrompt) || 10;
     console.log('🎯 HYBRID: Requested games:', requestedCount);
     
     // Determine optimal batching strategy
@@ -834,9 +834,22 @@ function determineBatchingStrategy(gameCount, prompt, options = {}) {
 function extractGameCount(prompt) {
   if (!prompt) return null;
   
-  const matches = prompt.match(/(\d+)\s*(?:games?|slots?)/i);
-  if (matches) {
-    return parseInt(matches[1]);
+  // Try different patterns to extract game count
+  const patterns = [
+    /(\d+)\s*(?:games?|slots?)/i,           // "10 games", "5 slots"
+    /(\d+)\s+\w+\s+(?:games?|slots?)/i,     // "10 pirate games", "5 adventure slots"
+    /generate\s+(\d+)/i,                    // "generate 10"
+    /(\d+)\s+[\w\s]+(?:games?|slots?)/i     // More flexible pattern for "10 xxx games"
+  ];
+  
+  for (const pattern of patterns) {
+    const matches = prompt.match(pattern);
+    if (matches) {
+      const count = parseInt(matches[1]);
+      if (count > 0) {
+        return count;
+      }
+    }
   }
   
   return null;
