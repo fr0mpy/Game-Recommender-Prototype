@@ -505,7 +505,7 @@ app.post("/api/validate-session-games", async (req, res) => {
 // Get recommendations
 app.post("/recommend", async (req, res) => {
   try {
-    const { gameId, theme, volatility, studio, mechanics, rtp, maxWin, features, pace, bonusFrequency, useLLM } = req.body;
+    const { gameId, theme, volatility, studio, mechanics, rtp, maxWin, features, pace, bonusFrequency, similarityEngine } = req.body;
 
     if (!gameId) {
       const games = await loadGames();
@@ -546,10 +546,10 @@ app.post("/recommend", async (req, res) => {
     console.log(`📚 Loaded ${games.length} games`);
 
     // Get recommendations with player context and LLM mode
-    const useLLMBool = useLLM === 'llm';
-    console.log(`🎯 Similarity mode: ${useLLMBool ? 'LLM-based' : 'Algorithmic'}`);
+    const useLLM = similarityEngine === 'llm';
+    console.log(`🎯 Similarity mode: ${useLLM ? 'LLM-based' : 'Algorithmic'}`);
     
-    const recommendations = await getRecommendations(gameId, weights, 5, games, req.playerContext, useLLMBool);
+    const recommendations = await getRecommendations(gameId, weights, 5, games, req.playerContext, useLLM);
 
     // Find selected game for display
     const selectedGame = games.find((g) => g.id === gameId);
