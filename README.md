@@ -13,7 +13,9 @@
 
 ### **🧠 AI Intelligence**
 - [AI Game Generation](#-ai-game-generation) - Create 100 custom slot games with prompts
-- [AI Recommendation Engine](#️-dynamic-similarity-scoring) - Weighted similarity matching with explanations
+- [Dual Similarity Engines](#️-dual-similarity-engines) - LLM vs Algorithmic with dynamic user weights
+- [LLM Similarity Analysis](#-llm-similarity-analysis) - BMad Master Similarity Engine with Claude Sonnet 4
+- [Context Integration](#-player-context-integration) - Full player psychology in LLM analysis
 - [Bally Sports X-Sell](#-bally-sports-x-sell-intelligence) - Auto-detect sports betting opportunities
 - [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
 - [Financial Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
@@ -55,7 +57,14 @@ Our system employs **two specialized AI models** working in concert:
 - **Temporal Modeling**: EU sports seasons, holidays, time-of-day psychology
 - **Output**: Dynamic player state with confidence scoring
 
-#### 3. **Recommendation Explainer** (Claude Haiku 3)
+#### 3. **BMad Master Similarity Engine** (Claude Sonnet 4)
+- **Purpose**: Advanced semantic game similarity analysis with comprehensive property evaluation
+- **Innovation**: Analyzes all 20+ game properties using dynamic user-configured weights
+- **Player Context Integration**: Incorporates time, attention, financial cycle, and behavioral patterns
+- **Semantic Understanding**: Recognizes thematic relationships (Dragons ≈ Fantasy ≈ Adventure ≈ Mythology)
+- **Output**: Contextual similarity scores with reasoning and cross-appeal probability analysis
+
+#### 4. **Recommendation Explainer** (Claude Haiku 3)
 - **Purpose**: Generates human-readable explanations for similarity matches
 - **Personalization**: Adapts language to current player context and situation
 - **Psychology Integration**: Considers focus level, budget pressure, session type
@@ -63,17 +72,49 @@ Our system employs **two specialized AI models** working in concert:
 
 ### 🔬 Advanced Algorithmic Design
 
-#### **Weighted Similarity Engine**
-Our recommendation algorithm transcends simple categorical matching by implementing **dynamic weight distribution**:
+#### **Dual Similarity Engines**
+Our recommendation system offers **two distinct analysis methods** that users can toggle between:
+
+##### **1. Algorithmic Similarity Engine (Fast)**
+Mathematical analysis with **dynamic weight distribution**:
 
 ```
-Theme Matching (40%):     Semantic similarity across thematic elements
-Volatility Alignment (30%): Risk tolerance and mathematical pattern matching  
-Studio Preference (20%):   Developer style and quality consistency
-Mechanics Overlap (10%):   Feature-based gameplay similarity
+Theme Matching (31%):        Jaccard similarity across thematic elements
+Volatility Alignment (23%):  Risk tolerance and mathematical pattern matching  
+Studio Preference (15%):     Developer style and quality consistency
+Mechanics Overlap (8%):      Feature-based gameplay similarity
+RTP Matching (4%):           Return-to-player rate alignment
+Max Win Potential (4%):      Big win opportunity similarity
+Feature Types (4%):          Progressive vs standard bonus systems
+Game Pace (3%):              Speed preference matching
+Bonus Frequency (2%):        Trigger rate similarity
 ```
 
-**Innovation**: Users can adjust these weights in real-time, producing unique similarity scores (e.g., 47.3%, 35.8%, 32.1%) rather than generic star ratings.
+##### **2. LLM Similarity Engine (Advanced)**
+**BMad Master Similarity Engine** powered by Claude Sonnet 4:
+
+```
+PRIMARY FACTORS (55% weight):
+- Thematic Universe Alignment: Semantic theme relationships
+- Mathematical Psychology Profile: Volatility impact on player emotions  
+- Gameplay Experience Architecture: Mechanical complexity matching
+
+SECONDARY FACTORS (25% weight):
+- Aesthetic & Sensory Harmony: Art style and audio vibe compatibility
+- Studio & Production Quality: Developer reputation alignment
+- Technical Architecture: Mobile optimization and payline structure
+
+CONTEXTUAL MODIFIERS (20% weight):
+- Player Context Integration: Time-based appropriateness
+- Attention Span Matching: Cognitive load compatibility
+- Financial Cycle Awareness: Budget pressure considerations
+```
+
+**Innovation**: 
+- **Dynamic User Weights**: Real-time weight adjustment affects both engines
+- **Contextual Scoring**: LLM integrates player psychology into similarity analysis
+- **Semantic Understanding**: LLM recognizes Dragons ≈ Fantasy ≈ Mythology relationships
+- **Unique Scores**: Both engines produce precise percentages (e.g., 73.2%, 68.7%, 45.1%)
 
 #### **Contextual Recommendation Logic**
 Unlike traditional "customers who played X also played Y" systems, Slot Forge implements **situational intelligence**:
@@ -125,6 +166,9 @@ Our recommendations consider **human psychology**, not just game attributes:
 - **Emotional State Consideration**: Factors in player mood and context
 
 ### 🏆 Industry Innovations
+- **Dual Similarity Engines**: First system offering both algorithmic and LLM-based similarity analysis
+- **Dynamic Weight Integration**: User preferences dynamically injected into LLM prompts
+- **Contextual LLM Analysis**: Player psychology integrated into semantic similarity scoring
 - **Bally Sports Cross-Sell**: Automatic detection of sports betting opportunities
 - **EU Sports Calendar Integration**: Premier League, Champions League awareness
 - **Work Pattern Detection**: First system to recognize "stealth gaming" at work
@@ -133,6 +177,144 @@ Our recommendations consider **human psychology**, not just game attributes:
 ---
 
 This isn't just a recommendation engine—it's a **comprehensive AI-driven gaming intelligence platform** that demonstrates the future of personalized casino experiences.
+
+## 🤖 LLM Similarity Analysis
+
+### BMad Master Similarity Engine
+Our advanced **BMad Master Similarity Engine** represents a breakthrough in semantic game analysis, powered by Claude Sonnet 4 with comprehensive prompt engineering.
+
+#### **Comprehensive Property Analysis**
+The LLM analyzes **all 20+ game properties** including:
+```json
+{
+  "title": "Dragon's Fortune",
+  "studio": "Mythic Gaming", 
+  "theme": ["Fantasy", "Dragons"],
+  "volatility": "high",
+  "rtp": 96.5,
+  "maxWin": 10000,
+  "reelLayout": "5x3",
+  "paylines": 25,
+  "mechanics": ["Wild", "Scatter", "Free Spins"],
+  "features": ["Multiplier", "Bonus Round"],
+  "pace": "medium",
+  "hitFrequency": 22.1,
+  "bonusFrequency": 8.3,
+  "artStyle": "Detailed 3D",
+  "audioVibe": "Epic Fantasy",
+  "visualDensity": "standard",
+  "mobileOptimized": true,
+  "releaseYear": 2024
+}
+```
+
+#### **Semantic Understanding**
+Unlike algorithmic matching, the LLM recognizes **thematic relationships**:
+- `Dragons ≈ Fantasy ≈ Mythology ≈ Adventure ≈ Magic`
+- `Ancient Egypt ≈ Treasures ≈ Pyramids ≈ Archaeological`
+- `Horror ≈ Supernatural ≈ Gothic ≈ Dark Themes`
+
+#### **Advanced Scoring Framework**
+The LLM evaluates games across **three weighted categories**:
+
+##### **PRIMARY FACTORS (55%)**
+1. **Thematic Universe Alignment** - Semantic theme relationships and emotional resonance
+2. **Mathematical Psychology Profile** - Volatility impact on player emotions and RTP expectations
+3. **Gameplay Experience Architecture** - Mechanical complexity and pace compatibility
+
+##### **SECONDARY FACTORS (25%)**
+4. **Aesthetic & Sensory Harmony** - Art style and audio vibe creating similar experiences
+5. **Studio & Production Quality** - Developer reputation and design philosophy similarities  
+6. **Technical Architecture** - Mobile optimization and payline structure compatibility
+
+##### **CONTEXTUAL MODIFIERS (20%)**
+7. **Player Context Integration** - Time-based appropriateness and attention span matching
+8. **Financial Cycle Awareness** - Budget pressure and payday proximity considerations
+9. **Session Type Matching** - Quick break vs extended play compatibility
+
+#### **Dynamic Weight Integration**
+The system **dynamically injects user-configured weights** into the LLM prompt:
+
+```
+USER WEIGHT PREFERENCES (Override default framework weights):
+- Theme Similarity: 45%
+- Volatility/Risk Level: 25% 
+- Studio/Brand: 12%
+- Game Mechanics: 8%
+- RTP/Return Rate: 4%
+- Max Win Potential: 3%
+- Feature Types: 2%
+- Game Pace: 1%
+
+IMPORTANT: Use these exact user weight percentages in your analysis 
+instead of the default framework weights.
+```
+
+#### **Contextual Analysis Output**
+The LLM provides comprehensive similarity analysis:
+
+```json
+{
+  "similarity_score": 73,
+  "confidence_level": "high", 
+  "primary_factors": "Mythological themes + medium volatility + complex bonus systems",
+  "secondary_factors": "Similar art styles + comparable studio quality",
+  "contextual_fit": "Both games suit evening leisure sessions with high attention spans",
+  "context_boost": 5,
+  "key_differences": "Egyptian focus vs Nordic mythology, different audio aesthetics",
+  "cross_appeal_probability": "high",
+  "player_segment": "Immersive theme seekers with moderate risk tolerance", 
+  "recommendation_strength": "strong",
+  "context_reasoning": "Games complement current player state - focused attention enables complex mechanics appreciation"
+}
+```
+
+## 🎯 Player Context Integration
+
+### Full Psychology Integration
+The LLM similarity engine incorporates **complete player context** into analysis:
+
+#### **Temporal Context**
+```json
+{
+  "timeOfDay": "evening",
+  "focusLevel": "focused", 
+  "sessionType": "leisure",
+  "isWeekend": true,
+  "dayOfMonth": 15
+}
+```
+
+#### **Behavioral Context**
+```json
+{
+  "deviceType": "desktop",
+  "atWork": false,
+  "preferredPace": "medium",
+  "attentionSpan": "high",
+  "financialCycle": "comfortable"
+}
+```
+
+#### **Contextual Reasoning Examples**
+
+**Work Hours Context:**
+> "Given your split-attention work environment, both games feature pause-friendly mechanics and moderate volatility suitable for discreet gaming. The simplified bonus structures won't demand extended focus periods."
+
+**Evening Leisure Context:**  
+> "Perfect match for your evening leisure session - both games offer immersive mythological themes with complex bonus mechanics that reward the high attention span available during dedicated gaming time."
+
+**Weekend Exploration Context:**
+> "Ideal for weekend exploration - these fantasy-themed games provide the rich, feature-heavy experiences that complement your relaxed weekend gaming mindset and willingness to try new mechanics."
+
+### Context-Aware Filtering
+Before LLM analysis, games are **pre-filtered based on context**:
+
+- **Work Hours**: Exclude ultra-high volatility games
+- **Tired/Drowsy**: Filter out complex multi-feature games  
+- **Mobile Device**: Deprioritize non-mobile-optimized games
+- **Late Night**: Avoid high-energy action themes
+- **Budget Pressure**: Focus on entertainment value over big win messaging
 
 ## ✨ Key Features
 
@@ -149,12 +331,12 @@ This isn't just a recommendation engine—it's a **comprehensive AI-driven gamin
 - **Focus Level Detection**: Split-attention, drowsy, relaxed-engaged, etc.
 - **AI Explanations**: Personalized reasoning for each recommendation
 
-### ⚖️ Dynamic Similarity Scoring
-- **Theme** (40%): Similar theme importance
-- **Volatility** (30%): Risk/reward pattern matching  
-- **Studio** (20%): Developer preference
-- **Mechanics** (10%): Bonus feature similarity
-- **Weighted Algorithm**: Produces unique match percentages based on user priorities
+### ⚖️ Dual Similarity Engines
+- **Algorithmic Engine**: Fast mathematical analysis with 9 weighted factors
+- **LLM Engine**: Advanced semantic analysis with BMad Master Similarity Engine  
+- **Dynamic User Weights**: Real-time slider adjustments affect both engines
+- **Contextual Integration**: Player psychology influences LLM scoring
+- **UI Toggle**: Switch between engines to compare results
 
 ## 🚀 Experience the AI Revolution
 
@@ -201,16 +383,34 @@ post-payday risk tolerance."
 
 ### 🎯 Advanced Features Showcase
 
-#### **Dynamic Weight Adjustment**
-- Slide **Theme** to 70% → Prioritize thematic similarity over all else
-- Boost **Volatility** to 50% → Mathematical risk patterns become primary factor  
-- Result: Watch recommendations reorder in real-time with new similarity percentages
+#### **Dual Engine Comparison**
+- **Toggle LLM Engine ON** → Experience semantic similarity analysis with contextual reasoning
+- **Toggle LLM Engine OFF** → Fast algorithmic mathematical analysis  
+- **Same weights, different analysis** → Compare how engines interpret similarity differently
 
-#### **Contextual Intelligence Demo**
-Try the same game selection at different times:
-- **9 AM (Workday)**: AI suggests fast-paced, low-attention games
-- **8 PM (Weekend)**: AI recommends immersive, feature-rich experiences
-- **Same game, different context = completely different explanations**
+#### **Dynamic Weight Integration**
+- Slide **Theme** to 50% → Both engines prioritize thematic similarity
+- Boost **Volatility** to 30% → Watch both algorithmic and LLM analysis adapt
+- **Real-Time Impact**: User preferences instantly injected into LLM prompts
+- **Result**: Consistent weight respect across both similarity methods
+
+#### **Contextual LLM Intelligence Demo**
+Try the same game selection at different times with **LLM Engine enabled**:
+- **9 AM (Workday)**: LLM contextual fit analysis suggests work-friendly games with reasoning
+- **8 PM (Weekend)**: LLM recognizes leisure time and recommends immersive experiences
+- **Different contexts = contextual_fit scores and reasoning change dynamically**
+
+#### **Semantic Understanding Showcase**
+Test LLM's thematic intelligence:
+- Select **"Dragon's Gold"** → LLM recognizes Fantasy/Adventure/Magic relationships
+- Recommendations include **Egyptian mythology, Norse legends, magical themes**
+- **Algorithmic engine** → Exact theme matching only
+- **LLM engine** → Semantic understanding across mythological universes
+
+#### **Comprehensive Property Analysis**
+- **LLM analyzes ALL game properties** → RTP, maxWin, pace, bonusFrequency, artStyle, etc.
+- **Algorithmic engine** → 9 weighted mathematical factors
+- **LLM engine** → 20+ properties with contextual analysis and cross-appeal probability
 
 #### **Prompt Engineering Excellence**
 Test our sophisticated input validation:
@@ -328,15 +528,20 @@ User Interface (EJS + Tailwind)
 │   Multi-Model AI Orchestra   │
 ├──────────────────────────────┤
 │ Claude Sonnet 4 (Generation) │
+│ Claude Sonnet 4 (LLM Sim.)   │
 │ Claude Haiku 3 (Context)     │
 │ Claude Haiku 3 (Explanation) │
 └──────────────────────────────┘
          ↓
    Redis (Upstash)
          ↓
-   Similarity Engine
+   Dual Similarity Engines
+   ┌─────────────────────────┐
+   │ Algorithmic   │   LLM   │
+   │ (Fast Math)   │ (Smart) │
+   └─────────────────────────┘
          ↓
-   Recommendations
+   Contextual Recommendations
 ```
 
 ### Technology Stack
@@ -346,10 +551,12 @@ User Interface (EJS + Tailwind)
 - Redis (Upstash) for persistent custom games in serverless environments
 - Session-based context tracking for recommendations
 
-**Recommendation Algorithm**:
-- Weighted scoring: Theme (40%) + Volatility (30%) + Studio (20%) + Mechanics (10%)
-- Produces unique match percentages (e.g., 48%, 36%, 33%, 31%)
-- Dynamic weight adjustment affects ranking order
+**Dual Recommendation Engines**:
+- **Algorithmic Engine**: 9 weighted factors (Theme 31%, Volatility 23%, Studio 15%, etc.)
+- **LLM Engine**: BMad Master Similarity Engine with semantic analysis
+- **Dynamic Weight System**: User preferences injected into both engines
+- **Contextual Analysis**: Player psychology integrated into LLM scoring
+- Produces unique match percentages (e.g., 73.2%, 68.7%, 45.1%)
 
 **Context Intelligence**:
 - Real-time temporal pattern detection (work vs. leisure)
@@ -361,11 +568,12 @@ User Interface (EJS + Tailwind)
 
 ### Real-World Performance (Production on Vercel)
 - **Game Generation**: ~0.9s per game (100 games in 91s with parallel processing)
-- **Recommendation Engine**: <250ms for 5 recommendations with AI explanations
+- **Algorithmic Recommendations**: <250ms for 5 recommendations with AI explanations  
+- **LLM Similarity Recommendations**: ~8-12s for 5 recommendations (sequential LLM analysis)
 - **Home Page Load**: 1.65s (includes context analysis and Redis check)
 - **Data Export**: 200-500ms for 100-game datasets
 - **Parallel Processing**: 5 concurrent Claude API calls for large generations
-- **Token Efficiency**: ~15,000 tokens for 100-game generation
+- **Token Efficiency**: ~15,000 tokens for 100-game generation, ~2,500 tokens per LLM similarity set
 
 ### Scalability
 - **Concurrent Users**: Serverless architecture auto-scales with demand
@@ -394,7 +602,17 @@ User Interface (EJS + Tailwind)
   - Output: ~50 tokens (1-2 sentence analysis)
   - **Total**: ~850 tokens per analysis
 
-#### 3. **Recommendation Explainer** (Claude Haiku 3)
+#### 3. **BMad Master Similarity Engine** (Claude Sonnet 4)
+- **Model**: `claude-sonnet-4-20250514`
+- **Purpose**: Semantic game similarity analysis with contextual reasoning
+- **Max Output Tokens**: 500
+- **Typical Usage per Comparison**:
+  - Input: ~1,800 tokens (system prompt + 2 games + player context + user weights)
+  - Output: ~300 tokens (comprehensive similarity analysis JSON)
+  - **Total**: ~2,100 tokens per similarity analysis
+- **5-Game Recommendation Set**: ~10,500 tokens (5 sequential comparisons)
+
+#### 4. **Recommendation Explainer** (Claude Haiku 3)
 - **Model**: `claude-3-haiku-20240307`
 - **Purpose**: Generate 5 personalized explanations
 - **Max Output Tokens**: 500
@@ -404,11 +622,21 @@ User Interface (EJS + Tailwind)
   - **Total**: ~1,400 tokens per recommendation
 
 ### Complete User Journey Cost
-**Full Session (Context → Generate 100 Games → Get 5 Recommendations):**
+
+#### **Algorithmic Similarity Session**
+**Full Session (Context → Generate 100 Games → Get 5 Algorithmic Recommendations):**
 - **Step 1 - Context Analysis**: $0.0002 (Haiku)
 - **Step 2 - Generate 100 Games**: $0.47 (Sonnet 4)
-- **Step 3 - 5 Recommendations**: $0.0004 (Haiku)
+- **Step 3 - 5 Recommendations**: $0.0004 (Haiku explanations only)
 - **Total Cost**: ~$0.47 per complete session
+
+#### **LLM Similarity Session**
+**Full Session (Context → Generate 100 Games → Get 5 LLM Recommendations):**
+- **Step 1 - Context Analysis**: $0.0002 (Haiku)
+- **Step 2 - Generate 100 Games**: $0.47 (Sonnet 4)
+- **Step 3 - LLM Similarity Analysis**: ~$0.16 (Sonnet 4, 5 comparisons)
+- **Step 4 - Recommendation Explanations**: $0.0004 (Haiku)
+- **Total Cost**: ~$0.63 per complete LLM session (+34% for advanced semantic analysis)
 
 ## 🧪 Quality Assurance
 
@@ -444,9 +672,21 @@ User Interface (EJS + Tailwind)
 - **Bandwidth**: Minimal (JSON responses only)
 
 **Cost at Scale** (1000 daily users):
+
+**Algorithmic Mode Only**:
 - **LLM Costs**: $470/day
+- **Infrastructure**: $5/day  
+- **Total**: $475/day ($0.47 per user)
+
+**Mixed Usage (50% LLM Similarity)**:
+- **LLM Costs**: $550/day (+$80 for semantic analysis)
 - **Infrastructure**: $5/day
-- **Total**: $475/day ($0.48 per user)
+- **Total**: $555/day ($0.55 per user)
+
+**Premium LLM Mode (100% LLM Similarity)**:
+- **LLM Costs**: $630/day (+$160 for full semantic analysis)
+- **Infrastructure**: $5/day
+- **Total**: $635/day ($0.63 per user)
 
 ## 🌍 EU-Focused Design
 
