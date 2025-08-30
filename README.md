@@ -12,6 +12,9 @@
 - [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
 
 ### **🧠 AI Intelligence**
+- [Dual Similarity Engines](#-advanced-algorithmic-design) - Algorithmic vs LLM comparison and toggle
+- [Algorithmic Similarity Engine](#1-algorithmic-similarity-engine-fast) - Fast mathematical analysis with dynamic weights  
+- [Engine Comparison Guide](#engine-comparison--selection-guide) - Speed, cost, and accuracy comparison table
 - [LLM Similarity Analysis](#-llm-similarity-analysis) - BMad Master Similarity Engine with Claude Sonnet 4
 - [Player Context Integration](#-player-context-integration) - Full player psychology in LLM analysis
 - [Deep Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
@@ -111,6 +114,18 @@ CONTEXTUAL MODIFIERS (20% weight):
 - Attention Span Matching: Cognitive load compatibility
 - Financial Cycle Awareness: Budget pressure considerations
 ```
+
+#### **Engine Comparison & Selection Guide**
+
+| **Aspect** | **Algorithmic Engine** | **LLM Engine** |
+|------------|------------------------|----------------|
+| **Speed** | <250ms | 8-12s |
+| **Cost** | $0 (mathematical) | ~$0.25 per recommendation set |
+| **Accuracy** | Mathematical precision | Semantic understanding |
+| **Context Awareness** | Weight-based only | Full player psychology |
+| **Theme Matching** | Exact keyword matching | Conceptual relationships (Dragons ≈ Fantasy) |
+| **Best For** | High-frequency, cost-sensitive | Premium experience, semantic analysis |
+| **Explanations** | Smart templates ($0) | LLM-generated contextual |
 
 **Innovation**: 
 - **Dynamic User Weights**: Real-time weight adjustment affects both engines
