@@ -269,6 +269,47 @@ The LLM provides comprehensive similarity analysis:
 }
 ```
 
+#### **Standardized Engine Output Structure**
+Both similarity engines now output identical data structures for seamless switching:
+
+```javascript
+// Both Algorithmic & LLM engines return:
+{
+  game: gameObject,           // Complete game data
+  score: 0.73,               // Similarity score (0-1 range)  
+  confidence: 73,            // Confidence percentage (0-100)
+  analysis: analysisObject   // Detailed analysis (LLM) or null (Algorithmic)
+}
+```
+
+**LLM Engine Analysis Object**:
+```javascript
+analysis: {
+  similarity_score: 73,
+  confidence_level: "high",
+  primary_factors: "Mythological themes + medium volatility + complex bonus systems",
+  secondary_factors: "Similar art styles + comparable studio quality", 
+  contextual_fit: "Both games suit evening leisure sessions with high attention spans",
+  context_boost: 5,
+  key_differences: "Egyptian focus vs Nordic mythology, different audio aesthetics",
+  cross_appeal_probability: "high",
+  player_segment: "Immersive theme seekers with moderate risk tolerance",
+  recommendation_strength: "strong", 
+  context_reasoning: "Games complement current player state - focused attention enables complex mechanics appreciation"
+}
+```
+
+**Algorithmic Engine Analysis Object**:
+```javascript
+analysis: null  // Fast mathematical analysis provides no detailed reasoning
+```
+
+This standardization enables:
+- **Seamless Engine Switching**: UI can toggle between engines without code changes
+- **Consistent API Responses**: Frontend components work with both engines identically  
+- **Progressive Enhancement**: Start with fast algorithmic, upgrade to LLM when needed
+- **A/B Testing**: Compare engine performance with identical data handling
+
 ## 🎯 Player Context Integration
 
 ### Full Psychology Integration
@@ -337,6 +378,7 @@ Before LLM analysis, games are **pre-filtered based on context**:
 - **Dynamic User Weights**: Real-time slider adjustments affect both engines
 - **Contextual Integration**: Player psychology influences LLM scoring
 - **UI Toggle**: Switch between engines to compare results
+- **Consistent Data Structures**: Both engines output identical response formats for seamless switching
 
 ## 🚀 Experience the AI Revolution
 
@@ -556,6 +598,7 @@ User Interface (EJS + Tailwind)
 - **LLM Engine**: BMad Master Similarity Engine with semantic analysis
 - **Dynamic Weight System**: User preferences injected into both engines
 - **Contextual Analysis**: Player psychology integrated into LLM scoring
+- **Consistent Output Structure**: Standardized response format across both engines
 - Produces unique match percentages (e.g., 73.2%, 68.7%, 45.1%)
 
 **Context Intelligence**:
