@@ -670,9 +670,8 @@
       </div>
       <div class="text-sm text-blue-700 mb-3">
         <p id="progressMessage">Preparing AI generation...</p>
-        <p class="text-xs mt-1">
-          Large datasets are generated in chunks to ensure quality. This may
-          take 1-2 minutes.
+        <p id="progressSubtext" class="text-xs mt-1">
+          Getting ready to generate your games...
         </p>
       </div>
       <div class="w-full bg-blue-200 rounded-full h-2">
@@ -1043,6 +1042,71 @@
   // Progress source for Server-Sent Events (declared in broader scope)
   let progressSource = null;
 
+  function startProgressSimulation(mode, progressBar, progressMessage, progressSubtext, gameCount) {
+    console.log('🎬 Starting progress simulation for mode:', mode);
+    
+    const progressSteps = {
+      hybrid: {
+        duration: 10000, // 10 seconds (8-12s range)
+        steps: [
+          { progress: 15, message: 'Initializing Claude 3 Haiku...', subtext: 'Preparing fast AI generation' },
+          { progress: 35, message: 'Creating game concepts...', subtext: 'AI analyzing your requirements' },
+          { progress: 60, message: 'Generating game details...', subtext: 'Processing in optimized batches' },
+          { progress: 85, message: 'Finalizing games...', subtext: 'Quality checks and formatting' },
+          { progress: 95, message: 'Almost ready!', subtext: 'Preparing your game collection' }
+        ]
+      },
+      traditional: {
+        duration: 75000, // 75 seconds (60-90s range)
+        steps: [
+          { progress: 15, message: 'Initializing Claude 4 Sonnet...', subtext: 'Preparing premium AI generation' },
+          { progress: 25, message: 'Deep analysis of requirements...', subtext: 'Advanced prompt processing' },
+          { progress: 40, message: 'Crafting detailed game concepts...', subtext: 'High-quality ideation in progress' },
+          { progress: 60, message: 'Generating comprehensive details...', subtext: 'Premium quality takes time' },
+          { progress: 80, message: 'Refining game mechanics...', subtext: 'Ensuring maximum quality' },
+          { progress: 95, message: 'Final quality assurance...', subtext: 'Delivering premium results' }
+        ]
+      },
+      mock: {
+        duration: 2000, // 2 seconds
+        steps: [
+          { progress: 30, message: 'Loading mock data...', subtext: 'No API calls needed' },
+          { progress: 70, message: 'Preparing sample games...', subtext: 'Development mode active' },
+          { progress: 95, message: 'Mock generation complete!', subtext: 'Ready for testing' }
+        ]
+      }
+    };
+    
+    const config = progressSteps[mode] || progressSteps.hybrid;
+    let currentStep = 0;
+    
+    const intervalTime = config.duration / config.steps.length;
+    
+    const updateProgress = () => {
+      if (currentStep < config.steps.length) {
+        const step = config.steps[currentStep];
+        
+        if (progressBar) {
+          progressBar.style.width = `${step.progress}%`;
+        }
+        if (progressMessage) {
+          progressMessage.textContent = step.message;
+        }
+        if (progressSubtext) {
+          progressSubtext.textContent = step.subtext;
+        }
+        
+        console.log(`📊 Progress: ${step.progress}% - ${step.message}`);
+        currentStep++;
+        
+        setTimeout(updateProgress, intervalTime);
+      }
+    };
+    
+    // Start the first update after a short delay
+    setTimeout(updateProgress, 500);
+  }
+
   function handleGenerateSubmit(event) {
     console.log('🚀 handleGenerateSubmit called - JavaScript working!');
     console.log('Event type:', event.type);
@@ -1098,6 +1162,15 @@
         progressBar.style.width = "10%";
         console.log('✅ Progress bar width set to 10%');
       }
+      
+      // Get selected generation mode and start appropriate progress simulation
+      const selectedMode = document.querySelector('input[name="generationMode"]:checked')?.value || 'hybrid';
+      const progressSubtext = document.getElementById("progressSubtext");
+      
+      console.log('🎯 Selected generation mode:', selectedMode);
+      
+      // Start progress simulation based on mode
+      startProgressSimulation(selectedMode, progressBar, progressMessage, progressSubtext, countValidation.count);
       
     } catch (error) {
       console.error('❌ Error in handleGenerateSubmit:', error);
