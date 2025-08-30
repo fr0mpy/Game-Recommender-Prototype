@@ -22,66 +22,79 @@ function volatilityLevel(game) {
   return levels[game.volatility] || 2;
 }
 
-// LLM-based similarity calculation
-async function calculateLLMSimilarity(game1, game2, playerContext = null, userWeights = null) {
+// LLM-based batch similarity calculation  
+async function calculateBatchLLMSimilarity(targetGame, candidateGames, playerContext = null, userWeights = null) {
   if (!anthropic) {
     console.log('⚠️ No LLM available, falling back to algorithmic similarity');
-    return calculateAlgorithmicSimilarity(game1, game2, DEFAULT_WEIGHTS);
+    return candidateGames.map(game => ({
+      gameId: game.id,
+      similarity: calculateAlgorithmicSimilarity(targetGame, game, userWeights || DEFAULT_WEIGHTS)
+    }));
   }
 
+  // Limit batch size to 100 games maximum
+  const batchGames = candidateGames.slice(0, 100);
+  
   try {
     // Load base system prompt
     const systemPrompt = fs.readFileSync(SIMILARITY_PROMPT_FILE, 'utf8');
     
-    // Build comprehensive prompt with games and player context
-    let gameComparison = `
-GAME A: ${JSON.stringify({
-  title: game1.title,
-  studio: game1.studio,
-  theme: game1.theme,
-  volatility: game1.volatility,
-  rtp: game1.rtp,
-  maxWin: game1.maxWin,
-  reelLayout: game1.reelLayout,
-  paylines: game1.paylines,
-  mechanics: game1.mechanics,
-  features: game1.features,
-  pace: game1.pace,
-  hitFrequency: game1.hitFrequency,
-  bonusFrequency: game1.bonusFrequency,
-  artStyle: game1.artStyle,
-  audioVibe: game1.audioVibe,
-  visualDensity: game1.visualDensity,
-  mobileOptimized: game1.mobileOptimized,
-  releaseYear: game1.releaseYear,
-  description: game1.description
-}, null, 2)}
+    // Build target game data
+    const targetGameData = {
+      title: targetGame.title,
+      studio: targetGame.studio,
+      theme: targetGame.theme,
+      volatility: targetGame.volatility,
+      rtp: targetGame.rtp,
+      maxWin: targetGame.maxWin,
+      reelLayout: targetGame.reelLayout,
+      paylines: targetGame.paylines,
+      mechanics: targetGame.mechanics,
+      features: targetGame.features,
+      pace: targetGame.pace,
+      hitFrequency: targetGame.hitFrequency,
+      bonusFrequency: targetGame.bonusFrequency,
+      artStyle: targetGame.artStyle,
+      audioVibe: targetGame.audioVibe,
+      visualDensity: targetGame.visualDensity,
+      mobileOptimized: targetGame.mobileOptimized,
+      releaseYear: targetGame.releaseYear,
+      description: targetGame.description
+    };
 
-GAME B: ${JSON.stringify({
-  title: game2.title,
-  studio: game2.studio,
-  theme: game2.theme,
-  volatility: game2.volatility,
-  rtp: game2.rtp,
-  maxWin: game2.maxWin,
-  reelLayout: game2.reelLayout,
-  paylines: game2.paylines,
-  mechanics: game2.mechanics,
-  features: game2.features,
-  pace: game2.pace,
-  hitFrequency: game2.hitFrequency,
-  bonusFrequency: game2.bonusFrequency,
-  artStyle: game2.artStyle,
-  audioVibe: game2.audioVibe,
-  visualDensity: game2.visualDensity,
-  mobileOptimized: game2.mobileOptimized,
-  releaseYear: game2.releaseYear,
-  description: game2.description
-}, null, 2)}`;
+    // Build candidate games data with IDs
+    const candidateGamesData = batchGames.map(game => ({
+      game_id: game.id,
+      title: game.title,
+      studio: game.studio,
+      theme: game.theme,
+      volatility: game.volatility,
+      rtp: game.rtp,
+      maxWin: game.maxWin,
+      reelLayout: game.reelLayout,
+      paylines: game.paylines,
+      mechanics: game.mechanics,
+      features: game.features,
+      pace: game.pace,
+      hitFrequency: game.hitFrequency,
+      bonusFrequency: game.bonusFrequency,
+      artStyle: game.artStyle,
+      audioVibe: game.audioVibe,
+      visualDensity: game.visualDensity,
+      mobileOptimized: game.mobileOptimized,
+      releaseYear: game.releaseYear,
+      description: game.description
+    }));
+
+    // Build comprehensive batch prompt
+    let batchPrompt = `
+TARGET GAME: ${JSON.stringify(targetGameData, null, 2)}
+
+CANDIDATE GAMES: ${JSON.stringify(candidateGamesData, null, 2)}`;
 
     // Add player context if available
     if (playerContext) {
-      gameComparison += `
+      batchPrompt += `
 
 PLAYER CONTEXT: ${JSON.stringify({
   timeOfDay: playerContext.timeOfDay,
@@ -113,7 +126,7 @@ PLAYER CONTEXT: ${JSON.stringify({
         bonusFrequency: Math.round(userWeights.bonusFrequency * 100)
       };
       
-      gameComparison += `
+      batchPrompt += `
 
 USER WEIGHT PREFERENCES (Override default framework weights):
 - Theme Similarity: ${weightPercentages.theme}%
@@ -126,32 +139,46 @@ USER WEIGHT PREFERENCES (Override default framework weights):
 - Game Pace: ${weightPercentages.pace}%
 - Bonus Frequency: ${weightPercentages.bonusFrequency}%
 
-IMPORTANT: Use these exact user weight percentages in your analysis instead of the default framework weights. The user has customized their preferences and expects the similarity scoring to reflect these specific weightings.`;
+IMPORTANT: Use these exact user weight percentages in your analysis instead of the default framework weights. Analyze the target game against ALL candidate games and return a JSON array with similarity analysis for each candidate game.`;
       
-      console.log(`🎚️ Using dynamic weights: Theme=${weightPercentages.theme}%, Volatility=${weightPercentages.volatility}%, Studio=${weightPercentages.studio}%`);
+      console.log(`🎚️ Using dynamic weights for ${batchGames.length} games: Theme=${weightPercentages.theme}%, Volatility=${weightPercentages.volatility}%, Studio=${weightPercentages.studio}%`);
     }
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 500,
+      max_tokens: 15000, // Increased for batch response
       system: systemPrompt,
-      messages: [{ role: 'user', content: gameComparison }]
+      messages: [{ role: 'user', content: batchPrompt }]
     });
 
-    const result = JSON.parse(response.content[0].text);
-    const similarity = result.similarity_score / 100; // Convert to 0-1 range
+    const results = JSON.parse(response.content[0].text);
     
-    console.log(`🤖 LLM Similarity: ${game1.title} vs ${game2.title} = ${Math.round(similarity * 100)}%`);
-    console.log(`🔍 Context fit: ${result.contextual_fit || 'N/A'}`);
-    console.log(`🔍 Context boost: ${result.context_boost || 0}%`);
+    console.log(`🤖 Batch LLM Similarity: ${targetGame.title} vs ${batchGames.length} games completed`);
+    console.log(`🔍 Sample results: ${results.slice(0, 3).map(r => `${r.game_id}=${r.similarity_score}%`).join(', ')}`);
     
-    return similarity;
+    // Convert results to expected format
+    return results.map(result => ({
+      gameId: result.game_id,
+      similarity: result.similarity_score / 100, // Convert to 0-1 range
+      analysis: result
+    }));
     
   } catch (error) {
-    console.error('❌ LLM similarity calculation failed:', error.message);
-    // Fallback to algorithmic method
-    return calculateAlgorithmicSimilarity(game1, game2, DEFAULT_WEIGHTS);
+    console.error('❌ Batch LLM similarity calculation failed:', error.message);
+    console.error('Error details:', error);
+    // Fallback to algorithmic method for all games
+    return batchGames.map(game => ({
+      gameId: game.id,
+      similarity: calculateAlgorithmicSimilarity(targetGame, game, userWeights || DEFAULT_WEIGHTS),
+      analysis: null
+    }));
   }
+}
+
+// Legacy single comparison function (kept for backward compatibility)
+async function calculateLLMSimilarity(game1, game2, playerContext = null, userWeights = null) {
+  const batchResults = await calculateBatchLLMSimilarity(game1, [game2], playerContext, userWeights);
+  return batchResults[0]?.similarity || 0;
 }
 
 // Original algorithmic similarity (renamed)
@@ -474,21 +501,27 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
   const recommendations = [];
   
   if (useLLM) {
-    // LLM-based similarity (slower but more nuanced)
-    for (const game of eligibleGames) {
-      const similarity = await calculateLLMSimilarity(targetGame, game, playerContext, contextAdjustedWeights);
-      
-      // Apply context-based score boosts/penalties
-      let contextBonus = 0;
-      if (playerContext) {
-        contextBonus = calculateContextBonus(game, playerContext);
+    // LLM-based batch similarity (much faster and cheaper)
+    console.log(`🚀 Starting batch LLM similarity analysis for ${eligibleGames.length} games`);
+    const batchResults = await calculateBatchLLMSimilarity(targetGame, eligibleGames, playerContext, contextAdjustedWeights);
+    
+    // Process batch results
+    for (const result of batchResults) {
+      const game = eligibleGames.find(g => g.id === result.gameId);
+      if (game) {
+        // Apply context-based score boosts/penalties
+        let contextBonus = 0;
+        if (playerContext) {
+          contextBonus = calculateContextBonus(game, playerContext);
+        }
+        
+        recommendations.push({
+          game,
+          score: Math.min(result.similarity + contextBonus, 1.0),
+          confidence: Math.round(Math.min((result.similarity + contextBonus) * 100, 100)),
+          analysis: result.analysis // Include detailed LLM analysis
+        });
       }
-      
-      recommendations.push({
-        game,
-        score: Math.min(similarity + contextBonus, 1.0),
-        confidence: Math.round(Math.min((similarity + contextBonus) * 100, 100))
-      });
     }
   } else {
     // Algorithmic similarity (faster)
@@ -731,6 +764,7 @@ function clearCache() {
 module.exports = {
   calculateSimilarity: calculateAlgorithmicSimilarity,
   calculateLLMSimilarity,
+  calculateBatchLLMSimilarity,
   calculateAlgorithmicSimilarity,
   getRecommendations,
   generateMatchExplanation,

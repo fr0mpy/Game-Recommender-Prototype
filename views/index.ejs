@@ -474,23 +474,26 @@
         </div>
         
 
-        <!-- Similarity Engine Toggle -->
+        <!-- Similarity Engine Selection -->
         <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-sm font-medium text-blue-900">Similarity Engine:</span>
-              <div class="text-xs text-blue-700 mt-1">
-                <span id="similarity-mode-desc">Mathematical analysis (fast)</span>
-              </div>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="useLLM" name="useLLM" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
+          <div class="mb-3">
+            <span class="text-sm font-medium text-blue-900">Similarity Engine:</span>
           </div>
-          <div class="text-xs text-blue-600 mt-2">
-            <span class="font-medium">Off:</span> Fast algorithmic similarity (user weights apply)<br>
-            <span class="font-medium">On:</span> AI-powered semantic analysis (comprehensive evaluation)
+          <div class="space-y-2">
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="useLLM" value="false" checked class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+              <div class="ml-3">
+                <div class="text-sm font-medium text-gray-900">Mathematical analysis (fast)</div>
+                <div class="text-xs text-gray-500">Fast algorithmic similarity - user weights apply</div>
+              </div>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input type="radio" name="useLLM" value="true" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+              <div class="ml-3">
+                <div class="text-sm font-medium text-gray-900">AI-powered semantic analysis</div>
+                <div class="text-xs text-gray-500">Comprehensive evaluation - batch processing (2-3 seconds)</div>
+              </div>
+            </label>
           </div>
         </div>
       </div>
@@ -881,21 +884,8 @@
     console.log('💾 Saved weights:', weights);
   }
 
-  // Handle similarity engine toggle
-  function initializeSimilarityToggle() {
-    const toggle = document.getElementById('useLLM');
-    const description = document.getElementById('similarity-mode-desc');
-    
-    if (toggle && description) {
-      toggle.addEventListener('change', function() {
-        if (this.checked) {
-          description.textContent = 'AI semantic analysis (slower, more nuanced)';
-        } else {
-          description.textContent = 'Mathematical analysis (fast)';
-        }
-      });
-    }
-  }
+  // Similarity engine selection is now handled by radio buttons
+  // No additional JavaScript needed as radio buttons work natively with forms
 
   function validateGameCount(prompt) {
     if (!prompt) return { valid: true, count: 100 }; // Default to 100
@@ -1401,7 +1391,7 @@
     });
 
     // Initialize similarity engine toggle
-    initializeSimilarityToggle();
+    // Similarity engine now uses radio buttons - no initialization needed
 
     // Detect and send client context
     detectAndSendClientContext();
