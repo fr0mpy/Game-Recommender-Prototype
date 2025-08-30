@@ -160,6 +160,7 @@ IMPORTANT: Use these exact user weight percentages in your analysis instead of t
     return results.map(result => ({
       gameId: result.game_id,
       similarity: result.similarity_score / 100, // Convert to 0-1 range
+      confidence: result.similarity_score, // Keep as percentage for consistency
       analysis: result
     }));
     
@@ -167,11 +168,15 @@ IMPORTANT: Use these exact user weight percentages in your analysis instead of t
     console.error('❌ Batch LLM similarity calculation failed:', error.message);
     console.error('Error details:', error);
     // Fallback to algorithmic method for all games
-    return batchGames.map(game => ({
-      gameId: game.id,
-      similarity: calculateAlgorithmicSimilarity(targetGame, game, userWeights || DEFAULT_WEIGHTS),
-      analysis: null
-    }));
+    return batchGames.map(game => {
+      const similarity = calculateAlgorithmicSimilarity(targetGame, game, userWeights || DEFAULT_WEIGHTS);
+      return {
+        gameId: game.id,
+        similarity: similarity,
+        confidence: Math.round(similarity * 100),
+        analysis: null
+      };
+    });
   }
 }
 
@@ -537,7 +542,8 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
       recommendations.push({
         game,
         score: Math.min(similarity + contextBonus, 1.0),
-        confidence: Math.round(Math.min((similarity + contextBonus) * 100, 100))
+        confidence: Math.round(Math.min((similarity + contextBonus) * 100, 100)),
+        analysis: null // Algorithmic engine has no detailed analysis
       });
     }
   }
