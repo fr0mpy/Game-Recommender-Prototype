@@ -501,16 +501,17 @@ function calculateAlgorithmicSimilarity(game1, game2, weights = DEFAULT_WEIGHTS)
   }
   score += paceScore;
   
-  // Hit Frequency matching (3% weight) - How often wins occur
+  // Hit Frequency matching - Use actual user weight
   let hitFreqScore = 0;
-  if (game1.hitFrequency && game2.hitFrequency) {
+  const hitFreqWeight = weights.hitFrequency || 0;
+  if (game1.hitFrequency && game2.hitFrequency && hitFreqWeight > 0) {
     const freqDiff = Math.abs(game1.hitFrequency - game2.hitFrequency);
     if (freqDiff < 5) {
-      hitFreqScore = 0.03; // Within 5% = full match
-      debugInfo.push(`hitFreq: 0.030 (close ${game1.hitFrequency.toFixed(1)}%)`);
+      hitFreqScore = hitFreqWeight; // Within 5% = full match
+      debugInfo.push(`hitFreq: ${hitFreqWeight.toFixed(3)} (close ${game1.hitFrequency.toFixed(1)}%)`);
     } else if (freqDiff < 15) {
-      hitFreqScore = 0.015; // Within 15% = half match
-      debugInfo.push(`hitFreq: 0.015 (moderate ${game1.hitFrequency.toFixed(1)}% vs ${game2.hitFrequency.toFixed(1)}%)`);
+      hitFreqScore = hitFreqWeight * 0.5; // Within 15% = half match
+      debugInfo.push(`hitFreq: ${(hitFreqWeight * 0.5).toFixed(3)} (moderate ${game1.hitFrequency.toFixed(1)}% vs ${game2.hitFrequency.toFixed(1)}%)`);
     } else {
       debugInfo.push(`hitFreq: 0 (${game1.hitFrequency.toFixed(1)}% vs ${game2.hitFrequency.toFixed(1)}%)`);
     }
@@ -534,48 +535,52 @@ function calculateAlgorithmicSimilarity(game1, game2, weights = DEFAULT_WEIGHTS)
   }
   score += bonusFreqScore;
   
-  // Art Style matching (2% weight) - Visual aesthetics
+  // Art Style matching - Use actual user weight
   let artStyleScore = 0;
-  if (game1.artStyle && game2.artStyle) {
+  const artStyleWeight = weights.artStyle || 0;
+  if (game1.artStyle && game2.artStyle && artStyleWeight > 0) {
     if (game1.artStyle === game2.artStyle) {
-      artStyleScore = 0.02;
-      debugInfo.push(`artStyle: 0.020 (match ${game1.artStyle})`);
+      artStyleScore = artStyleWeight;
+      debugInfo.push(`artStyle: ${artStyleWeight.toFixed(3)} (match ${game1.artStyle})`);
     } else {
       debugInfo.push(`artStyle: 0 (${game1.artStyle} vs ${game2.artStyle})`);
     }
   }
   score += artStyleScore;
   
-  // Audio Vibe matching (2% weight) - Sound design
+  // Audio Vibe matching - Use actual user weight
   let audioScore = 0;
-  if (game1.audioVibe && game2.audioVibe) {
+  const audioWeight = weights.audioVibe || 0;
+  if (game1.audioVibe && game2.audioVibe && audioWeight > 0) {
     if (game1.audioVibe === game2.audioVibe) {
-      audioScore = 0.02;
-      debugInfo.push(`audio: 0.020 (match ${game1.audioVibe})`);
+      audioScore = audioWeight;
+      debugInfo.push(`audio: ${audioWeight.toFixed(3)} (match ${game1.audioVibe})`);
     } else {
       debugInfo.push(`audio: 0 (${game1.audioVibe} vs ${game2.audioVibe})`);
     }
   }
   score += audioScore;
   
-  // Visual Density matching (1% weight) - UI complexity
+  // Visual Density matching - Use actual user weight
   let densityScore = 0;
-  if (game1.visualDensity && game2.visualDensity) {
+  const densityWeight = weights.visualDensity || 0;
+  if (game1.visualDensity && game2.visualDensity && densityWeight > 0) {
     if (game1.visualDensity === game2.visualDensity) {
-      densityScore = 0.01;
-      debugInfo.push(`density: 0.010 (match ${game1.visualDensity})`);
+      densityScore = densityWeight;
+      debugInfo.push(`density: ${densityWeight.toFixed(3)} (match ${game1.visualDensity})`);
     } else {
       debugInfo.push(`density: 0 (${game1.visualDensity} vs ${game2.visualDensity})`);
     }
   }
   score += densityScore;
   
-  // Reel Layout matching (1% weight) - Grid configuration
+  // Reel Layout matching - Use actual user weight
   let reelScore = 0;
-  if (game1.reelLayout && game2.reelLayout) {
+  const reelWeight = weights.reelLayout || 0;
+  if (game1.reelLayout && game2.reelLayout && reelWeight > 0) {
     if (game1.reelLayout === game2.reelLayout) {
-      reelScore = 0.01;
-      debugInfo.push(`reel: 0.010 (match ${game1.reelLayout})`);
+      reelScore = reelWeight;
+      debugInfo.push(`reel: ${reelWeight.toFixed(3)} (match ${game1.reelLayout})`);
     } else {
       debugInfo.push(`reel: 0 (${game1.reelLayout} vs ${game2.reelLayout})`);
     }
