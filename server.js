@@ -80,12 +80,27 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
     console.log(`   🎯 Recommendations: ${recommendations.length}`);
     console.log(`   ⚖️  Weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%`);
 
+    console.log(`\n🤖 CALLING ANTHROPIC API:`);
+    console.log(`   🚀 Model: claude-3-haiku-20240307`);
+    console.log(`   📏 Prompt Length: ${filledPrompt.length} chars`);
+    console.log(`   ⏰ API Call Start: ${new Date().toISOString()}`);
+    
+    const apiCallStart = Date.now();
     const response = await anthropic.messages.create({
       model: "claude-3-haiku-20240307", // Fastest model
       max_tokens: 300, // Reduced for speed - just need 5 short explanations
       temperature: 0.3, // Lower for more consistent/faster responses
       messages: [{ role: "user", content: filledPrompt }]
     });
+    const apiCallEnd = Date.now();
+    
+    console.log(`\n✅ ANTHROPIC API RESPONSE:`);
+    console.log(`   ⏱️  Duration: ${apiCallEnd - apiCallStart}ms`);
+    console.log(`   📊 Input Tokens: ${response.usage?.input_tokens || 'unknown'}`);
+    console.log(`   📤 Output Tokens: ${response.usage?.output_tokens || 'unknown'}`);
+    console.log(`   📝 Response Length: ${response.content[0].text.length} chars`);
+    console.log(`   🔍 Response Preview: "${response.content[0].text.substring(0, 150)}..."`);
+    console.log(`   ⏰ Completed: ${new Date().toISOString()}`);
 
     const explanationText = response.content[0].text;
     
@@ -646,6 +661,10 @@ app.post("/recommend", async (req, res) => {
     console.log('🎮 Session ID:', req.sessionId);
     console.log('📍 Request from IP:', req.ip);
     console.log('🖥️  User-Agent:', req.get('User-Agent'));
+    console.log('🌍 Host:', req.get('host'));
+    console.log('🔧 Node.js Version:', process.version);
+    console.log('📦 Environment:', process.env.NODE_ENV || 'development');
+    console.log('🚀 Deployment Check: This should show recent fixes if deployed correctly');
     
     const { gameId, theme, volatility, studio, mechanics, rtp, maxWin, features, pace, bonusFrequency, recommendationEngine, hitFrequency, artStyle, audioVibe, visualDensity, reelLayout } = req.body;
     

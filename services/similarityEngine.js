@@ -590,11 +590,19 @@ function calculateAlgorithmicSimilarity(game1, game2, weights = DEFAULT_WEIGHTS)
   // Weights should always sum to 1.0 from UI auto-balancing
   const finalScore = Math.min(score, 1.0);
   
-  // Log debug info for first few calculations
-  if (Math.random() < 0.1) { // 10% chance to log
-    console.log(`🔍 Similarity Debug: ${game1.title} vs ${game2.title}`);
-    console.log(`🔍 ${debugInfo.join(', ')}`);
-    console.log(`🔍 Final score: ${finalScore.toFixed(3)} (${Math.round(finalScore * 100)}%)`);
+  // DETAILED LOGGING: Always log first 3 calculations for debugging
+  if (typeof global.debugCalculationCount === 'undefined') {
+    global.debugCalculationCount = 0;
+  }
+  
+  if (global.debugCalculationCount < 3) {
+    global.debugCalculationCount++;
+    console.log(`\n🔍 SIMILARITY DEBUG #${global.debugCalculationCount}: ${game1.title} vs ${game2.title}`);
+    console.log(`🔍 Raw score before cap: ${score.toFixed(4)}`);
+    console.log(`🔍 Components: ${debugInfo.join(', ')}`);
+    console.log(`🔍 Final score: ${finalScore.toFixed(4)} (${Math.round(finalScore * 100)}%)`);
+    console.log(`🔍 Weight validation - Sum: ${Object.values(weights).reduce((a,b) => a+b, 0).toFixed(4)}`);
+    console.log(`🔍 Applied weights: ${JSON.stringify(weights, null, 2)}`);
   }
   
   return finalScore;
@@ -639,13 +647,20 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
   console.log(`   🎚️  Context Weights Applied: ${!!playerContext}`);
   console.log(`   💾 Cache Key: ${cacheKey.substring(0, 50)}...`);
   
-  // Log weight details
+  // COMPREHENSIVE WEIGHT LOGGING
   console.log('\n🎚️  FINAL WEIGHTS FOR SIMILARITY ANALYSIS:');
+  let totalWeight = 0;
   Object.entries(contextAdjustedWeights).forEach(([key, value]) => {
     const percentage = Math.round(value * 100);
     const status = value === 0 ? '🔇' : value === 1 ? '🔥' : '✓';
-    console.log(`   ${status} ${key}: ${value.toFixed(3)} (${percentage}%)`);
+    console.log(`   ${status} ${key}: ${value.toFixed(4)} (${percentage}%)`);
+    totalWeight += value;
   });
+  console.log(`🎚️  WEIGHT VALIDATION: Total = ${totalWeight.toFixed(4)} (should be ~1.0000)`);
+  
+  if (Math.abs(totalWeight - 1.0) > 0.01) {
+    console.log(`⚠️  WARNING: Weight sum ${totalWeight.toFixed(4)} is not close to 1.0 - this may cause scoring issues!`);
+  }
   
   // Calculate similarities (either LLM or algorithmic)
   const recommendations = [];
@@ -710,6 +725,9 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
     console.log(`   📦 Processing ${eligibleGames.length} games individually`);
     console.log(`   🎯 Target: "${targetGame.title}" (${targetGame.theme?.join('/')} themes)`);
     
+    // Reset debug counter for detailed similarity logging
+    global.debugCalculationCount = 0;
+    
     const algoStartTime = Date.now();
     let processedCount = 0;
     
@@ -724,6 +742,24 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
       
       const finalScore = Math.min(similarity + contextBonus, 1.0);
       const finalConfidence = Math.round(Math.min((similarity + contextBonus) * 100, 100));
+      
+      // DETAILED LOGGING for first 3 games
+      if (processedCount < 3) {
+        console.log(`\n🔍 GAME #${processedCount + 1} DETAILED BREAKDOWN:`);
+        console.log(`   🎮 Game: "${game.title}"`);
+        console.log(`   🏢 Studio: "${game.studio}" vs "${targetGame.studio}"`);
+        console.log(`   🎨 Themes: [${game.theme?.join(', ') || 'N/A'}] vs [${targetGame.theme?.join(', ') || 'N/A'}]`);
+        console.log(`   ⚡ Volatility: "${game.volatility}" vs "${targetGame.volatility}"`);
+        console.log(`   📈 Base Similarity: ${similarity.toFixed(4)}`);
+        console.log(`   🎯 Context Bonus: ${contextBonus.toFixed(4)}`);
+        console.log(`   📊 Final Score: ${finalScore.toFixed(4)}`);
+        console.log(`   🎯 Final Confidence: ${finalConfidence}%`);
+        console.log(`   ⚠️  Expected vs Actual: Expected=${Math.round(similarity * 100)}%, Actual=${finalConfidence}%`);
+        
+        if (finalConfidence === 100 && similarity < 0.95) {
+          console.log(`   🚨 POTENTIAL BUG: Low similarity (${similarity.toFixed(4)}) showing as 100%!`);
+        }
+      }
       
       recommendations.push({
         game,
