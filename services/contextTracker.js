@@ -299,37 +299,45 @@ class ContextTracker {
     const month = now.getMonth();
     const year = now.getFullYear();
     const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
-    const dayOfWeek = now.getDay();
+    const dayOfWeek = now.getDay(); // 0=Sunday, 5=Friday
+    
+    // Calculate key payday dates
+    const lastWorkingDay = this.getLastWorkingDay(year, month);
+    const lastFridayOfMonth = this.getLastFridayOfMonth(year, month);
+    const daysSinceLastPayday = this.getDaysSinceLastPayday(now, lastWorkingDay, lastFridayOfMonth);
     
     let phase, intensity, description;
     
-    // End of month (last 5 days)
-    if (day > lastDayOfMonth - 5) {
-      phase = 'end-of-month-tight';
-      intensity = 'high';
-      description = 'End of month - typically tighter budget';
-    }
-    // Beginning of month (first 5 days) - often payday
-    else if (day <= 5) {
+    // Post-payday period (0-7 days after payday)
+    if (daysSinceLastPayday <= 7) {
       phase = 'post-payday';
       intensity = 'high';
-      description = 'Early month - typically post-payday comfort';
+      description = `Post-payday comfort (${daysSinceLastPayday} days since payday)`;
     }
-    // Mid-month comfort zone
-    else if (day >= 10 && day <= 20) {
+    // Mid-cycle comfortable period (8-20 days since payday)
+    else if (daysSinceLastPayday <= 20) {
       phase = 'mid-month-comfortable';
       intensity = 'medium';
-      description = 'Mid-month - generally comfortable spending period';
+      description = `Mid-cycle period (${daysSinceLastPayday} days since payday)`;
     }
-    // Pre-payday period
+    // Pre-payday tightening (21+ days since payday)
     else {
       phase = 'pre-payday';
-      intensity = 'medium';
-      description = 'Pre-payday period - moderate budget consciousness';
+      intensity = 'medium-high';
+      description = `Pre-payday period (${daysSinceLastPayday} days since payday)`;
     }
     
-    // Friday is common payday
-    const isLikelyPayday = dayOfWeek === 5 && (day >= 1 && day <= 7 || day >= 15 && day <= 21);
+    // Check if today or yesterday was payday
+    const isToday = day === lastWorkingDay || day === lastFridayOfMonth;
+    const wasYesterday = (day - 1) === lastWorkingDay || (day - 1) === lastFridayOfMonth;
+    const isLikelyPayday = isToday || wasYesterday;
+    
+    // Override phase if it's payday or day after
+    if (isLikelyPayday) {
+      phase = 'post-payday';
+      intensity = 'high';
+      description = wasYesterday ? 'Day after payday - peak spending comfort' : 'Payday - maximum spending comfort';
+    }
     
     return {
       phase,
@@ -338,8 +346,75 @@ class ContextTracker {
       dayOfMonth: day,
       totalDaysInMonth: lastDayOfMonth,
       isLikelyPayday,
-      budgetPressure: phase === 'end-of-month-tight' ? 'high' : phase === 'pre-payday' ? 'medium' : 'low'
+      daysSincePayday: daysSinceLastPayday,
+      lastPaydayDate: Math.max(lastWorkingDay, lastFridayOfMonth),
+      budgetPressure: phase === 'pre-payday' ? 'medium-high' : phase === 'post-payday' ? 'low' : 'medium'
     };
+  }
+
+  // Get last working day of month
+  getLastWorkingDay(year, month) {
+    const lastDay = new Date(year, month + 1, 0);
+    let day = lastDay.getDate();
+    
+    // Walk backwards to find last weekday
+    while (day > 0) {
+      const testDate = new Date(year, month, day);
+      const dayOfWeek = testDate.getDay();
+      // Monday=1, Friday=5 (skip Saturday=6, Sunday=0)
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        return day;
+      }
+      day--;
+    }
+    return day;
+  }
+
+  // Get last Friday of month
+  getLastFridayOfMonth(year, month) {
+    const lastDay = new Date(year, month + 1, 0);
+    let day = lastDay.getDate();
+    
+    // Walk backwards to find last Friday
+    while (day > 0) {
+      const testDate = new Date(year, month, day);
+      if (testDate.getDay() === 5) { // Friday
+        return day;
+      }
+      day--;
+    }
+    return day;
+  }
+
+  // Calculate days since most recent payday (last working day or last Friday)
+  getDaysSinceLastPayday(now, lastWorkingDay, lastFridayOfMonth) {
+    const currentDay = now.getDate();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Most recent payday is the later of last working day or last Friday
+    const mostRecentPayday = Math.max(lastWorkingDay, lastFridayOfMonth);
+    
+    // If we're past the payday this month, calculate days since
+    if (currentDay >= mostRecentPayday) {
+      return currentDay - mostRecentPayday;
+    }
+    
+    // If we haven't reached this month's payday yet, calculate from previous month
+    const previousMonth = currentMonth - 1;
+    const previousYear = previousMonth < 0 ? currentYear - 1 : currentYear;
+    const adjustedMonth = previousMonth < 0 ? 11 : previousMonth;
+    
+    const prevLastWorkingDay = this.getLastWorkingDay(previousYear, adjustedMonth);
+    const prevLastFridayOfMonth = this.getLastFridayOfMonth(previousYear, adjustedMonth);
+    const prevPayday = Math.max(prevLastWorkingDay, prevLastFridayOfMonth);
+    
+    // Days from previous payday to end of previous month
+    const prevMonthLastDay = new Date(previousYear, adjustedMonth + 1, 0).getDate();
+    const daysFromPrevPayday = prevMonthLastDay - prevPayday;
+    
+    // Plus days into current month
+    return daysFromPrevPayday + currentDay;
   }
 
   // Calculate context confidence based on available data
