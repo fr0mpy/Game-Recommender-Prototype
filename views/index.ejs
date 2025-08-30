@@ -214,8 +214,7 @@
           <option value="">Choose a game...</option>
           <% games.forEach(game => { %>
           <option value="<%= game.id %>">
-            <%- game.title %> - <%- game.studio %> (<%- game.volatility %>
-            volatility, <%- game.rtp %>% RTP)
+            <%- game.title %>
           </option>
           <% }) %>
         </select>
@@ -1402,7 +1401,7 @@
       customGames.forEach(game => {
         const option = document.createElement('option');
         option.value = game.id;
-        option.textContent = `${game.title} - ${game.studio} (${game.volatility} volatility, ${game.rtp}% RTP)`;
+        option.textContent = game.title;
         gameSelect.appendChild(option);
       });
       
@@ -1417,7 +1416,7 @@
       defaultGames.forEach((game) => {
         const option = document.createElement('option');
         option.value = game.id;
-        option.textContent = `${game.title} - ${game.studio} (${game.volatility} volatility, ${game.rtp}% RTP)`;
+        option.textContent = game.title;
         gameSelect.appendChild(option);
       });
     }

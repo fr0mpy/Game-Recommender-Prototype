@@ -353,6 +353,7 @@ Each game must follow this exact structure:
 2. **Schema Strict**: Never add fields. Never skip required fields. Never modify field types.
 3. **Logical Consistency**: All mathematical parameters must make sense together.
 4. **Diversity Mandate**: Avoid clustering. Spread themes, studios, and features evenly.
+5. **TITLE-THEME COHERENCE**: Game titles MUST match their themes and descriptions exactly. If title is "Enchanted Forest", theme must be nature/forest-related, NOT Ancient Egypt. If title suggests pirates, theme must include pirates. Title, theme, and description must tell the same story.
 
 ---
 
