@@ -4,8 +4,8 @@ const path = require('path');
 describe('Match Explanation System', () => {
   
   describe('Prompt File Configuration', () => {
-    test('recommendation-explanation-prompt.md exists and is readable', () => {
-      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation-prompt.md');
+    test('recommendation-explanation.md exists and is readable', () => {
+      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation.md');
       expect(fs.existsSync(promptPath)).toBe(true);
       
       const content = fs.readFileSync(promptPath, 'utf8');
@@ -13,8 +13,8 @@ describe('Match Explanation System', () => {
       expect(content.length).toBeGreaterThan(100);
     });
 
-    test('recommendation-explanation-prompt.md contains required sections', () => {
-      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation-prompt.md');
+    test('recommendation-explanation.md contains required sections', () => {
+      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation.md');
       const content = fs.readFileSync(promptPath, 'utf8');
       
       // Check for key sections
@@ -57,14 +57,14 @@ describe('Match Explanation System', () => {
       });
     });
 
-    test('explanation generation uses recommendation-explanation-prompt.md', () => {
+    test('explanation generation uses recommendation-explanation.md', () => {
       // Check that server.js loads the correct prompt
       const serverPath = path.join(__dirname, '..', 'server.js');
       const serverContent = fs.readFileSync(serverPath, 'utf8');
       
-      // Verify the prompt loading code uses recommendation-explanation-prompt.md
-      expect(serverContent).toContain("loadPrompt('recommendation-explanation-prompt.md')");
-      expect(serverContent).not.toContain("loadPrompt('match-explanation-prompt.md')");
+      // Verify the prompt loading code uses recommendation-explanation.md
+      expect(serverContent).toContain("loadPrompt('recommendation-explanation.md')");
+      expect(serverContent).not.toContain("loadPrompt('explanation.md')");
     });
 
     test('explanations should be specific to each game match', () => {

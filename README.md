@@ -10,13 +10,14 @@
 
 - **🎰 Dual AI Engines**: Mathematical similarity analysis (250ms) + LLM semantic understanding (8-12s)
 - **🧠 Player Context Intelligence**: Work patterns, financial cycles, attention spans, and EU sports seasons
-- **⚡ Hybrid Game Generation**: Claude Sonnet 4 premium quality + Claude Haiku 3 ultra-fast batching
+- **⚡ Dual Generation Modes**: Claude Sonnet 4 (premium quality) OR Claude Haiku 3 (ultra-fast batching)
 - **📊 Cost-Optimized Performance**: $496K annually for 1,000 daily users with real-time recommendations
 
 ## 📖 Contents
 
 ### **🎯 Getting Started**
-- [Product Overview](#-product-overview) - AI architecture and innovation
+- [Platform Overview](#-platform-overview) - AI architecture and innovation  
+- [Product Overview](#-product-overview) - System capabilities and innovation
 - [Key Features](#-key-features) - Core capabilities  
 - [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
 
@@ -58,11 +59,11 @@
 
 **Slot Forge** represents a paradigm shift in casino game recommendation technology, combining advanced LLM-powered content generation with sophisticated behavioral psychology modeling. Built as an R&D prototype for Bally's, this system demonstrates how modern AI can revolutionize player experience personalization.
 
-### 🎯 Core Innovation: Hybrid AI Architecture
+### 🎯 Core Innovation: Dual-Mode AI Architecture
 
-Our system employs a **revolutionary hybrid approach** combining speed, cost-efficiency, and quality:
+Our system employs a **dual-mode approach** optimizing for speed, cost-efficiency, and quality:
 
-#### 1. **Hybrid Generation Engine** (Claude 3 Haiku + Intelligent Batching)
+#### 1. **Intelligent Generation Modes** (Claude Sonnet 4 OR Claude Haiku 3 with Batching)
 - **Innovation**: Token-optimized parallel processing with 93% faster generation
 - **Performance**: 8-12 seconds vs 90+ seconds traditional approaches
 - **Architecture**: Dynamic batching (single/dual/quad) based on complexity
@@ -91,7 +92,7 @@ Our system employs a **revolutionary hybrid approach** combining speed, cost-eff
 
 ### 🔬 Advanced Algorithmic Design
 
-#### **Hybrid Similarity Architecture**
+#### **Dual Similarity Engine Architecture**
 Our recommendation system offers **intelligent performance optimization** with user choice:
 
 ##### **1. Algorithmic Similarity Engine (Lightning Fast)**
@@ -641,13 +642,28 @@ User Interface (EJS + Tailwind)
 ## 📊 Performance Metrics
 
 ### Real-World Performance (Production on Vercel)
-- **Game Generation**: ~0.9s per game (100 games in 91s with parallel processing)
-- **Algorithmic Recommendations**: <250ms for 5 recommendations with AI explanations  
-- **LLM Similarity Recommendations**: ~8-12s for 5 recommendations (sequential LLM analysis)
-- **Home Page Load**: 1.65s (includes context analysis and Redis check)
-- **Data Export**: 200-500ms for 100-game datasets
-- **Parallel Processing**: 5 concurrent Claude API calls for large generations
-- **Token Efficiency**: ~15,000 tokens for 100-game generation, ~2,500 tokens per LLM similarity set
+
+#### **Generation Performance**
+- **Claude Haiku Batched**: 6-12 seconds for 100 games (93% faster than traditional)
+- **Claude Sonnet Traditional**: 91 seconds for 100 games (premium quality)  
+- **Speed Context**: Faster than typical video streaming buffer (2-5s), comparable to large file download
+
+#### **Recommendation Performance**
+- **Algorithmic Engine**: <250ms (faster than typical web page load)
+- **LLM Semantic Engine**: 8-12s for 5 recommendations (comparable to ChatGPT response)
+- **Smart Explanations**: <50ms (near-instantaneous)
+
+#### **System Performance** 
+- **Home Page Load**: 1.65s (competitive with major e-commerce sites)
+- **Data Export**: 200-500ms for 100-game datasets (faster than Excel export)
+- **Redis Storage**: <100ms read/write (faster than database query)
+
+### Network Performance Context
+*Performance relative to common internet experiences:*
+- **Instant** (<100ms): Like clicking a button
+- **Fast** (250ms-1s): Like loading a web page  
+- **Responsive** (1-3s): Like streaming video startup
+- **Processing** (8-12s): Like AI chat response or large download
 
 ### Scalability
 - **Concurrent Users**: Serverless architecture auto-scales with demand
@@ -699,7 +715,7 @@ User Interface (EJS + Tailwind)
 
 **Current Architecture (Complete User Journey):**
 - **Budget Mode** (Algorithmic + Smart Templates): $1.31 per session
-- **Hybrid Mode** (Algorithmic + LLM Explanations): $1.31 per session  
+- **Algorithmic Mode** (Fast + Smart Explanations): $1.31 per session  
 - **Premium Mode** (LLM Similarity + LLM Explanations): $1.56 per session
 
 ## 🧪 Bally's R&D Assessment Testing
@@ -846,7 +862,7 @@ test('custom game generation maintains data integrity', () => {
 
 ### Operational Cost Summary
 
-**Cost per Session**: $1.31 (Budget/Hybrid) to $1.56 (Premium)
+**Cost per Session**: $1.31 (Budget/Algorithmic) to $1.56 (Premium)
 
 **Scale Analysis (1,000 daily users)**:
 - Mixed usage: ~$1,360/day (~$496K annually)
@@ -905,22 +921,34 @@ test('custom game generation maintains data integrity', () => {
 
 ### **[Comprehensive Cost Analysis](docs/architecture/cost-analysis-framework.md)**
 
-**Session Costs**: $1.31 (Budget/Hybrid) to $1.56 (Premium)
-**Scale**: ~$1,360/day for 1,000 mixed users
-**Optimization**: 60% cost reduction potential via batching and smart templates
+#### **Accurate Production Costs**
+- **Algorithmic Mode**: $1.31 per complete session (game generation + recommendations + explanations)
+- **Premium LLM Mode**: $1.56 per complete session  
+- **Cost Context**: Less than a coffee ($2-5), competitive with mobile app in-purchases
+
+#### **Enterprise Scale Analysis**  
+- **1,000 Daily Users**: ~$1,360/day (~$496K annually)
+- **Infrastructure**: <$25/month (Vercel + Redis)
+- **Cost per User**: $1.36/day (less than Netflix subscription: $15/month)
+
+#### **Token Economy**
+- **Game Generation**: ~31,500 tokens per 100 games (Claude Sonnet 4)
+- **Fast Generation**: ~8,000 tokens per 100 games (Claude Haiku 3)  
+- **Recommendations**: ~2,500 tokens per similarity analysis
+- **Smart Templates**: $0 cost for algorithmic explanations
 
 ## 📊 Performance Testing
 
 ### **[Performance Testing Framework](docs/architecture/performance-testing-framework.md)**
 
-**Current Hybrid Architecture Benchmarks**:
+**Current Dual-Mode Architecture Benchmarks**:
 
-#### **Generation Performance (Hybrid System)**
+#### **Generation Performance (Batched Haiku System)**
 ```
 Traditional Claude 4 Sonnet: 91 seconds per 100 games
-Hybrid Single Batch:         12 seconds per 100 games (87% faster)
-Hybrid Dual Batch:           8 seconds per 100 games  (91% faster)  
-Hybrid Quad Batch:           6 seconds per 100 games  (93% faster)
+Haiku Single Batch:         12 seconds per 100 games (87% faster)
+Haiku Dual Batch:           8 seconds per 100 games  (91% faster)  
+Haiku Quad Batch:           6 seconds per 100 games  (93% faster)
 
 Cost Comparison:
 Claude 4 Sonnet: $12.50 per 100 games
@@ -933,7 +961,7 @@ Quality Retention: 85% (production-ready for structured data)
 - Algorithmic recommendations: <10ms (lightning fast)
 - LLM-enhanced recommendations: 2.5s (with progressive loading)
 - Smart explanations: <50ms (zero API cost)
-- Hybrid approach: Instant display + optional AI enhancement
+- Dual-mode approach: Instant display + optional AI enhancement
 - LLM explanations: 2-3s
 
 **Testing**: Load testing, stress testing, CI/CD integration, automated monitoring

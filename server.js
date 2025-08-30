@@ -10,7 +10,7 @@ const {
   generateMockGames,
   generateGamesHybrid,
 } = require("./services/gameGenerator");
-const { getRecommendations, generateMatchExplanation } = require("./services/similarityEngine");
+const { getRecommendations, generateMatchExplanation } = require("./services/recommendationEngine");
 
 // Load prompt from file
 function loadPrompt(filename) {
@@ -31,7 +31,7 @@ function loadPrompt(filename) {
   }
 }
 
-// Generate LLM explanations using existing recommendation-explanation-prompt.md
+// Generate LLM explanations using organized prompt structure
 async function generateLLMExplanations(selectedGame, recommendations, weights, playerContext) {
   const Anthropic = require('@anthropic-ai/sdk');
   
@@ -204,46 +204,11 @@ async function generateAllRecommendationExplanations(selectedGame, recommendatio
     const financialContext = playTimeContext.financialCycle || {};
     
     // Load prompt template from file
-    let promptTemplate = loadPrompt('recommendation-explanation-prompt.md');
+    let promptTemplate = loadPrompt('recommendation-explanation.md');
     
     if (!promptTemplate) {
-      // Fallback to embedded prompt if file loading fails
-      promptTemplate = `Generate concise recommendation explanations for slot games. Return ONLY a JSON array of explanations.
-
-PLAYER CONTEXT:
-- Selected game: "{{selectedGameTitle}}" ({{selectedGameThemes}}, {{selectedGameVolatility}} volatility)
-- Current time: {{timeContext}}
-- Player weights: Theme {{themeWeight}}%, Volatility {{volatilityWeight}}%, Studio {{studioWeight}}%, Mechanics {{mechanicsWeight}}%
-- Device: {{deviceType}}
-{{sportsActive}}
-
-PLAYER FOCUS & ATTENTION CONTEXT:
-- Focus level: {{focusLevel}} ({{focusReasoning}})
-- Attention span: {{attentionSpan}}
-- Preferred pace: {{preferredPace}} games
-- Preferred volatility: {{preferredVolatility}}
-- Session type: {{sessionDescription}}
-
-FINANCIAL CYCLE CONTEXT:
-- Budget phase: {{budgetDescription}}
-- Budget pressure: {{budgetPressure}}
-- Day {{dayOfMonth}} of {{totalDaysInMonth}} in month
-
-RECOMMENDED GAMES:
-{{gamesList}}
-
-Return JSON array with explanations (1-2 sentences each, natural language, no percentages):
-["explanation for game 1", "explanation for game 2", ...]
-
-IMPORTANT: Tailor recommendations to the player's current focus level, attention span, preferred pace/volatility, and financial cycle. For example:
-- Low focus/distracted: Recommend engaging, easy-to-follow games
-- Short attention span: Emphasize quick bonus features and fast-paced action
-- Tired/late night: Suggest relaxing, low-stress games
-- High budget pressure: Focus on entertainment value and lower volatility
-- Post-payday comfort: Can suggest higher volatility exciting games
-- Lunch break: Emphasize quick, immediately gratifying features
-
-Focus on: contextually appropriate gameplay style, matching attention/focus needs, financial sensitivity, shared themes, volatility alignment.`;
+      // Fallback to basic prompt if file loading fails
+      promptTemplate = 'Generate concise recommendation explanations for slot games based on player context.';
     }
 
     // Replace template variables with actual values
@@ -463,8 +428,8 @@ app.post("/generate", async (req, res) => {
     const customPrompt = req.body.customPrompt;
     console.log('🔍 SERVER: Custom prompt:', customPrompt);
     
-    // Determine generation mode from radio button selection
-    const generationMode = req.body.generationMode || 'hybrid'; // Default to hybrid for best performance
+    // Determine generation mode from radio button selection - FORCE HYBRID (HAIKU 3) AS DEFAULT
+    const generationMode = req.body.generationMode || 'hybrid'; // DEFAULT: Claude 3 Haiku (Fast Mode)
     console.log('🔍 SERVER: Generation mode selected:', generationMode);
     
     let games;
@@ -1063,7 +1028,7 @@ app.get("/export/json", async (req, res) => {
     }
 
     res.setHeader("Content-Type", "application/json");
-    res.setHeader("Content-Disposition", 'attachment; filename="games.json"');
+    res.setHeader("Content-Disposition", 'attachment; filename="default-games.json"');
     res.json(games);
   } catch (error) {
     renderError(res, error);

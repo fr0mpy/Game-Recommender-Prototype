@@ -26,7 +26,7 @@
 
 - **EJS Templates** - Server-rendered HTML pages
 - **Form-Based Interactions** - Standard HTML forms, minimal client JS
-- **File-Based Storage** - `games.json`, `user-settings.json`
+- **File-Based Storage** - `default-games.json`, `recommendation-weights.json`
 - **In-Memory Caching** - Similarity calculations cached in RAM
 
 ### Deployment Ready

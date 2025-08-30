@@ -36,24 +36,6 @@ const SPORTS_SEASONS = {
   'serie-a': { months: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5], peak: [12, 1, 2, 3, 4], themes: ['Italian Football', 'Tactical', 'Style'] }
 };
 
-// Load prompt from file
-function loadPrompt(filename) {
-  try {
-    const promptPath = path.join(__dirname, '..', 'prompts', filename);
-    const content = fs.readFileSync(promptPath, 'utf8');
-    
-    // Extract the context tracker implementation template section
-    const templateStart = content.indexOf('# Context Tracker Implementation Template');
-    if (templateStart !== -1) {
-      return content.substring(templateStart).replace('# Context Tracker Implementation Template\n\n', '');
-    }
-    
-    return content;
-  } catch (error) {
-    console.error(`Failed to load prompt from ${filename}:`, error.message);
-    return null;
-  }
-}
 
 class ContextTracker {
   constructor() {
@@ -583,7 +565,7 @@ class ContextTracker {
       };
 
       // Load prompt template from file
-      let promptTemplate = loadPrompt('player-context-analysis-prompt.md');
+      let promptTemplate = loadPrompt('context-analyzer.md');
       
       if (!promptTemplate) {
         // Fallback to embedded prompt if file loading fails
@@ -636,9 +618,6 @@ Provide a 1-2 sentence summary of what this context means for game recommendatio
   }
 
   generateBasicContextSummary(playerContext) {
-    const temporal = playerContext.temporal;
-    const confidence = playerContext.confidence;
-    
     // Generate dynamic, varied responses based on multiple context factors
     const contextFactors = this.analyzeContextFactors(playerContext);
     

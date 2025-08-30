@@ -15,7 +15,7 @@ slot-forge/
 │
 ├── data/                              # Local fallback storage
 │   ├── games.json                     # Default games dataset for fallback
-│   └── user-settings.json             # Local user weight preferences
+│   └── recommendation-weights.json             # Local user weight preferences
 │
 ├── utils/                             # Core utilities
 │   └── storage.js                     # Redis storage + file I/O operations (270+ lines)
@@ -39,7 +39,7 @@ slot-forge/
 │   └── test.html                      # Development testing page
 │
 ├── scripts/                           # Data generation utilities
-│   ├── generateDefaultGames.js        # Create default game dataset
+│   ├── generateGames.js               # Create default game dataset
 │   ├── create-default-games.js        # Alternative generation script
 │   ├── create-premium-games.js        # Premium game variants
 │   └── createDiverseGames.js          # Diverse dataset creation
@@ -96,7 +96,7 @@ slot-forge/
 - Schema matches Game interface specification
 - Persistent file for serverless compatibility
 
-**`data/user-settings.json`**
+**`data/recommendation-weights.json`**
 
 - User preference weights for recommendations
 - Default: `{ theme: 0.4, volatility: 0.3, studio: 0.2, mechanics: 0.1 }`

@@ -31,9 +31,9 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
 
   try {
     // Load the existing recommendation explanation prompt
-    const basePrompt = loadPrompt('recommendation-explanation-prompt.md');
+    const basePrompt = loadPrompt('recommendation-explanation.md');
     if (!basePrompt) {
-      throw new Error('Could not load recommendation-explanation-prompt.md');
+      throw new Error('Could not load recommendation-explanation.md');
     }
 
     // Build the games list for the prompt
@@ -184,7 +184,7 @@ describe('LLM Explanation Generation', () => {
   });
 
   test('should load explanation prompt successfully', () => {
-    const prompt = loadPrompt('recommendation-explanation-prompt.md');
+    const prompt = loadPrompt('recommendation-explanation.md');
     expect(prompt).toBeTruthy();
     expect(typeof prompt).toBe('string');
     expect(prompt.length).toBeGreaterThan(0);

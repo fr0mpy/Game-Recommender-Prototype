@@ -34,10 +34,10 @@ describe('Bally\'s R&D Assessment - Core Requirements Validation', () => {
   beforeAll(async () => {
     // Load the actual games from your system
     try {
-      const gamesPath = path.join(__dirname, '../data/games.json');
+      const gamesPath = path.join(__dirname, '../data/default-games.json');
       if (fs.existsSync(gamesPath)) {
         games = JSON.parse(fs.readFileSync(gamesPath, 'utf8'));
-        console.log(`✅ Loaded ${games.length} games from games.json`);
+        console.log(`✅ Loaded ${games.length} games from default-games.json`);
       } else {
         throw new Error('Games file not found');
       }
@@ -166,7 +166,7 @@ describe('Bally\'s R&D Assessment - Core Requirements Validation', () => {
     const coreFiles = [
       'server.js',
       'package.json',
-      'data/games.json'
+      'data/default-games.json'
     ];
     
     coreFiles.forEach(file => {
@@ -218,7 +218,7 @@ describe('Key User Flows - End-to-End Validation', () => {
   beforeAll(() => {
     // Load games for flow testing
     try {
-      const gamesPath = path.join(__dirname, '../data/games.json');
+      const gamesPath = path.join(__dirname, '../data/default-games.json');
       games = JSON.parse(fs.readFileSync(gamesPath, 'utf8'));
     } catch (error) {
       games = Array.from({length: 100}, (_, i) => ({

@@ -64,7 +64,7 @@ describe('LLM Explanation System', () => {
     });
 
     test('prompt template file exists and is readable', () => {
-      const promptPath = path.join(__dirname, '../prompts/recommendation-explanation-prompt.md');
+      const promptPath = path.join(__dirname, '../prompts/recommendation-explanation.md');
       expect(fs.existsSync(promptPath)).toBe(true);
       
       const promptContent = fs.readFileSync(promptPath, 'utf8');

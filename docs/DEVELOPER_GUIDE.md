@@ -81,7 +81,7 @@ slot-forge/
 │
 ├── data/                              # 📁 Local fallback storage (default games)
 │   ├── games.json                     # Default game dataset for fallback
-│   └── user-settings.json             # Local user preference weights
+│   └── recommendation-weights.json             # Local user preference weights
 │
 ├── utils/                             # 📁 Core utilities
 │   └── storage.js                     # 🔴 Redis storage + file I/O (270+ lines)
@@ -105,7 +105,7 @@ slot-forge/
 │   └── test.html                      # Development testing page
 │
 ├── scripts/                           # 📁 Data generation utilities
-│   ├── generateDefaultGames.js        # 🟢 Create 100-game dataset
+│   ├── generateGames.js               # 🟢 Create 100-game dataset
 │   ├── create-default-games.js        # Alternative generation script
 │   ├── create-premium-games.js        # Premium game variants
 │   └── createDiverseGames.js          # Diverse dataset creation
@@ -238,7 +238,7 @@ interface UserSettings {
 
 #### File-Based Storage (Fallback)
 - **Default Games**: `data/games.json` - Default game dataset for fallbacks
-- **Settings**: `data/user-settings.json` - User preference weights
+- **Settings**: `data/recommendation-weights.json` - User preference weights
 - **Format**: Pretty-printed JSON with 2-space indentation
 - **Serverless Handling**: Read-only compatibility, graceful degradation
 
@@ -369,7 +369,7 @@ cp .env.example .env
 # PORT=3001
 
 # 4. Generate initial dataset (optional - for local fallback)
-node scripts/generateDefaultGames.js
+node scripts/generateGames.js
 
 # 5. Start development server
 npm run dev
@@ -380,7 +380,7 @@ npm run dev
 ```bash
 npm run dev          # Development with nodemon (hot reload)
 npm start           # Production mode
-node scripts/generateDefaultGames.js  # Create 100-game dataset
+node scripts/generateGames.js  # Create 100-game dataset
 ```
 
 ### Build and Deployment Process
@@ -809,7 +809,7 @@ Confidence Scoring → Context Enhancement → Result Formatting
 ```bash
 npm run dev           # Start with hot reload
 npm start            # Production mode
-node scripts/generateDefaultGames.js  # Create dataset
+node scripts/generateGames.js  # Create dataset
 ```
 
 ### Testing (Manual)

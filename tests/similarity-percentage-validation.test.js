@@ -6,7 +6,7 @@
  * not showing 100% for everything due to hardcoded weights bug.
  */
 
-const { calculateAlgorithmicSimilarity } = require('../services/similarityEngine');
+const { calculateAlgorithmicSimilarity } = require('../services/recommendationEngine');
 const fs = require('fs');
 const path = require('path');
 
@@ -15,7 +15,7 @@ describe('Similarity Percentage Validation', () => {
   
   beforeAll(() => {
     // Load test games
-    const gamesPath = path.join(__dirname, '..', 'data', 'games.json');
+    const gamesPath = path.join(__dirname, '..', 'data', 'default-games.json');
     games = JSON.parse(fs.readFileSync(gamesPath, 'utf8'));
     expect(games.length).toBeGreaterThan(10);
   });

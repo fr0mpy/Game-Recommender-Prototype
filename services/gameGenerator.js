@@ -282,7 +282,7 @@ OUTPUT ONLY THE JSON ARRAY - NO OTHER TEXT:`;
       } catch (error) {
         console.error(`❌ Error in chunk ${chunkIndex + 1}:`, error.message);
         
-        // Generate fallback games from default games.json
+        // Generate fallback games from default default-games.json
         const { loadGames } = require('../utils/storage');
         const defaultGames = loadGames(); // Load default games
         const fallbackGames = [];
@@ -719,7 +719,7 @@ function generateMockGames() {
     }
   ];
   
-  // DO NOT SAVE - Mock games should not overwrite main games.json
+  // DO NOT SAVE - Mock games should not overwrite main default-games.json
   console.log(`Generated ${mockGames.length} mock games for testing`);
   return mockGames;
 }

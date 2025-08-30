@@ -1,0 +1,16 @@
+{
+  "theme": 0,
+  "volatility": 0,
+  "studio": 1,
+  "mechanics": 0,
+  "rtp": 0.04,
+  "maxWin": 0.04,
+  "features": 0.04,
+  "pace": 0.03,
+  "bonusFrequency": 0.02,
+  "hitFrequency": 0.02,
+  "artStyle": 0.02,
+  "audioVibe": 0.01,
+  "visualDensity": 0.005,
+  "reelLayout": 0.005
+}

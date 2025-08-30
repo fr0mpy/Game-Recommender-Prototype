@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const GAMES_FILE = path.join(__dirname, '..', 'data', 'games.json');
-const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'user-settings.json');
+const GAMES_FILE = path.join(__dirname, '..', 'data', 'default-games.json');
+const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'recommendation-weights.json');
 
 // Vercel KV for serverless-compatible session storage
 let redis = null;
@@ -67,7 +67,7 @@ function saveGames(games) {
     // Save to games file
     fs.writeFileSync(GAMES_FILE, JSON.stringify(games, null, 2));
     
-    console.log(`✅ Saved ${games.length} games to games.json`);
+    console.log(`✅ Saved ${games.length} games to default-games.json`);
   } catch (error) {
     console.error('Failed to save games (will use memory storage):', error);
     // Don't throw error in serverless - just log and continue
@@ -91,11 +91,11 @@ async function loadGames(sessionId = null) {
       }
     }
 
-    // 2. Fall back to default games.json
+    // 2. Fall back to default default-games.json
     if (fs.existsSync(GAMES_FILE)) {
       const data = fs.readFileSync(GAMES_FILE, 'utf8');
       const games = JSON.parse(data);
-      console.log(`✅ Loaded ${games.length} default games from games.json`);
+      console.log(`✅ Loaded ${games.length} default games from default-games.json`);
       return games;
     }
 

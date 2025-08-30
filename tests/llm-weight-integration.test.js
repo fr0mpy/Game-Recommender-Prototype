@@ -247,8 +247,8 @@ describe('LLM Weight Integration Tests', () => {
 
   describe('LLM Prompt Weight Injection', () => {
     
-    test('recommendation-explanation-prompt.md contains weight placeholders', () => {
-      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation-prompt.md');
+    test('recommendation-explanation.md contains weight placeholders', () => {
+      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation.md');
       const content = fs.readFileSync(promptPath, 'utf8');
       
       // Check for weight placeholders
@@ -848,7 +848,7 @@ describe('LLM Weight Integration Tests', () => {
   describe('Prompt Template Weight Integration', () => {
     
     test('prompt template includes weight context in instructions', () => {
-      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation-prompt.md');
+      const promptPath = path.join(__dirname, '..', 'prompts', 'recommendation-explanation.md');
       const content = fs.readFileSync(promptPath, 'utf8');
       
       // Should have instructions about using weights
