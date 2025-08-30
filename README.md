@@ -12,29 +12,29 @@
 - [Quick Start](#-experience-the-ai-revolution) - Get running in 2 minutes
 
 ### **🧠 AI Intelligence**
-- [AI Game Generation](#-ai-game-generation) - Create 100 custom slot games with prompts
-- [Dual Similarity Engines](#️-dual-similarity-engines) - LLM vs Algorithmic with dynamic user weights
 - [LLM Similarity Analysis](#-llm-similarity-analysis) - BMad Master Similarity Engine with Claude Sonnet 4
-- [Context Integration](#-player-context-integration) - Full player psychology in LLM analysis
-- [Bally Sports X-Sell](#-bally-sports-x-sell-intelligence) - Auto-detect sports betting opportunities
-- [Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
-- [Financial Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
+- [Player Context Integration](#-player-context-integration) - Full player psychology in LLM analysis
+- [Deep Context Analysis](#-deep-context-analysis) - Understanding player context when gaming
+- [Financial Cycle Intelligence](#-financial-cycle-intelligence) - Budget cycle psychology
 - [Example Prompts](#-example-prompts) - Generation examples
 
 ### **⚙️ Technical Reference**
 - [API Reference](#-api-reference) - Endpoints and performance
 - [Game Data Model](#-game-data-model) - Schema details
-- [System Architecture](#️-system-architecture) - Technical design
+- [System Architecture](#-system-architecture) - Technical design
 - [Performance Metrics](#-performance-metrics) - Real-world benchmarks
 
 ### **💼 Business & Operations**
-- [Business Impact](#-business-impact) - ROI and costs
 - [Quality Assurance](#-quality-assurance) - Validation and robustness testing
-- [EU Design](#-eu-focused-design) - European market features
+- [Business Impact](#-business-impact) - ROI and updated costs
+- [EU-Focused Design](#-eu-focused-design) - European market features
 
-### **🛠️ Development**
+### **🛠️ Development & Architecture**
 - [Deployment](#-deployment) - Production setup
 - [Developer Resources](#-developer-resources) - Documentation
+- [Architecture Documentation](#-architecture-documentation) - Dual explanation system architecture
+- [Cost Analysis Framework](#-cost-analysis-framework) - Comprehensive cost monitoring
+- [Performance Testing](#-performance-testing) - Testing frameworks and benchmarks
 - [Troubleshooting](#-troubleshooting) - Common issues
 
 ## 🧠 Product Overview
@@ -64,11 +64,13 @@ Our system employs **two specialized AI models** working in concert:
 - **Semantic Understanding**: Recognizes thematic relationships (Dragons ≈ Fantasy ≈ Adventure ≈ Mythology)
 - **Output**: Contextual similarity scores with reasoning and cross-appeal probability analysis
 
-#### 4. **Recommendation Explainer** (Claude Haiku 3)
-- **Purpose**: Generates human-readable explanations for similarity matches
-- **Personalization**: Adapts language to current player context and situation
-- **Psychology Integration**: Considers focus level, budget pressure, session type
-- **Result**: Natural language justifications that build user trust and understanding
+#### 4. **Dual Explanation System** (Claude Haiku 3 + Smart Templates)
+- **Engine-Aware Explanations**: LLM recommendations get LLM-generated explanations, algorithmic recommendations use optimized templates
+- **Dynamic Weight Integration**: All 14 user weight preferences injected into LLM prompts
+- **Cost Optimization**: Smart JavaScript templates ($0 cost) for algorithmic mode, LLM explanations for semantic mode
+- **Contextual Personalization**: Adapts to player context, attention span, and financial cycle
+- **Dominant Factor Detection**: Prioritizes factors with 80%+ user weighting
+- **Graceful Fallback**: Automatic fallback to smart templates if LLM fails
 
 ### 🔬 Advanced Algorithmic Design
 
@@ -664,22 +666,12 @@ User Interface (EJS + Tailwind)
   - Output: ~200 tokens (5 explanations × 40 tokens)
   - **Total**: ~1,400 tokens per recommendation
 
-### Complete User Journey Cost
+### Session Cost Summary
 
-#### **Algorithmic Similarity Session**
-**Full Session (Context → Generate 100 Games → Get 5 Algorithmic Recommendations):**
-- **Step 1 - Context Analysis**: $0.0002 (Haiku)
-- **Step 2 - Generate 100 Games**: $0.47 (Sonnet 4)
-- **Step 3 - 5 Recommendations**: $0.0004 (Haiku explanations only)
-- **Total Cost**: ~$0.47 per complete session
-
-#### **LLM Similarity Session**
-**Full Session (Context → Generate 100 Games → Get 5 LLM Recommendations):**
-- **Step 1 - Context Analysis**: $0.0002 (Haiku)
-- **Step 2 - Generate 100 Games**: $0.47 (Sonnet 4)
-- **Step 3 - LLM Similarity Analysis**: ~$0.16 (Sonnet 4, 5 comparisons)
-- **Step 4 - Recommendation Explanations**: $0.0004 (Haiku)
-- **Total Cost**: ~$0.63 per complete LLM session (+34% for advanced semantic analysis)
+**Current Architecture (Complete User Journey):**
+- **Budget Mode** (Algorithmic + Smart Templates): $1.31 per session
+- **Hybrid Mode** (Algorithmic + LLM Explanations): $1.31 per session  
+- **Premium Mode** (LLM Similarity + LLM Explanations): $1.56 per session
 
 ## 🧪 Quality Assurance
 
@@ -702,34 +694,18 @@ User Interface (EJS + Tailwind)
 - **Cost Efficiency**: Pay-per-use LLM model, no idle infrastructure
 - **Instant Scaling**: Handles traffic spikes automatically
 
-### Operational Costs (Per User Session)
-**Complete User Journey**:
-1. **Context Analysis** (Haiku): $0.0002
-2. **Generate 100 Games** (Sonnet 4): $0.47
-3. **Get 5 Recommendations** (Haiku): $0.0004
-- **Total per Session**: ~$0.47
+### Operational Cost Summary
 
-**Infrastructure Costs**:
-- **Vercel Hosting**: Free tier covers most R&D usage
-- **Upstash Redis**: $0.2 per 100K commands (~1000 sessions)
-- **Bandwidth**: Minimal (JSON responses only)
+**Cost per Session**: $1.31 (Budget/Hybrid) to $1.56 (Premium)
 
-**Cost at Scale** (1000 daily users):
+**Scale Analysis (1,000 daily users)**:
+- Mixed usage: ~$1,360/day (~$496K annually)
+- Infrastructure: <$25/month (Vercel + Redis)
 
-**Algorithmic Mode Only**:
-- **LLM Costs**: $470/day
-- **Infrastructure**: $5/day  
-- **Total**: $475/day ($0.47 per user)
-
-**Mixed Usage (50% LLM Similarity)**:
-- **LLM Costs**: $550/day (+$80 for semantic analysis)
-- **Infrastructure**: $5/day
-- **Total**: $555/day ($0.55 per user)
-
-**Premium LLM Mode (100% LLM Similarity)**:
-- **LLM Costs**: $630/day (+$160 for full semantic analysis)
-- **Infrastructure**: $5/day
-- **Total**: $635/day ($0.63 per user)
+**Cost Optimization**:
+- Explanation batching: 60% cost reduction potential
+- Smart template expansion: More $0 cost scenarios  
+- Context caching: Reuse analysis across sessions
 
 ## 🌍 EU-Focused Design
 
@@ -766,6 +742,34 @@ User Interface (EJS + Tailwind)
 
 ### 🎯 Project Analysis  
 - **[Assessment Comparison](ASSESSMENT_COMPARISON.md)** - Project vs. original Bally's brief analysis
+
+## 🏗️ Architecture Documentation
+
+### **[Dual Explanation System Architecture](docs/architecture/dual-explanation-system-architecture.md)**
+- **Engine-Specific Logic**: LLM recommendations use LLM explanations, algorithmic uses JavaScript templates
+- **Dynamic Weight Integration**: All 14 user preferences injected into LLM prompts
+- **Implementation Details**: Technical breakdown of explanation functions and UI integration
+- **Performance Analysis**: Cost and timing characteristics for both explanation methods
+
+## 💰 Cost Analysis Framework
+
+### **[Comprehensive Cost Analysis](docs/architecture/cost-analysis-framework.md)**
+
+**Session Costs**: $1.31 (Budget/Hybrid) to $1.56 (Premium)
+**Scale**: ~$1,360/day for 1,000 mixed users
+**Optimization**: 60% cost reduction potential via batching and smart templates
+
+## 📊 Performance Testing
+
+### **[Performance Testing Framework](docs/architecture/performance-testing-framework.md)**
+
+**Current Benchmarks**:
+- Algorithmic recommendations: <250ms
+- LLM similarity: 8-12s  
+- Smart explanations: <50ms
+- LLM explanations: 2-3s
+
+**Testing**: Load testing, stress testing, CI/CD integration, automated monitoring
 
 ## 🔍 Troubleshooting
 

@@ -627,17 +627,45 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
     eligibleGames = filterGamesByContext(eligibleGames, playerContext, targetGame);
   }
   
-  console.log(`🎯 Using ${recommendationEngine} similarity for ${eligibleGames.length} games`);
+  console.log('\n🎯 SIMILARITY ENGINE SELECTION:');
+  console.log(`   ⚙️  Engine Type: ${recommendationEngine.toUpperCase()}`);
+  console.log(`   📊 Eligible Games: ${eligibleGames.length}`);
+  console.log(`   🎮 Target Game: "${targetGame.title}"`);
+  console.log(`   🎚️  Context Weights Applied: ${!!playerContext}`);
+  console.log(`   💾 Cache Key: ${cacheKey.substring(0, 50)}...`);
+  
+  // Log weight details
+  console.log('\n🎚️  FINAL WEIGHTS FOR SIMILARITY ANALYSIS:');
+  Object.entries(contextAdjustedWeights).forEach(([key, value]) => {
+    const percentage = Math.round(value * 100);
+    const status = value === 0 ? '🔇' : value === 1 ? '🔥' : '✓';
+    console.log(`   ${status} ${key}: ${value.toFixed(3)} (${percentage}%)`);
+  });
   
   // Calculate similarities (either LLM or algorithmic)
   const recommendations = [];
   
   if (recommendationEngine === 'llm') {
+    console.log('\n🤖 LLM SEMANTIC ANALYSIS SELECTED:');
+    console.log('   🧠 Using AI for semantic understanding of game similarities');
+    console.log('   📈 Better at thematic, emotional, and contextual matches');
+    console.log('   🎯 Will generate detailed analysis explanations');
     // LLM-based batch similarity (much faster and cheaper)
-    console.log(`🚀 Starting batch LLM similarity analysis for ${eligibleGames.length} games`);
+    console.log('\n🚀 STARTING LLM BATCH PROCESSING...');
+    console.log(`   📦 Batch Size: ${eligibleGames.length} games`);
+    console.log(`   🎯 Target: "${targetGame.title}" (${targetGame.theme?.join('/')} themes)`);
+    console.log(`   ⚡ Processing mode: Batch API call for efficiency`);
+    
+    const batchStartTime = Date.now();
     const batchResults = await calculateBatchLLMSimilarity(targetGame, eligibleGames, playerContext, contextAdjustedWeights);
+    const batchEndTime = Date.now();
+    
+    console.log(`   ✅ LLM batch completed in ${batchEndTime - batchStartTime}ms`);
+    console.log(`   📊 Results received: ${batchResults.length} game similarities`);
     
     // Process batch results
+    console.log('\n📊 PROCESSING LLM BATCH RESULTS:');
+    let processedCount = 0;
     for (const result of batchResults) {
       const game = eligibleGames.find(g => g.id === result.gameId);
       if (game) {
@@ -647,16 +675,39 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
           contextBonus = calculateContextBonus(game, playerContext);
         }
         
+        const finalScore = Math.min(result.similarity + contextBonus, 1.0);
+        const finalConfidence = Math.round(Math.min((result.similarity + contextBonus) * 100, 100));
+        
         recommendations.push({
           game,
-          score: Math.min(result.similarity + contextBonus, 1.0),
-          confidence: Math.round(Math.min((result.similarity + contextBonus) * 100, 100)),
+          score: finalScore,
+          confidence: finalConfidence,
           analysis: result.analysis // Include detailed LLM analysis
         });
+        
+        processedCount++;
+        
+        // Log high-scoring matches
+        if (finalScore > 0.7 || processedCount <= 5) {
+          console.log(`   ${processedCount}. "${game.title}" - ${Math.round(finalScore * 100)}% similarity ${contextBonus > 0 ? `(+${Math.round(contextBonus * 100)}% context bonus)` : ''}`);
+        }
       }
     }
+    console.log(`   ✅ Processed ${processedCount} LLM similarity results`);
   } else {
+    console.log('\n📊 MATHEMATICAL ALGORITHM SELECTED:');
+    console.log('   ⚡ Using fast mathematical similarity calculations');
+    console.log('   📈 Better at precise numerical and categorical matches');
+    console.log('   🎯 Will provide debug scoring breakdowns');
+    
     // Algorithmic similarity (faster)
+    console.log('\n🔢 STARTING ALGORITHMIC PROCESSING...');
+    console.log(`   📦 Processing ${eligibleGames.length} games individually`);
+    console.log(`   🎯 Target: "${targetGame.title}" (${targetGame.theme?.join('/')} themes)`);
+    
+    const algoStartTime = Date.now();
+    let processedCount = 0;
+    
     for (const game of eligibleGames) {
       const similarity = calculateAlgorithmicSimilarity(targetGame, game, contextAdjustedWeights);
       
@@ -666,29 +717,65 @@ async function getRecommendations(gameId, weights = DEFAULT_WEIGHTS, count = 5, 
         contextBonus = calculateContextBonus(game, playerContext);
       }
       
+      const finalScore = Math.min(similarity + contextBonus, 1.0);
+      const finalConfidence = Math.round(Math.min((similarity + contextBonus) * 100, 100));
+      
       recommendations.push({
         game,
-        score: Math.min(similarity + contextBonus, 1.0),
-        confidence: Math.round(Math.min((similarity + contextBonus) * 100, 100)),
+        score: finalScore,
+        confidence: finalConfidence,
         analysis: null // Algorithmic engine has no detailed analysis
       });
+      
+      processedCount++;
+      
+      // Log high-scoring matches
+      if (finalScore > 0.7 || processedCount <= 5) {
+        console.log(`   ${processedCount}. "${game.title}" - ${Math.round(finalScore * 100)}% similarity ${contextBonus > 0 ? `(+${Math.round(contextBonus * 100)}% context bonus)` : ''}`);
+      }
     }
+    
+    const algoEndTime = Date.now();
+    console.log(`   ✅ Algorithmic processing completed in ${algoEndTime - algoStartTime}ms`);
+    console.log(`   📊 Processed ${processedCount} games with mathematical similarity`);
   }
   
   // Sort and limit results
+  console.log('\n🏆 FINAL RESULTS PROCESSING:');
+  console.log(`   📊 Total recommendations generated: ${recommendations.length}`);
+  console.log(`   🔝 Requesting top ${count} results`);
+  
   const sortedRecommendations = recommendations
     .sort((a, b) => b.score - a.score)
     .slice(0, count);
   
+  console.log('\n🎯 TOP RECOMMENDATIONS SELECTED:');
+  sortedRecommendations.forEach((rec, i) => {
+    const similarity = Math.round(rec.score * 100);
+    const hasAnalysis = !!rec.analysis;
+    console.log(`   ${i+1}. "${rec.game.title}" - ${similarity}% match ${hasAnalysis ? '(with LLM analysis)' : '(algorithmic)'}`);
+    if (rec.game.theme) {
+      console.log(`      🎨 Theme: ${rec.game.theme.join(', ')}`);
+    }
+    if (rec.game.volatility) {
+      console.log(`      🎲 Volatility: ${rec.game.volatility}`);
+    }
+  });
+  
   // Cache results
+  console.log(`\n💾 CACHING RESULTS:`);
+  console.log(`   🔑 Cache key: ${cacheKey.substring(0, 30)}...`);
   gameCache.set(cacheKey, sortedRecommendations);
+  console.log(`   📊 Cache size: ${gameCache.size} entries`);
   
   // Clear cache if it grows too large (memory management)
   if (gameCache.size > 100) {
     const oldestKey = gameCache.keys().next().value;
     gameCache.delete(oldestKey);
+    console.log(`   🧹 Cleaned oldest cache entry to prevent memory bloat`);
   }
   
+  console.log(`\n✅ RECOMMENDATION ENGINE COMPLETED: ${sortedRecommendations.length} results ready`);
   return sortedRecommendations;
 }
 

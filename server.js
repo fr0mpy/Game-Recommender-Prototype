@@ -30,6 +30,122 @@ function loadPrompt(filename) {
   }
 }
 
+// Generate LLM explanations using existing recommendation-explanation-prompt.md
+async function generateLLMExplanations(selectedGame, recommendations, weights, playerContext) {
+  const Anthropic = require('@anthropic-ai/sdk');
+  
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error('ANTHROPIC_API_KEY not configured');
+  }
+
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
+  try {
+    // Load the existing recommendation explanation prompt
+    const basePrompt = loadPrompt('recommendation-explanation-prompt.md');
+    if (!basePrompt) {
+      throw new Error('Could not load recommendation-explanation-prompt.md');
+    }
+
+    // Build the games list for the prompt
+    const gamesList = recommendations.map((rec, index) => 
+      `${index + 1}. "${rec.game.title}" - ${rec.game.themes.join('/')}, ${rec.game.volatility} volatility, ${rec.game.studio}`
+    ).join('\n');
+
+    // Calculate context values for the prompt template
+    const timeContext = playerContext.currentTime || new Date().toLocaleTimeString();
+    const focusLevel = playerContext.focusLevel || 'balanced';
+    const focusReasoning = playerContext.focusReasoning || 'standard gaming session';
+    const attentionSpan = playerContext.attentionSpan || 'moderate';
+    const preferredPace = playerContext.preferredPace || 'balanced';
+    const preferredVolatility = playerContext.preferredVolatility || 'medium';
+    const sessionDescription = playerContext.sessionDescription || 'casual gaming';
+    const budgetDescription = playerContext.budgetDescription || 'moderate budget';
+    const budgetPressure = playerContext.budgetPressure || 'low';
+    const deviceType = playerContext.deviceType || 'desktop';
+    const sportsActive = playerContext.activeSports ? `Active sports: ${playerContext.activeSports}` : '';
+    
+    // Calculate day of month info
+    const now = new Date();
+    const dayOfMonth = now.getDate();
+    const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+    // Fill in the prompt template with dynamic values
+    const filledPrompt = basePrompt
+      .replace('{{selectedGameTitle}}', selectedGame.title)
+      .replace('{{selectedGameThemes}}', selectedGame.themes.join('/'))
+      .replace('{{selectedGameVolatility}}', selectedGame.volatility)
+      .replace('{{timeContext}}', timeContext)
+      .replace('{{themeWeight}}', Math.round(weights.theme * 100))
+      .replace('{{volatilityWeight}}', Math.round(weights.volatility * 100))
+      .replace('{{studioWeight}}', Math.round(weights.studio * 100))
+      .replace('{{mechanicsWeight}}', Math.round(weights.mechanics * 100))
+      .replace('{{deviceType}}', deviceType)
+      .replace('{{sportsActive}}', sportsActive)
+      .replace('{{focusLevel}}', focusLevel)
+      .replace('{{focusReasoning}}', focusReasoning)
+      .replace('{{attentionSpan}}', attentionSpan)
+      .replace('{{preferredPace}}', preferredPace)
+      .replace('{{preferredVolatility}}', preferredVolatility)
+      .replace('{{sessionDescription}}', sessionDescription)
+      .replace('{{budgetDescription}}', budgetDescription)
+      .replace('{{budgetPressure}}', budgetPressure)
+      .replace('{{dayOfMonth}}', dayOfMonth)
+      .replace('{{totalDaysInMonth}}', totalDaysInMonth)
+      .replace('{{gamesList}}', gamesList)
+      // Add extended weight information including bonusFrequency  
+      .replace('Player weights: Theme {{themeWeight}}%, Volatility {{volatilityWeight}}%, Studio {{studioWeight}}%, Mechanics {{mechanicsWeight}}%', 
+        `Player weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%, Bonus Frequency ${Math.round(weights.bonusFrequency * 100)}%, RTP ${Math.round(weights.rtp * 100)}%, Max Win ${Math.round(weights.maxWin * 100)}%, Features ${Math.round(weights.features * 100)}%, Pace ${Math.round(weights.pace * 100)}%, Hit Frequency ${Math.round(weights.hitFrequency * 100)}%, Art Style ${Math.round(weights.artStyle * 100)}%, Audio Vibe ${Math.round(weights.audioVibe * 100)}%, Visual Density ${Math.round(weights.visualDensity * 100)}%, Reel Layout ${Math.round(weights.reelLayout * 100)}%`);
+
+    console.log('\n📝 SENDING LLM EXPLANATION REQUEST:');
+    console.log(`   🎮 Selected: ${selectedGame.title}`);
+    console.log(`   🎯 Recommendations: ${recommendations.length}`);
+    console.log(`   ⚖️  Weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%`);
+
+    const response = await anthropic.messages.create({
+      model: "claude-3-haiku-20240307", // Use faster model for explanations
+      max_tokens: 1000,
+      temperature: 0.7,
+      messages: [
+        {
+          role: "user",
+          content: filledPrompt
+        }
+      ]
+    });
+
+    const explanationText = response.content[0].text;
+    
+    // Parse JSON response
+    let explanations;
+    try {
+      explanations = JSON.parse(explanationText);
+    } catch (parseError) {
+      console.log('❌ Failed to parse JSON, extracting array...');
+      // Try to extract JSON array from response
+      const jsonMatch = explanationText.match(/\[(.*?)\]/s);
+      if (jsonMatch) {
+        explanations = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('Could not extract valid JSON array from response');
+      }
+    }
+
+    if (!Array.isArray(explanations)) {
+      throw new Error('Response is not an array');
+    }
+
+    console.log(`✅ Successfully generated ${explanations.length} LLM explanations`);
+    return explanations;
+
+  } catch (error) {
+    console.error('❌ LLM explanation generation failed:', error.message);
+    throw error;
+  }
+}
+
 // Unified function to generate all recommendation explanations in a single LLM call
 async function generateAllRecommendationExplanations(selectedGame, recommendations, weights, playerContext, allGames) {
   const Anthropic = require('@anthropic-ai/sdk');
@@ -505,9 +621,35 @@ app.post("/api/validate-session-games", async (req, res) => {
 // Get recommendations
 app.post("/recommend", async (req, res) => {
   try {
-    const { gameId, theme, volatility, studio, mechanics, rtp, maxWin, features, pace, bonusFrequency, recommendationEngine } = req.body;
+    console.log('\n🔥 ===== NEW RECOMMENDATION REQUEST ===== 🔥');
+    console.log('⏰ Timestamp:', new Date().toISOString());
+    console.log('🎮 Session ID:', req.sessionId);
+    console.log('📍 Request from IP:', req.ip);
+    console.log('🖥️  User-Agent:', req.get('User-Agent'));
+    
+    const { gameId, theme, volatility, studio, mechanics, rtp, maxWin, features, pace, bonusFrequency, recommendationEngine, hitFrequency, artStyle, audioVibe, visualDensity, reelLayout } = req.body;
+    
+    console.log('\n📋 RAW FORM DATA RECEIVED:');
+    console.log('🎯 Game ID:', gameId);
+    console.log('🏷️  Recommendation Engine:', recommendationEngine);
+    console.log('📊 Raw Form Values:');
+    console.log('   • theme:', theme, '(type:', typeof theme, ')');
+    console.log('   • volatility:', volatility, '(type:', typeof volatility, ')');
+    console.log('   • studio:', studio, '(type:', typeof studio, ')');
+    console.log('   • mechanics:', mechanics, '(type:', typeof mechanics, ')');
+    console.log('   • rtp:', rtp, '(type:', typeof rtp, ')');
+    console.log('   • maxWin:', maxWin, '(type:', typeof maxWin, ')');
+    console.log('   • features:', features, '(type:', typeof features, ')');
+    console.log('   • pace:', pace, '(type:', typeof pace, ')');
+    console.log('   • bonusFrequency:', bonusFrequency, '(type:', typeof bonusFrequency, ')');
+    console.log('   • hitFrequency:', hitFrequency, '(type:', typeof hitFrequency, ')');
+    console.log('   • artStyle:', artStyle, '(type:', typeof artStyle, ')');
+    console.log('   • audioVibe:', audioVibe, '(type:', typeof audioVibe, ')');
+    console.log('   • visualDensity:', visualDensity, '(type:', typeof visualDensity, ')');
+    console.log('   • reelLayout:', reelLayout, '(type:', typeof reelLayout, ')');
 
     if (!gameId) {
+      console.log('❌ ERROR: No game ID provided, returning to index');
       const games = await loadGames();
       const settings = loadSettings();
       return res.render("index", {
@@ -524,35 +666,99 @@ app.post("/recommend", async (req, res) => {
         customPrompt: 'Generate 100 slot games'
       });
     }
+    
+    console.log('\n🔧 WEIGHT PARSING PROCESS:');
+    console.log('📏 Converting form values to numeric weights...');
 
-    // Parse weights from form - using normalized defaults
+    // Parse weights from form - preserve user's 0% settings
     const weights = {
-      theme: parseFloat(theme) || 0.31,
-      volatility: parseFloat(volatility) || 0.23,
-      studio: parseFloat(studio) || 0.15,
-      mechanics: parseFloat(mechanics) || 0.08,
-      rtp: parseFloat(rtp) || 0.04,
-      maxWin: parseFloat(maxWin) || 0.04,
-      features: parseFloat(features) || 0.04,
-      pace: parseFloat(pace) || 0.03,
-      bonusFrequency: parseFloat(bonusFrequency) || 0.02,
+      theme: theme !== undefined ? parseFloat(theme) : 0.31,
+      volatility: volatility !== undefined ? parseFloat(volatility) : 0.23,
+      studio: studio !== undefined ? parseFloat(studio) : 0.15,
+      mechanics: mechanics !== undefined ? parseFloat(mechanics) : 0.08,
+      rtp: rtp !== undefined ? parseFloat(rtp) : 0.04,
+      maxWin: maxWin !== undefined ? parseFloat(maxWin) : 0.04,
+      features: features !== undefined ? parseFloat(features) : 0.04,
+      pace: pace !== undefined ? parseFloat(pace) : 0.03,
+      bonusFrequency: bonusFrequency !== undefined ? parseFloat(bonusFrequency) : 0.02,
+      hitFrequency: hitFrequency !== undefined ? parseFloat(hitFrequency) : 0.02,
+      artStyle: artStyle !== undefined ? parseFloat(artStyle) : 0.02,
+      audioVibe: audioVibe !== undefined ? parseFloat(audioVibe) : 0.01,
+      visualDensity: visualDensity !== undefined ? parseFloat(visualDensity) : 0.005,
+      reelLayout: reelLayout !== undefined ? parseFloat(reelLayout) : 0.005
     };
+    
+    console.log('\n✅ FINAL PARSED WEIGHTS:');
+    Object.entries(weights).forEach(([key, value]) => {
+      const percentage = Math.round(value * 100);
+      const isZero = value === 0;
+      const isMax = value === 1;
+      const status = isZero ? '🔇 DISABLED' : isMax ? '🔥 MAX' : '✓';
+      console.log(`   ${status} ${key}: ${value.toFixed(3)} (${percentage}%)`);
+    });
+    
+    const totalWeight = Object.values(weights).reduce((sum, w) => sum + w, 0);
+    console.log(`📊 Total weight sum: ${totalWeight.toFixed(3)} (${Math.round(totalWeight * 100)}%)`);
+    
+    if (Math.abs(totalWeight - 1.0) > 0.01) {
+      console.log('⚠️  WARNING: Weights do not sum to 100%, normalization may be required');
+    }
 
     // Save user preferences
+    console.log('\n💾 SAVING USER PREFERENCES...');
     saveSettings(weights);
+    console.log('✅ User weights saved to disk/storage');
 
     // Load games from Redis or defaults
+    console.log('\n📚 LOADING GAMES DATABASE...');
     const games = await loadGames();
-    console.log(`📚 Loaded ${games.length} games`);
+    console.log(`✅ Loaded ${games.length} total games for analysis`);
+    
+    // Find and log selected game details
+    const selectedGame = games.find(g => g.id === gameId);
+    if (selectedGame) {
+      console.log('\n🎯 SELECTED GAME DETAILS:');
+      console.log(`   🏷️  Title: "${selectedGame.title}"`);
+      console.log(`   🎨 Theme: ${selectedGame.theme?.join(', ')}`);
+      console.log(`   🎲 Volatility: ${selectedGame.volatility}`);
+      console.log(`   🏢 Studio: ${selectedGame.studio}`);
+      console.log(`   💰 RTP: ${selectedGame.rtp}%`);
+      console.log(`   🎊 Bonus Frequency: ${selectedGame.bonusFrequency}%`);
+      console.log(`   ⚡ Pace: ${selectedGame.pace}`);
+    } else {
+      console.log(`❌ ERROR: Selected game ${gameId} not found in games database`);
+    }
 
     // Get recommendations with player context and engine mode
-    console.log(`🎯 Recommendation engine: ${recommendationEngine}`);
+    console.log('\n🚀 STARTING RECOMMENDATION ENGINE...');
+    console.log(`🏷️  Engine Type: ${recommendationEngine?.toUpperCase() || 'UNKNOWN'}`);
+    console.log(`⚙️  Mode: ${recommendationEngine === 'llm' ? 'AI Semantic Analysis' : 'Mathematical Algorithm'}`);
+    console.log(`🔍 Target: Find 5 similar games to "${selectedGame?.title}"`);
+    console.log(`🎯 Context: Session ${req.sessionId}`);
     
+    const startTime = Date.now();
     const recommendations = await getRecommendations(gameId, weights, 5, games, req.playerContext, recommendationEngine);
-
-    // Find selected game for display
-    const selectedGame = games.find((g) => g.id === gameId);
+    const endTime = Date.now();
+    const processingTime = endTime - startTime;
     
+    console.log(`⏱️  Processing completed in ${processingTime}ms (${(processingTime/1000).toFixed(2)}s)`);
+    console.log(`📊 Recommendations returned: ${recommendations?.length || 0}`);
+    
+    if (recommendations && recommendations.length > 0) {
+      console.log('\n🎯 RECOMMENDATION RESULTS SUMMARY:');
+      recommendations.forEach((rec, i) => {
+        const similarity = Math.round((rec.similarity || 0) * 100);
+        console.log(`   ${i+1}. "${rec.game?.title}" - ${similarity}% similarity`);
+        if (rec.confidence) {
+          console.log(`      🎯 Confidence: ${Math.round(rec.confidence * 100)}%`);
+        }
+        if (rec.analysis) {
+          console.log(`      📝 Analysis: ${rec.analysis.substring(0, 100)}...`);
+        }
+      });
+    }
+
+    // Check selectedGame again after processing (should already exist from earlier)
     if (!selectedGame) {
       console.log(`❌ Game ${gameId} not found in ${games.length} games`);
       console.log('Available game IDs:', games.map(g => g.id).slice(0, 10));
@@ -571,14 +777,111 @@ app.post("/recommend", async (req, res) => {
       });
     }
 
-    // Start with loading state - all explanations will be generated by LLM
-    const recommendationsWithExplanations = recommendations.map((rec) => {
-      return {
-        ...rec, 
-        explanation: 'Generating personalized match analysis...',
-        loading: true // Flag for frontend to know LLM enhancement is pending
-      };
-    });
+    // Smart weight-aware explanations based on user preferences
+    function generateSmartExplanation(selectedGame, recommendedGame, weights) {
+      const dominantFactors = [];
+      const explanationParts = [];
+      
+      // Identify dominant factors (80%+ weight)
+      if (weights.bonusFrequency >= 0.8) {
+        dominantFactors.push('bonusFrequency');
+        const bonusMatch = selectedGame.bonusFrequency && recommendedGame.bonusFrequency && 
+          Math.abs(selectedGame.bonusFrequency - recommendedGame.bonusFrequency) < 0.2;
+        explanationParts.push(bonusMatch ? 
+          `Perfect bonus frequency match at ${recommendedGame.bonusFrequency?.toFixed(1) || 'N/A'}%, identical to ${selectedGame.title}'s bonus trigger rate.` :
+          `Similar bonus frequency pattern (${recommendedGame.bonusFrequency?.toFixed(1) || 'N/A'}% vs ${selectedGame.bonusFrequency?.toFixed(1) || 'N/A'}%) providing comparable bonus anticipation.`);
+      }
+      
+      if (weights.theme >= 0.8 && selectedGame.theme && recommendedGame.theme) {
+        dominantFactors.push('theme');
+        const sharedThemes = selectedGame.theme.filter(t => recommendedGame.theme.includes(t));
+        if (sharedThemes.length > 0) {
+          explanationParts.push(`Perfect thematic match with shared ${sharedThemes.join(' and ')} themes.`);
+        } else {
+          explanationParts.push(`Complementary ${recommendedGame.theme.join('/')} theme offering similar atmospheric appeal.`);
+        }
+      }
+      
+      if (weights.volatility >= 0.8) {
+        dominantFactors.push('volatility');
+        if (selectedGame.volatility === recommendedGame.volatility) {
+          explanationParts.push(`Identical ${recommendedGame.volatility} volatility level matching your risk preference perfectly.`);
+        } else {
+          explanationParts.push(`${recommendedGame.volatility} volatility providing similar payout patterns and gaming excitement.`);
+        }
+      }
+      
+      if (weights.studio >= 0.8) {
+        dominantFactors.push('studio');
+        if (selectedGame.studio === recommendedGame.studio) {
+          explanationParts.push(`Same studio (${recommendedGame.studio}) ensuring consistent quality and game feel.`);
+        } else {
+          explanationParts.push(`${recommendedGame.studio}'s development style matches the quality you enjoyed in ${selectedGame.title}.`);
+        }
+      }
+      
+      // Handle multiple dominant factors
+      if (dominantFactors.length > 1) {
+        return `Excellent match on your top priorities: ${explanationParts.join(' Additionally, ')}.`;
+      } else if (dominantFactors.length === 1) {
+        return explanationParts[0] || 'Great match based on your preferences.';
+      }
+      
+      // Fallback for balanced weights
+      return `Balanced match considering your weight preferences across multiple game factors.`;
+    }
+
+    // Generate explanations based on recommendation engine
+    let recommendationsWithExplanations;
+    
+    if (recommendationEngine === 'llm') {
+      // For LLM recommendations, use LLM-generated explanations
+      console.log('\n🤖 GENERATING LLM EXPLANATIONS...');
+      console.log(`🎯 Using existing recommendation-explanation-prompt.md with dynamic weights`);
+      
+      try {
+        // Generate LLM explanations using existing prompt
+        const explanations = await generateLLMExplanations(selectedGame, recommendations, weights, req.playerContext);
+        
+        recommendationsWithExplanations = recommendations.map((rec, index) => {
+          return {
+            ...rec,
+            explanation: explanations[index] || 'Contextually matched based on your preferences.',
+            loading: false
+          };
+        });
+        
+        console.log(`✅ Generated ${explanations.length} LLM explanations`);
+      } catch (error) {
+        console.log(`❌ LLM explanation generation failed: ${error.message}`);
+        console.log(`🔄 Falling back to smart explanations`);
+        
+        // Fallback to smart explanations
+        recommendationsWithExplanations = recommendations.map((rec) => {
+          const smartExplanation = generateSmartExplanation(selectedGame, rec.game, weights);
+          return {
+            ...rec, 
+            explanation: smartExplanation,
+            loading: false
+          };
+        });
+      }
+    } else {
+      // For algorithmic recommendations, use smart JavaScript explanations
+      console.log('\n⚙️ GENERATING ALGORITHMIC EXPLANATIONS...');
+      console.log(`🎯 Using JavaScript-based smart explanation templates`);
+      
+      recommendationsWithExplanations = recommendations.map((rec) => {
+        const smartExplanation = generateSmartExplanation(selectedGame, rec.game, weights);
+        return {
+          ...rec, 
+          explanation: smartExplanation,
+          loading: false
+        };
+      });
+      
+      console.log(`✅ Generated ${recommendationsWithExplanations.length} algorithmic explanations`);
+    }
 
     res.render("recommendations", {
       recommendations: recommendationsWithExplanations,

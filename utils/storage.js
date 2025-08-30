@@ -159,24 +159,52 @@ function getDefaultGames() {
 }
 
 function saveSettings(settings) {
+  console.log('\n💾 SAVING USER WEIGHT PREFERENCES:');
+  console.log('📊 Settings object structure validation:');
+  
+  // Validate settings structure
+  if (!settings || typeof settings !== 'object') {
+    console.log('❌ INVALID: Settings is not a valid object');
+    throw new Error('Invalid settings object provided');
+  }
+  
+  // Log all weight values
+  console.log('🎚️ Weight values to save:');
+  Object.entries(settings).forEach(([key, value]) => {
+    const percentage = Math.round(value * 100);
+    const isZero = value === 0;
+    const isMax = value === 1;
+    const isValid = typeof value === 'number' && value >= 0 && value <= 1;
+    const status = !isValid ? '❌ INVALID' : isZero ? '🔇 DISABLED' : isMax ? '🔥 MAX' : '✅';
+    console.log(`   ${status} ${key}: ${value} (${percentage}%)`);
+  });
+  
+  // Calculate total weight
+  const totalWeight = Object.values(settings).reduce((sum, w) => sum + w, 0);
+  console.log(`📊 Total weight sum: ${totalWeight.toFixed(3)} (${Math.round(totalWeight * 100)}%)`);
+  
   try {
     // Skip file writes in serverless/production environments
     const isServerless = process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME;
     
     if (isServerless) {
       console.log('⚠️ Serverless environment detected - skipping settings file write');
-      console.log('💾 User settings received but not persisted (serverless limitation):', settings);
+      console.log('💾 User settings received but not persisted (serverless limitation)');
+      console.log('✅ Settings validated and ready for use (in-memory only)');
       return; // Gracefully skip file write in serverless
     }
     
     const dataDir = path.dirname(SETTINGS_FILE);
     if (!fs.existsSync(dataDir)) {
+      console.log(`📁 Creating data directory: ${dataDir}`);
       fs.mkdirSync(dataDir, { recursive: true });
     }
+    
+    console.log(`📝 Writing settings to: ${SETTINGS_FILE}`);
     fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
-    console.log('✅ Settings saved successfully to disk');
+    console.log('✅ User weight preferences saved successfully to disk');
   } catch (error) {
-    console.error('Failed to save settings:', error);
+    console.error('❌ Failed to save settings:', error);
     
     // For serverless read-only filesystem errors, fail gracefully
     if (error.code === 'EROFS' || error.code === 'EACCES') {
@@ -189,14 +217,44 @@ function saveSettings(settings) {
 }
 
 function loadSettings() {
+  console.log('\n📖 LOADING USER WEIGHT PREFERENCES:');
+  console.log(`📁 Settings file path: ${SETTINGS_FILE}`);
+  
   try {
     if (!fs.existsSync(SETTINGS_FILE)) {
+      console.log('⚠️ No settings file found - using default weights');
+      console.log('🎚️ Default weights loaded:');
+      Object.entries(DEFAULT_WEIGHTS).forEach(([key, value]) => {
+        const percentage = Math.round(value * 100);
+        console.log(`   ✅ ${key}: ${value} (${percentage}%)`);
+      });
       return DEFAULT_WEIGHTS;
     }
+    
+    console.log('📝 Reading settings file...');
     const data = fs.readFileSync(SETTINGS_FILE, 'utf8');
-    return JSON.parse(data);
+    const settings = JSON.parse(data);
+    
+    console.log('✅ User settings loaded from disk:');
+    Object.entries(settings).forEach(([key, value]) => {
+      const percentage = Math.round(value * 100);
+      const isZero = value === 0;
+      const isMax = value === 1;
+      const status = isZero ? '🔇 DISABLED' : isMax ? '🔥 MAX' : '✅';
+      console.log(`   ${status} ${key}: ${value} (${percentage}%)`);
+    });
+    
+    const totalWeight = Object.values(settings).reduce((sum, w) => sum + w, 0);
+    console.log(`📊 Total loaded weight sum: ${totalWeight.toFixed(3)} (${Math.round(totalWeight * 100)}%)`);
+    
+    return settings;
   } catch (error) {
-    console.error('Failed to load settings:', error);
+    console.error('❌ Failed to load settings:', error);
+    console.log('🔄 Falling back to default weights');
+    Object.entries(DEFAULT_WEIGHTS).forEach(([key, value]) => {
+      const percentage = Math.round(value * 100);
+      console.log(`   ✅ ${key}: ${value} (${percentage}%)`);
+    });
     return DEFAULT_WEIGHTS;
   }
 }
