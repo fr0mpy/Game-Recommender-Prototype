@@ -546,7 +546,7 @@ app.post("/recommend", async (req, res) => {
     console.log(`📚 Loaded ${games.length} games`);
 
     // Get recommendations with player context and LLM mode
-    const useLLMBool = useLLM === 'on' || useLLM === true;
+    const useLLMBool = useLLM === 'on' || useLLM === true || useLLM === 'true';
     console.log(`🎯 Similarity mode: ${useLLMBool ? 'LLM-based' : 'Algorithmic'}`);
     
     const recommendations = await getRecommendations(gameId, weights, 5, games, req.playerContext, useLLMBool);
