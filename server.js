@@ -52,10 +52,10 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
   });
 
   try {
-    // Load the recommendation explanation prompt
-    const basePrompt = loadPrompt('recommendation-explanation-prompt.md');
+    // Load the fast explanation prompt
+    const basePrompt = loadPrompt('fast-explanation-prompt.md');
     if (!basePrompt) {
-      throw new Error('Could not load recommendation-explanation-prompt.md');
+      throw new Error('Could not load fast-explanation-prompt.md');
     }
 
     // Build the games list for the prompt - only top 5
@@ -63,50 +63,17 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
       `${index + 1}. "${rec.game.title}" - ${rec.game.themes.join('/')}, ${rec.game.volatility} volatility, ${rec.game.studio}`
     ).join('\n');
 
-    // Calculate context values for the prompt template
-    const timeContext = playerContext.currentTime || new Date().toLocaleTimeString();
-    const focusLevel = playerContext.focusLevel || 'balanced';
-    const focusReasoning = playerContext.focusReasoning || 'standard gaming session';
-    const attentionSpan = playerContext.attentionSpan || 'moderate';
-    const preferredPace = playerContext.preferredPace || 'balanced';
-    const preferredVolatility = playerContext.preferredVolatility || 'medium';
-    const sessionDescription = playerContext.sessionDescription || 'casual gaming';
-    const budgetDescription = playerContext.budgetDescription || 'moderate budget';
-    const budgetPressure = playerContext.budgetPressure || 'low';
-    const deviceType = playerContext.deviceType || 'desktop';
-    const sportsActive = playerContext.activeSports ? `Active sports: ${playerContext.activeSports}` : '';
-    
-    // Calculate day of month info
-    const now = new Date();
-    const dayOfMonth = now.getDate();
-    const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-
-    // Fill in the prompt template with dynamic values
+    // Simple prompt substitution for speed
     const filledPrompt = basePrompt
       .replace('{{selectedGameTitle}}', selectedGame.title)
       .replace('{{selectedGameThemes}}', selectedGame.themes.join('/'))
       .replace('{{selectedGameVolatility}}', selectedGame.volatility)
-      .replace('{{timeContext}}', timeContext)
+      .replace('{{selectedGameStudio}}', selectedGame.studio || 'Unknown')
       .replace('{{themeWeight}}', Math.round(weights.theme * 100))
       .replace('{{volatilityWeight}}', Math.round(weights.volatility * 100))
       .replace('{{studioWeight}}', Math.round(weights.studio * 100))
       .replace('{{mechanicsWeight}}', Math.round(weights.mechanics * 100))
-      .replace('{{deviceType}}', deviceType)
-      .replace('{{sportsActive}}', sportsActive)
-      .replace('{{focusLevel}}', focusLevel)
-      .replace('{{focusReasoning}}', focusReasoning)
-      .replace('{{attentionSpan}}', attentionSpan)
-      .replace('{{preferredPace}}', preferredPace)
-      .replace('{{preferredVolatility}}', preferredVolatility)
-      .replace('{{sessionDescription}}', sessionDescription)
-      .replace('{{budgetDescription}}', budgetDescription)
-      .replace('{{budgetPressure}}', budgetPressure)
-      .replace('{{dayOfMonth}}', dayOfMonth)
-      .replace('{{totalDaysInMonth}}', totalDaysInMonth)
-      .replace('{{gamesList}}', gamesList)
-      // Add extended weight information including bonusFrequency  
-      .replace('Player weights: Theme {{themeWeight}}%, Volatility {{volatilityWeight}}%, Studio {{studioWeight}}%, Mechanics {{mechanicsWeight}}%', 
-        `Player weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%, Bonus Frequency ${Math.round(weights.bonusFrequency * 100)}%, RTP ${Math.round(weights.rtp * 100)}%, Max Win ${Math.round(weights.maxWin * 100)}%, Features ${Math.round(weights.features * 100)}%, Pace ${Math.round(weights.pace * 100)}%, Hit Frequency ${Math.round(weights.hitFrequency * 100)}%, Art Style ${Math.round(weights.artStyle * 100)}%, Audio Vibe ${Math.round(weights.audioVibe * 100)}%, Visual Density ${Math.round(weights.visualDensity * 100)}%, Reel Layout ${Math.round(weights.reelLayout * 100)}%`);
+      .replace('{{gamesList}}', gamesList);
 
     console.log('\n📝 SENDING LLM EXPLANATION REQUEST:');
     console.log(`   🎮 Selected: ${selectedGame.title}`);
@@ -114,15 +81,10 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
     console.log(`   ⚖️  Weights: Theme ${Math.round(weights.theme * 100)}%, Volatility ${Math.round(weights.volatility * 100)}%, Studio ${Math.round(weights.studio * 100)}%, Mechanics ${Math.round(weights.mechanics * 100)}%`);
 
     const response = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307", // Use faster model for explanations
-      max_tokens: 1000,
-      temperature: 0.7,
-      messages: [
-        {
-          role: "user",
-          content: filledPrompt
-        }
-      ]
+      model: "claude-3-haiku-20240307", // Fastest model
+      max_tokens: 300, // Reduced for speed - just need 5 short explanations
+      temperature: 0.3, // Lower for more consistent/faster responses
+      messages: [{ role: "user", content: filledPrompt }]
     });
 
     const explanationText = response.content[0].text;
