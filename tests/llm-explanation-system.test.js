@@ -165,25 +165,28 @@ Games list:
 
   describe('4. Performance and Loading States', () => {
     
-    test('loading indicators exist in recommendations template', () => {
+    test('simplified explanations display without loading indicators', () => {
       const templatePath = path.join(__dirname, '../views/recommendations.ejs');
       expect(fs.existsSync(templatePath)).toBe(true);
       
       const templateContent = fs.readFileSync(templatePath, 'utf8');
       
-      // Check for loading spinner elements
-      expect(templateContent).toContain('loading-indicator');
-      expect(templateContent).toContain('animate-spin');
-      expect(templateContent).toContain('Analyzing with our AI');
+      // Check that loading indicators have been removed (for algorithmic speed)
+      expect(templateContent).not.toContain('loading-indicator');
+      expect(templateContent).not.toContain('animate-spin');
+      expect(templateContent).not.toContain('Taking longer than expected');
+      
+      // But explanations should still display
+      expect(templateContent).toContain('rec.explanation');
     });
 
     test('explanation text containers exist', () => {
       const templatePath = path.join(__dirname, '../views/recommendations.ejs');
       const templateContent = fs.readFileSync(templatePath, 'utf8');
       
-      // Check for explanation display elements
-      expect(templateContent).toContain('explanation-text');
+      // Check for explanation display elements (simplified after loading animation removal)
       expect(templateContent).toContain('rec.explanation');
+      expect(templateContent).toContain('Why this match:');
     });
 
     test('recommendations processing logging exists', () => {

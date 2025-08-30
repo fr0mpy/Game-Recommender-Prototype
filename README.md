@@ -4,6 +4,15 @@
 
 🌐 **Live Demo**: [https://slot-forge.vercel.app](https://slot-forge.vercel.app)
 
+## 🎯 Platform Overview
+
+**Slot Forge** is Bally's enterprise casino game intelligence platform delivering:
+
+- **🎰 Dual AI Engines**: Mathematical similarity analysis (250ms) + LLM semantic understanding (8-12s)
+- **🧠 Player Context Intelligence**: Work patterns, financial cycles, attention spans, and EU sports seasons
+- **⚡ Hybrid Game Generation**: Claude Sonnet 4 premium quality + Claude Haiku 3 ultra-fast batching
+- **📊 Cost-Optimized Performance**: $496K annually for 1,000 daily users with real-time recommendations
+
 ## 📖 Contents
 
 ### **🎯 Getting Started**
@@ -73,12 +82,12 @@ Our system employs a **revolutionary hybrid approach** combining speed, cost-eff
 - **Progressive Enhancement**: Start with algorithmic, enhance with LLM insights
 - **Context Integration**: All modes incorporate player behavioral patterns
 
-#### 4. **Smart Explanation System** (Progressive Enhancement)
-- **Instant Display**: Algorithmic explanations render immediately
-- **AI Enhancement**: LLM explanations progressively replace basic ones
-- **Visual Feedback**: Animated progress bars with performance-based timing
+#### 4. **Dynamic Explanation System** (Adaptive Intelligence)
+- **Adaptive Thresholds**: Intelligent percentage calculation based on actual similarity scores
+- **Context-Aware**: Explanations adapt to player psychology and gaming context
+- **Real-Time Analysis**: Dynamic weight integration with instant threshold adjustments
 - **Error Resilience**: Multiple fallback layers ensure explanations always appear
-- **Cost Optimization**: Only uses LLM tokens when users request enhanced mode
+- **Cost Optimization**: Smart batching and template fallbacks minimize LLM usage
 
 ### 🔬 Advanced Algorithmic Design
 
@@ -187,13 +196,13 @@ Our recommendations consider **human psychology**, not just game attributes:
 - **Emotional State Consideration**: Factors in player mood and context
 
 ### 🏆 Industry Innovations
+- **Data Corruption Prevention**: Advanced title-theme coherence validation preventing dropdown errors
+- **Adaptive Threshold System**: Dynamic percentage calculation replacing hardcoded similarity thresholds
 - **Dual Similarity Engines**: First system offering both algorithmic and LLM-based similarity analysis
 - **Dynamic Weight Integration**: User preferences dynamically injected into LLM prompts
 - **Contextual LLM Analysis**: Player psychology integrated into semantic similarity scoring
-- **Bally Sports Cross-Sell**: Automatic detection of sports betting opportunities
-- **EU Sports Calendar Integration**: Premier League, Champions League awareness
-- **Work Pattern Detection**: First system to recognize "stealth gaming" at work
-- **Financial Cycle Awareness**: Payday proximity influences recommendations
+- **Streamlined UX**: Simplified interface with optimized performance and removed loading animations
+- **Production-Ready Logging**: Comprehensive debugging system for real-world deployment
 
 ---
 
@@ -382,6 +391,7 @@ Before LLM analysis, games are **pre-filtered based on context**:
 
 ### 🎮 AI Game Generation
 - **LLM-Powered**: Creates realistic slots using Anthropic Claude Sonnet 4
+- **Data Integrity**: Robust title-theme coherence with corruption detection and prevention
 - **Custom Prompts**: Specify themes, volatility, studio preferences or creative overrides
 - **Redis Storage**: Persistent custom games across serverless deployments
 - **Complete Schema**: Generated games include all fields for accurate similarity scoring
@@ -391,14 +401,14 @@ Before LLM analysis, games are **pre-filtered based on context**:
 - **Attention Span Matching**: Very-short (work) to very-long (weekend)
 - **Financial Cycle Awareness**: Payday comfort vs. end-of-month caution
 - **Focus Level Detection**: Split-attention, drowsy, relaxed-engaged, etc.
-- **AI Explanations**: Personalized reasoning for each recommendation
+- **Dynamic Explanations**: Adaptive AI reasoning with intelligent threshold calculation
 
 ### ⚖️ Dual Similarity Engines
-- **Algorithmic Engine**: Fast mathematical analysis with 9 weighted factors
+- **Algorithmic Engine**: Fast mathematical analysis with 14 weighted factors
 - **LLM Engine**: Advanced semantic analysis with BMad Master Similarity Engine  
 - **Dynamic User Weights**: Real-time slider adjustments affect both engines
 - **Contextual Integration**: Player psychology influences LLM scoring
-- **UI Toggle**: Switch between engines to compare results
+- **Simplified UI**: Streamlined interface with removed loading animations
 - **Consistent Data Structures**: Both engines output identical response formats for seamless switching
 
 ## 🚀 Experience the AI Revolution

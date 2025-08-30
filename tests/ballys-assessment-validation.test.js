@@ -101,7 +101,7 @@ describe('Bally\'s R&D Assessment - Core Requirements Validation', () => {
   // ✅ Requirement 2: "LLM determines similarity - returns top 3-5 most similar games"  
   test('LLM similarity engine concept validation (Node.js vs Python)', () => {
     // Since we can't easily mock the full LLM system in tests, validate the structure
-    const selectedGame = games.find(g => g.id === 'default-002') || games[1];
+    const selectedGame = games.find(g => g.id === 'game-002') || games[1];
     
     // Mock what your getRecommendations would return
     const mockRecommendations = games.slice(2, 7).map((game, index) => ({
@@ -236,7 +236,7 @@ describe('Key User Flows - End-to-End Validation', () => {
       expect(games.length).toBeGreaterThan(0);
       
       // WHEN: User selects a specific game
-      const selectedGame = games.find(g => g.id === 'default-002') || games[1];
+      const selectedGame = games.find(g => g.id === 'game-002') || games[1];
       expect(selectedGame).toBeTruthy();
       
       // THEN: System should be able to generate recommendations

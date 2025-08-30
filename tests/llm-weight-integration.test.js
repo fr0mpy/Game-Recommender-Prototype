@@ -121,7 +121,7 @@ describe('LLM Weight Integration Tests', () => {
       };
       
       const selectedGame = {
-        title: "Dragon's Fortune",
+        title: "Dragon's Fortune Quest",
         themes: ["Fantasy", "Dragons"],
         volatility: "high",
         studio: "Mythic Gaming"

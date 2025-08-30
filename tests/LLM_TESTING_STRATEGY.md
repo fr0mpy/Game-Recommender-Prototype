@@ -71,7 +71,7 @@ Maintain a curated set of **known good responses** for regression protection:
 const goldenResponses = [
   {
     scenario: 'bonus-frequency-dominant',
-    input: { weights: { bonusFrequency: 1.0 }, gameId: 'default-001' },
+    input: { weights: { bonusFrequency: 1.0 }, gameId: 'game-001' },
     expectedKeywords: ['bonus frequency', 'trigger rate', 'similar'],
     qualityThreshold: 0.85 // 85% semantic similarity to stored response
   }

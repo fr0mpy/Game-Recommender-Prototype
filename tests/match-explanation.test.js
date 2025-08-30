@@ -30,7 +30,7 @@ describe('Match Explanation System', () => {
     test('generateLLMExplanations processes exactly 5 recommendations', () => {
       // Mock data
       const selectedGame = {
-        title: "Dragon's Fortune",
+        title: "Dragon's Fortune Quest",
         themes: ["Fantasy", "Dragons"],
         volatility: "low",
         studio: "Mythic Gaming",

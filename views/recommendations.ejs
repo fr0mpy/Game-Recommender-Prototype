@@ -254,23 +254,7 @@
           </p>
           <div class="text-sm text-casino-dark text-opacity-80">
             <% if (rec.explanation) { %>
-              <p id="explanation-<%= recommendations.indexOf(rec) %>" class="explanation-text"><%= rec.explanation %></p>
-              <div id="loading-<%= recommendations.indexOf(rec) %>" class="loading-indicator space-y-2 mt-2">
-                <!-- Progress Bar -->
-                <div class="w-full bg-gray-200 rounded-full h-1.5">
-                  <div id="progress-<%= recommendations.indexOf(rec) %>" class="bg-blue-500 h-1.5 rounded-full transition-all duration-200" style="width: 0%"></div>
-                </div>
-                
-                <!-- Loading Text with Spinner -->
-                <div class="flex items-center text-xs text-blue-600">
-                  <svg class="animate-spin -ml-1 mr-2 h-3 w-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span id="status-<%= recommendations.indexOf(rec) %>">Analyzing with our AI for the best recommendation insights...</span>
-                  <span id="timer-<%= recommendations.indexOf(rec) %>" class="ml-2 text-gray-500">(~2.5s)</span>
-                </div>
-              </div>
+              <p><%= rec.explanation %></p>
             <% } else { %>
               <div class="text-xs space-y-1">
                 <% if (selectedGame && rec.game.theme && selectedGame.theme) { %> <%
@@ -329,68 +313,5 @@
   </div>
 </div>
 
-<!-- LLM Progress Animation Script -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const EXPECTED_LLM_TIME = 2500; // 2.5 seconds for 5 explanations (from performance tests)
-  
-  // Find all loading indicators
-  const loadingIndicators = document.querySelectorAll('.loading-indicator');
-  
-  loadingIndicators.forEach((indicator, index) => {
-    const progressBar = indicator.querySelector(`#progress-${index}`);
-    const statusText = indicator.querySelector(`#status-${index}`);
-    const timerText = indicator.querySelector(`#timer-${index}`);
-    
-    if (!progressBar) return;
-    
-    let startTime = Date.now();
-    let progress = 0;
-    
-    // Update progress bar and status text
-    const updateProgress = () => {
-      const elapsed = Date.now() - startTime;
-      progress = Math.min((elapsed / EXPECTED_LLM_TIME) * 100, 95); // Cap at 95% until real completion
-      
-      progressBar.style.width = progress + '%';
-      
-      // Update status text based on progress
-      if (progress < 20) {
-        statusText.textContent = 'Analyzing game preferences...';
-      } else if (progress < 40) {
-        statusText.textContent = 'Processing similarity factors...';
-      } else if (progress < 60) {
-        statusText.textContent = 'Generating AI insights...';
-      } else if (progress < 80) {
-        statusText.textContent = 'Crafting personalized explanations...';
-      } else {
-        statusText.textContent = 'Finalizing recommendations...';
-      }
-      
-      // Update timer
-      const remaining = Math.max(0, EXPECTED_LLM_TIME - elapsed);
-      const seconds = (remaining / 1000).toFixed(1);
-      timerText.textContent = `(~${seconds}s remaining)`;
-      
-      // Continue animation if not complete
-      if (progress < 95 && indicator.style.display !== 'none') {
-        requestAnimationFrame(updateProgress);
-      }
-    };
-    
-    // Start progress animation
-    requestAnimationFrame(updateProgress);
-    
-    // Auto-hide after max expected time if still showing
-    setTimeout(() => {
-      if (indicator.style.display !== 'none') {
-        progressBar.style.width = '100%';
-        statusText.textContent = 'Taking longer than expected...';
-        timerText.textContent = '(please wait)';
-      }
-    }, EXPECTED_LLM_TIME + 1000);
-  });
-});
-</script>
 
 <%- include('partials/footer') %>
