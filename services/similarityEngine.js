@@ -17,6 +17,107 @@ const SIMILARITY_PROMPT_FILE = path.join(__dirname, '..', 'prompts', 'game-simil
 // Cache for similarity calculations
 const gameCache = new Map();
 
+// Create dynamic system prompt based on user weights
+function createDynamicSystemPrompt(userWeights = null) {
+  if (!userWeights) {
+    // Fall back to static prompt if no weights provided
+    return fs.readFileSync(SIMILARITY_PROMPT_FILE, 'utf8');
+  }
+  
+  const weightPercentages = {
+    theme: Math.round(userWeights.theme * 100),
+    volatility: Math.round(userWeights.volatility * 100),
+    studio: Math.round(userWeights.studio * 100),
+    mechanics: Math.round(userWeights.mechanics * 100),
+    rtp: Math.round(userWeights.rtp * 100),
+    maxWin: Math.round(userWeights.maxWin * 100),
+    features: Math.round(userWeights.features * 100),
+    pace: Math.round(userWeights.pace * 100),
+    bonusFrequency: Math.round(userWeights.bonusFrequency * 100)
+  };
+  
+  // Find the primary focus (highest weight)
+  const primaryFactor = Object.entries(weightPercentages)
+    .reduce((max, [key, value]) => value > max.value ? { key, value } : max, { key: 'theme', value: 0 });
+  
+  // Create focused system prompt
+  return `# Dynamic Game Similarity Analysis System
+
+You are a Master Similarity Engine - an expert slot game analyst with deep knowledge of player psychology, game mechanics, and casino mathematics. 
+
+## USER-CONFIGURED ANALYSIS WEIGHTS
+
+The user has specified these exact weights for similarity analysis:
+- Theme Similarity: ${weightPercentages.theme}%
+- Volatility/Risk Level: ${weightPercentages.volatility}%
+- Studio/Brand: ${weightPercentages.studio}%
+- Game Mechanics: ${weightPercentages.mechanics}%
+- RTP/Return Rate: ${weightPercentages.rtp}%
+- Max Win Potential: ${weightPercentages.maxWin}%
+- Feature Types: ${weightPercentages.features}%
+- Game Pace: ${weightPercentages.pace}%
+- Bonus Frequency: ${weightPercentages.bonusFrequency}%
+
+## MANDATORY SCORING APPROACH
+
+${primaryFactor.value === 100 ? 
+  `🎯 SINGLE-FACTOR MODE: The user has set ${primaryFactor.key.toUpperCase()} to 100%.
+  Score games EXCLUSIVELY based on ${primaryFactor.key} similarity.
+  IGNORE all other factors completely.
+  
+  ${primaryFactor.key === 'bonusFrequency' ? 
+    'Focus on numerical closeness of bonusFrequency values (e.g., 2.1% vs 2.3% = very similar).' :
+  primaryFactor.key === 'theme' ?
+    'Focus on semantic thematic relationships (Fantasy ≈ Dragons ≈ Magic ≈ Adventure).' :
+  primaryFactor.key === 'volatility' ?
+    'Focus on volatility level matching (low/medium/high/ultra).' :
+    `Focus on ${primaryFactor.key} similarity exclusively.`}` :
+  `WEIGHTED MODE: Use the exact percentages above.
+  Factors with 0% weight must be completely ignored.
+  Weight your analysis proportionally to the user's preferences.`}
+
+## ANALYSIS FACTORS
+
+### Thematic Analysis (Weight: ${weightPercentages.theme}%)
+${weightPercentages.theme > 0 ? `
+- Semantic theme relationships (Dragons ≈ Fantasy ≈ Mythology ≈ Adventure)
+- Emotional resonance matching (Mystery, Excitement, Tranquility, Power)
+- Cultural/historical connections (Ancient Egypt ≈ Treasures ≈ Pyramids)` : 
+'DISABLED - User set Theme weight to 0%'}
+
+### Mathematical Properties (Weight: ${weightPercentages.volatility + weightPercentages.rtp + weightPercentages.maxWin}%)
+${weightPercentages.volatility > 0 || weightPercentages.rtp > 0 || weightPercentages.maxWin > 0 ? `
+- Volatility impact on player emotions (Low=Comfort, High=Adrenaline)
+- RTP expectation alignment (similar fairness perception)
+- Max win potential affecting excitement levels` :
+'DISABLED - User set all mathematical weights to 0%'}
+
+### Gameplay Mechanics (Weight: ${weightPercentages.mechanics + weightPercentages.features + weightPercentages.pace + weightPercentages.bonusFrequency}%)
+${weightPercentages.mechanics > 0 || weightPercentages.features > 0 || weightPercentages.pace > 0 || weightPercentages.bonusFrequency > 0 ? `
+- Mechanical complexity matching (simple vs feature-rich)
+- Feature types creating comparable engagement patterns
+- Pace compatibility (fast action vs contemplative play)  
+- Bonus frequency creating similar reward anticipation` :
+'DISABLED - User set all gameplay weights to 0%'}
+
+### Studio Quality (Weight: ${weightPercentages.studio}%)
+${weightPercentages.studio > 0 ? `
+- Developer reputation and quality consistency
+- Production values alignment
+- Design philosophy similarities` :
+'DISABLED - User set Studio weight to 0%'}
+
+## EXECUTION RULES
+
+1. Use ONLY the user-specified percentages above
+2. Any 0% factor must be completely ignored in scoring  
+3. Focus analysis effort proportional to weight percentages
+4. Return precise similarity scores (not ranges)
+5. Provide detailed reasoning based on weighted factors
+
+Execute analysis using these exact user weights.`;
+}
+
 function volatilityLevel(game) {
   const levels = { 'low': 1, 'medium': 2, 'high': 3, 'ultra': 4 };
   return levels[game.volatility] || 2;
@@ -128,26 +229,40 @@ PLAYER CONTEXT: ${JSON.stringify({
       
       batchPrompt += `
 
-USER WEIGHT PREFERENCES (COMPLETELY OVERRIDE all framework defaults):
-- Theme Similarity: ${weightPercentages.theme}%
-- Volatility/Risk Level: ${weightPercentages.volatility}%
-- Studio/Brand: ${weightPercentages.studio}%
-- Game Mechanics: ${weightPercentages.mechanics}%
-- RTP/Return Rate: ${weightPercentages.rtp}%
-- Max Win Potential: ${weightPercentages.maxWin}%
-- Feature Types: ${weightPercentages.features}%
-- Game Pace: ${weightPercentages.pace}%
-- Bonus Frequency: ${weightPercentages.bonusFrequency}%
+═══════════════════════════════════════════════════════
+🚨🚨🚨 CRITICAL: USER WEIGHT OVERRIDE 🚨🚨🚨
+═══════════════════════════════════════════════════════
 
-CRITICAL INSTRUCTIONS:
-1. IGNORE ALL DEFAULT FRAMEWORK WEIGHTS - use ONLY the user percentages above
-2. Any factor with 0% weight must be COMPLETELY IGNORED in scoring
-3. Any factor with 100% weight becomes the SOLE scoring criteria
-4. Focus EXCLUSIVELY on the properties with non-zero weights
-5. When Bonus Frequency = 100%, score games purely on bonusFrequency similarity (numerical closeness)
-6. DO NOT fall back to thematic analysis when user has set Theme = 0%
+IGNORE ALL PERCENTAGE VALUES IN THE SYSTEM PROMPT ABOVE.
+The user has provided explicit weights that OVERRIDE everything:
 
-Analyze the target game against ALL candidate games and return a JSON array with similarity analysis for each candidate game.`;
+USER WEIGHTS (Use these EXCLUSIVELY):
+{
+  "theme": ${weightPercentages.theme}%,
+  "volatility": ${weightPercentages.volatility}%,
+  "studio": ${weightPercentages.studio}%,
+  "mechanics": ${weightPercentages.mechanics}%,
+  "rtp": ${weightPercentages.rtp}%,
+  "maxWin": ${weightPercentages.maxWin}%,
+  "features": ${weightPercentages.features}%,
+  "pace": ${weightPercentages.pace}%,
+  "bonusFrequency": ${weightPercentages.bonusFrequency}%
+}
+
+ABSOLUTE REQUIREMENTS:
+- Disregard the 55%/25%/20% framework structure above
+- Disregard the 18%/19%/18% primary factor weights above  
+- Use ONLY the user weights object shown above
+- 0% = Completely ignore that factor in all calculations
+- 100% = Score based SOLELY on that single factor
+
+${weightPercentages.bonusFrequency === 100 ? 
+'🎯 BONUS FREQUENCY EXCLUSIVE MODE: Score games by bonusFrequency numerical similarity ONLY. Ignore themes, volatility, studio, everything else.' :
+weightPercentages.theme === 100 ?
+'🎯 THEME EXCLUSIVE MODE: Score games by thematic similarity ONLY. Ignore bonus frequency, volatility, studio, everything else.' :
+'🎯 WEIGHTED MODE: Apply user percentages proportionally.'}
+
+Execute using the user weights object above.`;
       
       console.log(`🎚️ Using dynamic weights for ${batchGames.length} games: Theme=${weightPercentages.theme}%, Volatility=${weightPercentages.volatility}%, Studio=${weightPercentages.studio}%, BonusFreq=${weightPercentages.bonusFrequency}%`);
       
