@@ -818,56 +818,163 @@ app.post("/recommend", async (req, res) => {
 
     // Smart weight-aware explanations based on user preferences
     function generateSmartExplanation(selectedGame, recommendedGame, weights) {
+      console.log('\n🔍 SMART EXPLANATION GENERATION DETAILED LOG:');
+      console.log(`📊 Selected Game: "${selectedGame.title}" (${selectedGame.theme?.join('/')} themes, ${selectedGame.volatility} volatility)`);
+      console.log(`📊 Recommended Game: "${recommendedGame.title}" (${recommendedGame.theme?.join('/')} themes, ${recommendedGame.volatility} volatility)`);
+      console.log(`📊 User Weights:`, JSON.stringify(weights, null, 2));
+      
       const dominantFactors = [];
       const explanationParts = [];
       
-      // Identify dominant factors (80%+ weight)
-      if (weights.bonusFrequency >= 0.8) {
+      // DETAILED WEIGHT ANALYSIS
+      console.log('\n🎚️ WEIGHT ANALYSIS:');
+      const weightEntries = Object.entries(weights).map(([key, value]) => ({ key, value, percentage: Math.round(value * 100) }));
+      const sortedWeights = weightEntries.sort((a, b) => b.value - a.value);
+      
+      // Find dynamic thresholds
+      const maxWeight = sortedWeights[0].value;
+      const secondHighest = sortedWeights[1].value;
+      const dynamicThreshold = Math.max(maxWeight * 0.8, 0.15); // At least 15% or 80% of max
+      
+      console.log(`   Max weight: ${maxWeight.toFixed(4)} (${Math.round(maxWeight * 100)}%)`);
+      console.log(`   Dynamic threshold: ${dynamicThreshold.toFixed(4)} (${Math.round(dynamicThreshold * 100)}%)`);
+      
+      sortedWeights.forEach(({ key, value, percentage }) => {
+        const isDominant = value >= dynamicThreshold;
+        const isSignificant = value >= 0.1;
+        const status = isDominant ? '🔥 PRIMARY' : isSignificant ? '✅ SECONDARY' : '🔇 LOW';
+        console.log(`   ${status} ${key}: ${value.toFixed(4)} (${percentage}%)`);
+      });
+      
+      // Identify primary factors using dynamic threshold
+      console.log('\n🎯 CHECKING PRIMARY FACTORS (dynamic threshold):');
+      if (weights.bonusFrequency >= dynamicThreshold) {
+        console.log('   🎲 BONUS FREQUENCY is primary factor');
         dominantFactors.push('bonusFrequency');
         const bonusMatch = selectedGame.bonusFrequency && recommendedGame.bonusFrequency && 
           Math.abs(selectedGame.bonusFrequency - recommendedGame.bonusFrequency) < 0.2;
-        explanationParts.push(bonusMatch ? 
+        console.log(`      Selected bonus: ${selectedGame.bonusFrequency?.toFixed(2)}%, Recommended bonus: ${recommendedGame.bonusFrequency?.toFixed(2)}%`);
+        console.log(`      Difference: ${Math.abs((selectedGame.bonusFrequency || 0) - (recommendedGame.bonusFrequency || 0)).toFixed(2)}%, Match: ${bonusMatch}`);
+        
+        const bonusExplanation = bonusMatch ? 
           `Perfect bonus frequency match at ${recommendedGame.bonusFrequency?.toFixed(1) || 'N/A'}%, identical to ${selectedGame.title}'s bonus trigger rate.` :
-          `Similar bonus frequency pattern (${recommendedGame.bonusFrequency?.toFixed(1) || 'N/A'}% vs ${selectedGame.bonusFrequency?.toFixed(1) || 'N/A'}%) providing comparable bonus anticipation.`);
+          `Similar bonus frequency pattern (${recommendedGame.bonusFrequency?.toFixed(1) || 'N/A'}% vs ${selectedGame.bonusFrequency?.toFixed(1) || 'N/A'}%) providing comparable bonus anticipation.`;
+        explanationParts.push(bonusExplanation);
+        console.log(`      Generated explanation: "${bonusExplanation}"`);
       }
       
-      if (weights.theme >= 0.8 && selectedGame.theme && recommendedGame.theme) {
+      if (weights.theme >= dynamicThreshold && selectedGame.theme && recommendedGame.theme) {
+        console.log('   🎨 THEME is primary factor');
         dominantFactors.push('theme');
         const sharedThemes = selectedGame.theme.filter(t => recommendedGame.theme.includes(t));
-        if (sharedThemes.length > 0) {
-          explanationParts.push(`Perfect thematic match with shared ${sharedThemes.join(' and ')} themes.`);
-        } else {
-          explanationParts.push(`Complementary ${recommendedGame.theme.join('/')} theme offering similar atmospheric appeal.`);
-        }
+        console.log(`      Selected themes: [${selectedGame.theme.join(', ')}]`);
+        console.log(`      Recommended themes: [${recommendedGame.theme.join(', ')}]`);
+        console.log(`      Shared themes: [${sharedThemes.join(', ')}] (${sharedThemes.length} matches)`);
+        
+        const themeExplanation = sharedThemes.length > 0 ?
+          `Perfect thematic match with shared ${sharedThemes.join(' and ')} themes.` :
+          `Complementary ${recommendedGame.theme.join('/')} theme offering similar atmospheric appeal.`;
+        explanationParts.push(themeExplanation);
+        console.log(`      Generated explanation: "${themeExplanation}"`);
       }
       
-      if (weights.volatility >= 0.8) {
+      if (weights.volatility >= dynamicThreshold) {
+        console.log('   ⚡ VOLATILITY is primary factor');
         dominantFactors.push('volatility');
-        if (selectedGame.volatility === recommendedGame.volatility) {
-          explanationParts.push(`Identical ${recommendedGame.volatility} volatility level matching your risk preference perfectly.`);
-        } else {
-          explanationParts.push(`${recommendedGame.volatility} volatility providing similar payout patterns and gaming excitement.`);
-        }
+        const volatilityMatch = selectedGame.volatility === recommendedGame.volatility;
+        console.log(`      Selected volatility: ${selectedGame.volatility}, Recommended volatility: ${recommendedGame.volatility}`);
+        console.log(`      Exact match: ${volatilityMatch}`);
+        
+        const volatilityExplanation = volatilityMatch ?
+          `Identical ${recommendedGame.volatility} volatility level matching your risk preference perfectly.` :
+          `${recommendedGame.volatility} volatility providing similar payout patterns and gaming excitement.`;
+        explanationParts.push(volatilityExplanation);
+        console.log(`      Generated explanation: "${volatilityExplanation}"`);
       }
       
-      if (weights.studio >= 0.8) {
+      if (weights.studio >= dynamicThreshold) {
+        console.log('   🏢 STUDIO is primary factor');
         dominantFactors.push('studio');
-        if (selectedGame.studio === recommendedGame.studio) {
-          explanationParts.push(`Same studio (${recommendedGame.studio}) ensuring consistent quality and game feel.`);
-        } else {
-          explanationParts.push(`${recommendedGame.studio}'s development style matches the quality you enjoyed in ${selectedGame.title}.`);
+        const studioMatch = selectedGame.studio === recommendedGame.studio;
+        console.log(`      Selected studio: ${selectedGame.studio}, Recommended studio: ${recommendedGame.studio}`);
+        console.log(`      Same studio: ${studioMatch}`);
+        
+        const studioExplanation = studioMatch ?
+          `Same studio (${recommendedGame.studio}) ensuring consistent quality and game feel.` :
+          `${recommendedGame.studio}'s development style matches the quality you enjoyed in ${selectedGame.title}.`;
+        explanationParts.push(studioExplanation);
+        console.log(`      Generated explanation: "${studioExplanation}"`);
+      }
+      
+      // Add analysis for other significant factors
+      const secondaryFactors = [];
+      if (weights.mechanics >= 0.1 && weights.mechanics < dynamicThreshold) {
+        if (selectedGame.mechanics && recommendedGame.mechanics) {
+          const sharedMechanics = selectedGame.mechanics.filter(m => recommendedGame.mechanics.includes(m));
+          if (sharedMechanics.length > 0) {
+            secondaryFactors.push(`${sharedMechanics.slice(0,2).join('/')} mechanics`);
+          }
         }
       }
       
-      // Handle multiple dominant factors
-      if (dominantFactors.length > 1) {
-        return `Excellent match on your top priorities: ${explanationParts.join(' Additionally, ')}.`;
-      } else if (dominantFactors.length === 1) {
-        return explanationParts[0] || 'Great match based on your preferences.';
+      if (weights.rtp >= 0.1 && weights.rtp < dynamicThreshold) {
+        if (selectedGame.rtp && recommendedGame.rtp && Math.abs(selectedGame.rtp - recommendedGame.rtp) < 1) {
+          secondaryFactors.push(`similar ${recommendedGame.rtp}% RTP`);
+        }
       }
       
-      // Fallback for balanced weights
-      return `Balanced match considering your weight preferences across multiple game factors.`;
+      console.log('\n🎯 FINAL EXPLANATION DECISION:');
+      console.log(`   Primary factors found: ${dominantFactors.length} (${dominantFactors.join(', ')})`);
+      console.log(`   Secondary factors: ${secondaryFactors.join(', ')}}`);
+      console.log(`   Explanation parts generated: ${explanationParts.length}`);
+      explanationParts.forEach((part, i) => console.log(`      ${i+1}. "${part}"`));
+      
+      let finalExplanation;
+      
+      if (dominantFactors.length > 1) {
+        finalExplanation = `Excellent match on your top priorities: ${explanationParts.join(' Additionally, ')}.`;
+        console.log(`   ✅ Using MULTI-PRIMARY explanation: "${finalExplanation}"`);
+      } else if (dominantFactors.length === 1) {
+        finalExplanation = explanationParts[0] || 'Great match based on your preferences.';
+        if (secondaryFactors.length > 0) {
+          finalExplanation += ` Plus ${secondaryFactors.join(' and ')}.`;
+        }
+        console.log(`   ✅ Using SINGLE-PRIMARY explanation: "${finalExplanation}"`);
+      } else {
+        // Enhanced fallback with actual analysis
+        const fallbackParts = [];
+        
+        // Check theme similarity even if not dominant
+        if (selectedGame.theme && recommendedGame.theme) {
+          const sharedThemes = selectedGame.theme.filter(t => recommendedGame.theme.includes(t));
+          if (sharedThemes.length > 0) {
+            fallbackParts.push(`${sharedThemes.join('/')} theme similarity`);
+          }
+        }
+        
+        // Check volatility match
+        if (selectedGame.volatility === recommendedGame.volatility) {
+          fallbackParts.push(`matching ${recommendedGame.volatility} volatility`);
+        }
+        
+        // Check studio match
+        if (selectedGame.studio === recommendedGame.studio) {
+          fallbackParts.push(`same studio (${recommendedGame.studio})`);
+        }
+        
+        if (fallbackParts.length > 0) {
+          finalExplanation = `Strong match based on ${fallbackParts.join(' and ')} providing a similar gaming experience.`;
+        } else {
+          finalExplanation = `Complementary match offering variety while respecting your balanced weight preferences across multiple game factors.`;
+        }
+        
+        console.log(`   ⚠️ Using FALLBACK explanation (no primary factors above threshold ${dynamicThreshold.toFixed(3)}): "${finalExplanation}"`);
+        console.log(`   ⚠️ FALLBACK ANALYSIS: theme match=${selectedGame.theme && recommendedGame.theme ? selectedGame.theme.filter(t => recommendedGame.theme.includes(t)).length > 0 : false}, volatility match=${selectedGame.volatility === recommendedGame.volatility}, studio match=${selectedGame.studio === recommendedGame.studio}`);
+        console.log(`   ⚠️ All weights were below dynamic threshold of ${Math.round(dynamicThreshold * 100)}%`);
+      }
+      
+      console.log(`\n✅ FINAL SMART EXPLANATION: "${finalExplanation}"`);
+      return finalExplanation;
     }
 
     // Generate explanations based on recommendation engine
