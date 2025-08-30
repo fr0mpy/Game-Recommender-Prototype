@@ -541,24 +541,67 @@
             Customize how the AI generates your games.
           </p>
           
-          <!-- Hybrid Generation Toggle -->
+          <!-- Generation Mode Selection -->
           <div class="mt-3 p-3 bg-gray-50 rounded-lg border">
-            <div class="flex items-center space-x-2">
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Generation Engine</h4>
+            
+            <!-- Fast Mode (Hybrid) - Default -->
+            <div class="flex items-start space-x-3 mb-3">
               <input 
-                type="checkbox" 
-                id="useHybrid" 
-                name="useHybrid" 
-                value="true"
+                type="radio" 
+                id="generationHybrid" 
+                name="generationMode" 
+                value="hybrid"
                 checked
-                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                class="mt-1 rounded-full border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               >
-              <label for="useHybrid" class="text-sm font-medium text-gray-700">
-                🚀 Fast Mode (Hybrid Generation)
-              </label>
+              <div class="flex-1">
+                <label for="generationHybrid" class="text-sm font-medium text-gray-700 flex items-center">
+                  🚀 Fast Mode <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full font-medium">RECOMMENDED</span>
+                </label>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  Claude 3 Haiku with parallel batching • <strong>8-12 seconds</strong> • Great quality
+                </p>
+              </div>
             </div>
-            <p class="text-xs text-gray-500 mt-1 ml-6">
-              Use Claude 3 Haiku with parallel batching (~8-12s vs ~90s)
-            </p>
+            
+            <!-- Premium Mode (Traditional) -->
+            <div class="flex items-start space-x-3 mb-3">
+              <input 
+                type="radio" 
+                id="generationTraditional" 
+                name="generationMode" 
+                value="traditional"
+                class="mt-1 rounded-full border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              >
+              <div class="flex-1">
+                <label for="generationTraditional" class="text-sm font-medium text-gray-700">
+                  🎯 Premium Mode
+                </label>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  Claude 4 Sonnet single call • <strong>60-90 seconds</strong> • Maximum quality
+                </p>
+              </div>
+            </div>
+            
+            <!-- Development Mode (Mock) -->
+            <div class="flex items-start space-x-3">
+              <input 
+                type="radio" 
+                id="generationMock" 
+                name="generationMode" 
+                value="mock"
+                class="mt-1 rounded-full border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              >
+              <div class="flex-1">
+                <label for="generationMock" class="text-sm font-medium text-gray-700 flex items-center">
+                  ⚡ Dev Mode <span class="ml-2 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">NO API</span>
+                </label>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  Mock data generation • <strong>Instant</strong> • Testing only
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

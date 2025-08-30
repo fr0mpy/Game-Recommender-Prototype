@@ -468,17 +468,30 @@ app.post("/generate", async (req, res) => {
     const customPrompt = req.body.customPrompt;
     console.log('🔍 SERVER: Custom prompt:', customPrompt);
     
-    // Check if hybrid generation is enabled (default: true for better performance)
-    const useHybrid = process.env.USE_HYBRID_GENERATION !== 'false' && (req.body.useHybrid !== 'false' && req.body.useHybrid !== false);
-    console.log('🔍 SERVER: Hybrid generation enabled:', useHybrid);
+    // Determine generation mode from radio button selection
+    const generationMode = req.body.generationMode || 'hybrid'; // Default to hybrid for best performance
+    console.log('🔍 SERVER: Generation mode selected:', generationMode);
     
     let games;
-    if (useHybrid) {
-      console.log('🚀 SERVER: Using hybrid generation (Claude 3 Haiku + batching)...');
-      games = await generateGamesHybrid(customPrompt, req.sessionId);
-    } else {
-      console.log('🔍 SERVER: Using traditional generation (Claude 4 Sonnet)...');
-      games = await generateGames(customPrompt, req.sessionId);
+    switch (generationMode) {
+      case 'hybrid':
+        console.log('🚀 SERVER: Using hybrid generation (Claude 3 Haiku + batching)...');
+        games = await generateGamesHybrid(customPrompt, req.sessionId);
+        break;
+        
+      case 'traditional':
+        console.log('🎯 SERVER: Using premium generation (Claude 4 Sonnet)...');
+        games = await generateGames(customPrompt, req.sessionId);
+        break;
+        
+      case 'mock':
+        console.log('⚡ SERVER: Using mock generation (development mode)...');
+        games = generateMockGames();
+        break;
+        
+      default:
+        console.log('🚀 SERVER: Unknown mode, defaulting to hybrid generation...');
+        games = await generateGamesHybrid(customPrompt, req.sessionId);
     }
     console.log('✅ SERVER: generateGames completed successfully');
     console.log('🔍 SERVER: Generated games count:', games?.length);
