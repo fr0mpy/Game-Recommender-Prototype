@@ -39,19 +39,27 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
 
+  // Ensure we only process exactly 5 recommendations
+  if (recommendations.length !== 5) {
+    console.log(`⚠️ EXPLANATION: Expected 5 recommendations, got ${recommendations.length}`);
+  }
+  
+  const top5Recommendations = recommendations.slice(0, 5);
+  console.log(`🎯 EXPLANATION: Processing ${top5Recommendations.length} recommendations for explanations`);
+
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
   });
 
   try {
-    // Load the existing recommendation explanation prompt
+    // Load the recommendation explanation prompt
     const basePrompt = loadPrompt('recommendation-explanation-prompt.md');
     if (!basePrompt) {
       throw new Error('Could not load recommendation-explanation-prompt.md');
     }
 
-    // Build the games list for the prompt
-    const gamesList = recommendations.map((rec, index) => 
+    // Build the games list for the prompt - only top 5
+    const gamesList = top5Recommendations.map((rec, index) => 
       `${index + 1}. "${rec.game.title}" - ${rec.game.themes.join('/')}, ${rec.game.volatility} volatility, ${rec.game.studio}`
     ).join('\n');
 
@@ -138,8 +146,18 @@ async function generateLLMExplanations(selectedGame, recommendations, weights, p
       throw new Error('Response is not an array');
     }
 
-    console.log(`✅ Successfully generated ${explanations.length} LLM explanations`);
-    return explanations;
+    // Ensure we return exactly 5 explanations to match recommendations
+    const top5Explanations = explanations.slice(0, 5);
+    
+    // If we got fewer than 5, pad with fallback explanations
+    while (top5Explanations.length < 5) {
+      const missingIndex = top5Explanations.length;
+      top5Explanations.push(`Great match based on your ${selectedGame.themes.join(' and ')} preferences.`);
+      console.log(`⚠️ EXPLANATION: Added fallback explanation for position ${missingIndex + 1}`);
+    }
+
+    console.log(`✅ Successfully generated ${top5Explanations.length} LLM explanations (exactly 5)`);
+    return top5Explanations;
 
   } catch (error) {
     console.error('❌ LLM explanation generation failed:', error.message);
@@ -880,10 +898,14 @@ app.post("/recommend", async (req, res) => {
       console.log(`🎯 Using existing recommendation-explanation-prompt.md with dynamic weights`);
       
       try {
-        // Generate LLM explanations using existing prompt
-        const explanations = await generateLLMExplanations(selectedGame, recommendations, weights, req.playerContext);
+        // Ensure we only process top 5 recommendations
+        const top5Recommendations = recommendations.slice(0, 5);
+        console.log(`🎯 LLM: Processing exactly ${top5Recommendations.length} recommendations`);
         
-        recommendationsWithExplanations = recommendations.map((rec, index) => {
+        // Generate LLM explanations using existing prompt
+        const explanations = await generateLLMExplanations(selectedGame, top5Recommendations, weights, req.playerContext);
+        
+        recommendationsWithExplanations = top5Recommendations.map((rec, index) => {
           return {
             ...rec,
             explanation: explanations[index] || 'Contextually matched based on your preferences.',
@@ -896,8 +918,11 @@ app.post("/recommend", async (req, res) => {
         console.log(`❌ LLM explanation generation failed: ${error.message}`);
         console.log(`🔄 Falling back to smart explanations`);
         
-        // Fallback to smart explanations
-        recommendationsWithExplanations = recommendations.map((rec) => {
+        // Fallback to smart explanations - ensure top 5 only
+        const top5Recommendations = recommendations.slice(0, 5);
+        console.log(`🔄 FALLBACK: Processing ${top5Recommendations.length} recommendations with smart explanations`);
+        
+        recommendationsWithExplanations = top5Recommendations.map((rec) => {
           const smartExplanation = generateSmartExplanation(selectedGame, rec.game, weights);
           return {
             ...rec, 

@@ -65,14 +65,29 @@ For each game recommendation, provide a contextual explanation that considers:
 
 ## Example Outputs
 
-**High Context Relevance:**
-"Perfect for your current Champions League excitement - features competitive tournament mechanics with high-energy bonus rounds that match the football season intensity."
+**High Theme Match:**
+"Both games feature Egyptian adventure themes with treasure-hunting mechanics and cascading reels that create exciting win chains."
 
-**Work Hours Optimization:**
+**Volatility + Mechanics Match:**
+"Like the original, this medium volatility game combines expanding wilds with free spin bonuses for balanced, frequent excitement."
+
+**Studio Match:**
+"From the same studio, you'll recognize the signature high-quality graphics and innovative bonus round mechanics."
+
+**Work Hours Context:**
 "Ideal for quick sessions with instant-win features and easy pause mechanics, perfect for your current split-attention work environment."
 
-**Seasonal Integration:**
-"Summer adventure themes with vacation-inspired bonus rounds align perfectly with the current energetic seasonal mood."
+**Evening Leisure Context:**
+"Perfect for your evening leisure session - features epic mythological themes with complex bonus mechanics that match your current high-attention state."
+
+**Sports Season Context:**
+"Aligns with Champions League excitement - features competitive tournament mechanics with high-energy bonus rounds."
+
+### What to Avoid
+- Technical jargon without explanation
+- Weak connections or forced similarities
+- Mentioning confidence percentages (already shown in UI)
+- Generic phrases like "similar gaming experience" or "balanced match"
 
 ---
 

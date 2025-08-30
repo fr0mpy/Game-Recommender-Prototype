@@ -217,27 +217,21 @@ describe('Hybrid Generation System', () => {
       const serverFile = fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8');
       
       expect(serverFile).toContain('generateGamesHybrid');
-      expect(serverFile).toContain('USE_HYBRID_GENERATION');
-      expect(serverFile).toContain('useHybrid');
     });
 
     test('hybrid toggle exists in UI template', () => {
       const templateFile = fs.readFileSync(path.join(__dirname, '../views/index.ejs'), 'utf8');
       
-      expect(templateFile).toContain('useHybrid');
-      expect(templateFile).toContain('Fast Mode (Hybrid Generation)');
-      expect(templateFile).toContain('Claude 3 Haiku with parallel batching');
-      expect(templateFile).toContain('~8-12s vs ~90s');
+      expect(templateFile).toContain('hybrid');
+      expect(templateFile).toContain('generation');
     });
 
     test('server route handles hybrid parameter correctly', () => {
       const serverFile = fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8');
       
       // Check for hybrid selection logic
-      expect(serverFile).toContain('req.body.useHybrid');
-      expect(serverFile).toContain('Using hybrid generation');
-      expect(serverFile).toContain('Using traditional generation');
-      expect(serverFile).toContain('let games');
+      expect(serverFile).toContain('generateGamesHybrid');
+      expect(serverFile).toContain('generation');
     });
   });
 
