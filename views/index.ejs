@@ -491,7 +491,7 @@
               <input type="radio" name="recommendationEngine" value="llm" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
               <div class="ml-3">
                 <div class="text-sm font-medium text-gray-900"><span class="font-mono text-purple-600">LLM</span> - AI-powered semantic analysis</div>
-                <div class="text-xs text-gray-500">Comprehensive evaluation - batch processing (2-3 seconds)</div>
+                <div class="text-xs text-gray-500">AI-powered semantic analysis with contextual explanations</div>
               </div>
             </label>
           </div>
@@ -501,9 +501,17 @@
       <div class="flex justify-center">
         <button
           type="submit"
-          class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200 text-lg"
+          id="find-games-btn"
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200 text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          🔍 Find Similar Games
+          <span id="btn-text">🔍 Find Similar Games</span>
+          <span id="btn-spinner" class="hidden">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Analyzing Games...
+          </span>
         </button>
       </div>
     </form>
@@ -1569,6 +1577,25 @@
       alert('Failed to reset games. Please try again.');
     }
   }
+
+  // Add loading state to recommendation form
+  document.addEventListener('DOMContentLoaded', function() {
+    const recommendForm = document.querySelector('form[action="/recommend"]');
+    const findBtn = document.getElementById('find-games-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+    
+    if (recommendForm && findBtn) {
+      recommendForm.addEventListener('submit', function() {
+        // Show loading state immediately
+        findBtn.disabled = true;
+        btnText.classList.add('hidden');
+        btnSpinner.classList.remove('hidden');
+        
+        console.log('🚀 Starting recommendation submission...');
+      });
+    }
+  });
 </script>
 
 <%- include('partials/footer') %>
